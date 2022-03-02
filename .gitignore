@@ -3,7 +3,7 @@
 *~
 *.RDS
 generated_data/*
-raw_data/*
+raw_data/*.tab
 .DS_Store
 .Rproj.user
 .Rhistory
