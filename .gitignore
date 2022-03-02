@@ -2,6 +2,8 @@
 .Rapp.history
 *~
 *.RDS
+generated_data/*
+raw_data/*
 .DS_Store
 .Rproj.user
 .Rhistory
