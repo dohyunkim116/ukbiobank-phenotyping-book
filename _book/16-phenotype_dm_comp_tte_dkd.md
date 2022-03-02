@@ -1,0 +1,125 @@
+# Generate time-to-event data for diabetes related kidney disease {#tte-dkd}
+
+Diabetes first occurrence event table (`dm_firstoccur.RDS`) and diabetic kidney disease first occurrence event table (`dkd_firstoccur.RDS`) were generated in `phenotype_outcome_events_combine`. Demographic data (`demog_selected.RDS`) was generated in `prep_ukb_assessment`.
+
+For CKD, we apply the following exclusion criteria for controls and cases:
+
+- controls are excluded if:
+  - represented in UKB CKD control exclusion event table 
+  - represented in PCP CKD control exclusion event table
+  - found to have microalbuminuria at least once
+  - found to have eGFR level < 60
+
+- controls must satisfy all of the following to not be excluded:
+  - represented in PCP data
+  - have eGFR measurements available
+
+- cases were excluded if:
+  - the follow-up time was less than 5 years
+  
+Subject IDs that were represented in the primary care data (`gp_subject_ids.RDS`) was created in `prep_pcp_data`. The control exclusion based on microalbuminuria status and the eGFR measurements were accomplished based on corresponding biomarker datasets `micro_macro_albuminuria_event_tab.RDS` and `comb_creat_tab.RDS`, respectively, both generated in `phenotype_biomarkers` folder. The following table shows control exclusion event table files and where they were generated:
+
+|Control exclusion outcome|file|folder|
+|------------|---|---|
+|UKB CKD control exclusion event table|`dkd_control_exclusion_events_ukb.RDS`|`phenotype_events_ukb`|
+|PCP CKD control exclusion event table|`kidney_disease_control_exclusion_pc.RDS`|`phenotype_events_pcp`|
+|microalbuminuria status|`micro_macro_albuminuria_event_tab.RDS`|`phenotype_biomarkers/compute_acr_albuminuria`|
+|eGFR measurements|`comb_creat_tab.RDS`|`phenotype_biomarkers/compute_egfr`|
+  
+Applying these exclusion criteria to initial time-to-event data gives us the final time-to-event data for diabetic kidney disease. 
+
+
+
+```r
+library(tidyverse)
+library(data.table)
+source("functions.R")
+```
+
+Load the following datasets:
+
+- diabetes first occurrence data
+- selected demographic data
+- first occurrence DKD event table
+- eGFR trajectory data
+- microalbuminuria first occurrence event table
+
+
+```r
+dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
+demog <- readRDS("generated_data/demog_selected.RDS")
+dkd_firstoccur <- readRDS("generated_data/dkd_firstoccur.RDS")
+egfr_traj <- readRDS("generated_data/trajectory_egfr.RDS")
+microabu_firstoccur <- readRDS("generated_data/microabu_firstoccur.RDS")
+```
+
+Load the following control exclusion event tables:
+
+- CKD control exclusion event table from UKB assessment center data
+- CKD control exclusion event table from PCP data
+
+
+```r
+dkd_control_exclusion_events_ukb <- readRDS("generated_data/dkd_control_exclusion_events_ukb.RDS")
+kidney_disease_control_exclusion_events_pc <- readRDS("generated_data/kidney_disease_control_exclusion_pc.RDS")
+```
+
+Create additional control exclusion event tables:
+
+- a table containing subjects who have been recorded to have ever had creatinine level less than 60 
+- a table containing subjects who have been recorded to have ever had microalbuminuria
+
+
+```r
+egfr_lt60_ever_event_tab <- egfr_traj %>% filter(measurement < 60, !is.na(measurement), !is.na(event_dt))
+microabu_ever_event_tab <- microabu_firstoccur %>% filter(!is.na(event))
+```
+
+Merge control exclusion event tables
+
+```r
+ckd_control_exclusion_events <- bind_rows(list(dkd_control_exclusion_events_ukb,
+            kidney_disease_control_exclusion_events_pc,
+            egfr_lt60_ever_event_tab,microabu_ever_event_tab))
+```
+
+Define control exclusion subject IDs
+
+```r
+ctrl_exclusion_ids <- ckd_control_exclusion_events$f.eid %>% unique
+```
+
+The controls should have linked primary care dataset and at least one eGFR measurement
+
+```r
+pcp_subejct_ids <- readRDS("generated_data/gp_subject_ids.RDS")
+eGFR_avail_subject_ids <- (egfr_traj %>% filter(!is.na(measurement) & !is.na(event_dt))) %>% .$f.eid
+```
+
+Define control inclusion subject IDs
+
+```r
+ctrl_inclusion_ids <- intersect(pcp_subejct_ids,eGFR_avail_subject_ids) %>% unique
+```
+
+
+```r
+dkd_tte <- phenotype_time_to_event(dm_firstoccur,dkd_firstoccur,demog,
+                                  control_exclusion_ids = ctrl_exclusion_ids,
+                                  control_inclusion_ids = ctrl_inclusion_ids)
+```
+
+We filter out cases that do not have 5+ follow-up time
+
+```r
+dkd_tte <- 
+  dkd_tte %>%
+  filter(event == 0 | (event == 1 & (lubridate::decimal_date(event_dt_comp) - lubridate::decimal_date(event_dt_dm) >= 5)))
+```
+
+
+```r
+saveRDS(dkd_tte,"generated_data/dkd_tte.RDS")
+```
+
+

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>13.1 DM | UK Biobank Phenotyping</title>
+  <meta name="description" content="13.1 DM | UK Biobank Phenotyping" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="13.1 DM | UK Biobank Phenotyping" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="13.1 DM | UK Biobank Phenotyping" />
+  
+  
+  
+
+<meta name="author" content="Do Hyun Kim" />
+
+
+<meta name="date" content="2022-02-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="phenotype-outcome-combine.html"/>
+<link rel="next" href="dr-2.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Generating time-to-event data using UK biobank data</a></li>
+<li class="chapter" data-level="1" data-path="reformat-raw-data.html"><a href="reformat-raw-data.html"><i class="fa fa-check"></i><b>1</b> Clean raw UKB assesment center data</a></li>
+<li class="chapter" data-level="2" data-path="curate-demog-table.html"><a href="curate-demog-table.html"><i class="fa fa-check"></i><b>2</b> Curate demographic table</a></li>
+<li class="chapter" data-level="3" data-path="curate-all-ukb_events-table.html"><a href="curate-all-ukb_events-table.html"><i class="fa fa-check"></i><b>3</b> Curate all UKB events table</a><ul>
+<li class="chapter" data-level="3.1" data-path="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><a href="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><i class="fa fa-check"></i><b>3.1</b> First occurrence event table and algorithmically defined outcome table</a></li>
+<li class="chapter" data-level="3.2" data-path="custom-defined-outcome-for-dr.html"><a href="custom-defined-outcome-for-dr.html"><i class="fa fa-check"></i><b>3.2</b> Custom defined outcome for DR</a></li>
+<li class="chapter" data-level="3.3" data-path="icd-10.html"><a href="icd-10.html"><i class="fa fa-check"></i><b>3.3</b> ICD 10</a></li>
+<li class="chapter" data-level="3.4" data-path="opcs4.html"><a href="opcs4.html"><i class="fa fa-check"></i><b>3.4</b> OPCS4</a></li>
+<li class="chapter" data-level="3.5" data-path="medical-conditions-self-report-ukb.html"><a href="medical-conditions-self-report-ukb.html"><i class="fa fa-check"></i><b>3.5</b> Medical conditions self-report UKB</a></li>
+<li class="chapter" data-level="3.6" data-path="self-reported-operations-ukb.html"><a href="self-reported-operations-ukb.html"><i class="fa fa-check"></i><b>3.6</b> Self-reported operations UKB</a></li>
+<li class="chapter" data-level="3.7" data-path="standardize-and-merge-event-tables.html"><a href="standardize-and-merge-event-tables.html"><i class="fa fa-check"></i><b>3.7</b> Standardize and merge event tables</a></li>
+<li class="chapter" data-level="3.8" data-path="convert-ukb-special-dates-into-normal-dates.html"><a href="convert-ukb-special-dates-into-normal-dates.html"><i class="fa fa-check"></i><b>3.8</b> Convert UKB special dates into “normal” dates</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="exclude-sex-mismatch-subjects.html"><a href="exclude-sex-mismatch-subjects.html"><i class="fa fa-check"></i><b>4</b> Filter out subjects with sex mistmatch</a></li>
+<li class="chapter" data-level="5" data-path="prep_pcp_data.html"><a href="prep_pcp_data.html"><i class="fa fa-check"></i><b>5</b> Prepare UKB Primary Care Data</a></li>
+<li class="chapter" data-level="6" data-path="make-code-dictionary.html"><a href="make-code-dictionary.html"><i class="fa fa-check"></i><b>6</b> Create a master code dictionary for primary care data</a><ul>
+<li class="chapter" data-level="6.1" data-path="read-v2.html"><a href="read-v2.html"><i class="fa fa-check"></i><b>6.1</b> Read v2</a></li>
+<li class="chapter" data-level="6.2" data-path="read-v3.html"><a href="read-v3.html"><i class="fa fa-check"></i><b>6.2</b> Read v3</a></li>
+<li class="chapter" data-level="6.3" data-path="tpp-local-codes.html"><a href="tpp-local-codes.html"><i class="fa fa-check"></i><b>6.3</b> TPP local codes</a></li>
+<li class="chapter" data-level="6.4" data-path="merge-read-v2-read-v3-and-tpp-dictionaries.html"><a href="merge-read-v2-read-v3-and-tpp-dictionaries.html"><i class="fa fa-check"></i><b>6.4</b> Merge Read v2, Read v3 and TPP dictionaries</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="make-outcome-specific-code-dictionary.html"><a href="make-outcome-specific-code-dictionary.html"><i class="fa fa-check"></i><b>7</b> Make outcome-specific code dictionary</a><ul>
+<li class="chapter" data-level="7.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html"><i class="fa fa-check"></i><b>7.1</b> Prepare diabetes code dictionary</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-keywords"><i class="fa fa-check"></i><b>7.1.1</b> Define keywords</a></li>
+<li class="chapter" data-level="7.1.2" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-codes"><i class="fa fa-check"></i><b>7.1.2</b> Define codes</a></li>
+<li class="chapter" data-level="7.1.3" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#create-diabetes-code-dictionary"><i class="fa fa-check"></i><b>7.1.3</b> Create diabetes code dictionary</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.2</b> Prepare diabetic eye disease code dictionary</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-keywords-1"><i class="fa fa-check"></i><b>7.2.1</b> Define keywords</a></li>
+<li class="chapter" data-level="7.2.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-codes-1"><i class="fa fa-check"></i><b>7.2.2</b> Define codes</a></li>
+<li class="chapter" data-level="7.2.3" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#create-diabetic-eye-disease-code-dictionary"><i class="fa fa-check"></i><b>7.2.3</b> Create diabetic eye disease code dictionary</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.3</b> Prepare diabetic kidney disease code dictionary</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-keywords-2"><i class="fa fa-check"></i><b>7.3.1</b> Define Keywords</a></li>
+<li class="chapter" data-level="7.3.2" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-codes-2"><i class="fa fa-check"></i><b>7.3.2</b> Define codes</a></li>
+<li class="chapter" data-level="7.3.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#create-diabetic-kidney-disease-code-dictionary"><i class="fa fa-check"></i><b>7.3.3</b> Create diabetic kidney disease code dictionary</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="phenotype-outcomes-ukb.html"><a href="phenotype-outcomes-ukb.html"><i class="fa fa-check"></i><b>8</b> Phenotype outcome events using UKB assessment center data</a><ul>
+<li class="chapter" data-level="8.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.1</b> Phenotype outcome events using UKB assessment center data</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dm"><i class="fa fa-check"></i><b>8.1.1</b> DM</a></li>
+<li class="chapter" data-level="8.1.2" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#mi"><i class="fa fa-check"></i><b>8.1.2</b> MI</a></li>
+<li class="chapter" data-level="8.1.3" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#unstable-angina"><i class="fa fa-check"></i><b>8.1.3</b> Unstable Angina</a></li>
+<li class="chapter" data-level="8.1.4" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ischemic-stroke"><i class="fa fa-check"></i><b>8.1.4</b> Ischemic Stroke</a></li>
+<li class="chapter" data-level="8.1.5" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#hemorrhagic-stroke"><i class="fa fa-check"></i><b>8.1.5</b> Hemorrhagic Stroke</a></li>
+<li class="chapter" data-level="8.1.6" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#stroke"><i class="fa fa-check"></i><b>8.1.6</b> Stroke</a></li>
+<li class="chapter" data-level="8.1.7" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#pci"><i class="fa fa-check"></i><b>8.1.7</b> PCI</a></li>
+<li class="chapter" data-level="8.1.8" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#cvd-death"><i class="fa fa-check"></i><b>8.1.8</b> CVD death</a></li>
+<li class="chapter" data-level="8.1.9" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#composite-cvd"><i class="fa fa-check"></i><b>8.1.9</b> Composite CVD</a></li>
+<li class="chapter" data-level="8.1.10" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dr"><i class="fa fa-check"></i><b>8.1.10</b> DR</a></li>
+<li class="chapter" data-level="8.1.11" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ckd"><i class="fa fa-check"></i><b>8.1.11</b> CKD</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.2</b> Phenotype control exclusion events using UKB assessment center data</a><ul>
+<li class="chapter" data-level="8.2.1" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cardiovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.1</b> Cardiovascular control exclusion events</a></li>
+<li class="chapter" data-level="8.2.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cerebrovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.2</b> Cerebrovascular control exclusion events</a></li>
+<li class="chapter" data-level="8.2.3" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#non-coronary-revascularization-procedure-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.3</b> Non-coronary revascularization procedure control exclusion events</a></li>
+<li class="chapter" data-level="8.2.4" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#renal-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.4</b> Renal disease control exclusion events</a></li>
+<li class="chapter" data-level="8.2.5" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#eye-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.5</b> Eye disease control exclusion events</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="phenotype-outcomes-pcp.html"><a href="phenotype-outcomes-pcp.html"><i class="fa fa-check"></i><b>9</b> Phenotype outcomes using primary care data</a><ul>
+<li class="chapter" data-level="9.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.1</b> Phenotype outcome events using primary care data</a><ul>
+<li class="chapter" data-level="9.1.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dm-1"><i class="fa fa-check"></i><b>9.1.1</b> DM</a></li>
+<li class="chapter" data-level="9.1.2" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dr-1"><i class="fa fa-check"></i><b>9.1.2</b> DR</a></li>
+<li class="chapter" data-level="9.1.3" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#ckd-1"><i class="fa fa-check"></i><b>9.1.3</b> CKD</a></li>
+</ul></li>
+<li class="chapter" data-level="9.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.2</b> Phenotype control exclusion events using primary care data</a><ul>
+<li class="chapter" data-level="9.2.1" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#non-diabetic-eye-disease-events"><i class="fa fa-check"></i><b>9.2.1</b> Non-diabetic eye disease events</a></li>
+<li class="chapter" data-level="9.2.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#kidney-disease-control-exclusion-events"><i class="fa fa-check"></i><b>9.2.2</b> Kidney disease control exclusion events</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="traj-ukb.html"><a href="traj-ukb.html"><i class="fa fa-check"></i><b>10</b> Create biomarker trajectory data from UK biobank assessment center data</a></li>
+<li class="chapter" data-level="11" data-path="traj-pcp.html"><a href="traj-pcp.html"><i class="fa fa-check"></i><b>11</b> Curate biomarker trajectory data from primary care data</a><ul>
+<li class="chapter" data-level="11.1" data-path="total-cholesterol.html"><a href="total-cholesterol.html"><i class="fa fa-check"></i><b>11.1</b> Total cholesterol</a></li>
+<li class="chapter" data-level="11.2" data-path="hdl.html"><a href="hdl.html"><i class="fa fa-check"></i><b>11.2</b> HDL</a></li>
+<li class="chapter" data-level="11.3" data-path="ldl.html"><a href="ldl.html"><i class="fa fa-check"></i><b>11.3</b> LDL</a></li>
+<li class="chapter" data-level="11.4" data-path="triglycerides.html"><a href="triglycerides.html"><i class="fa fa-check"></i><b>11.4</b> Triglycerides</a></li>
+<li class="chapter" data-level="11.5" data-path="fasting-glucose.html"><a href="fasting-glucose.html"><i class="fa fa-check"></i><b>11.5</b> Fasting Glucose</a></li>
+<li class="chapter" data-level="11.6" data-path="random-glucose.html"><a href="random-glucose.html"><i class="fa fa-check"></i><b>11.6</b> Random glucose</a></li>
+<li class="chapter" data-level="11.7" data-path="urine-albumin.html"><a href="urine-albumin.html"><i class="fa fa-check"></i><b>11.7</b> Urine Albumin</a></li>
+<li class="chapter" data-level="11.8" data-path="urine-creatinine.html"><a href="urine-creatinine.html"><i class="fa fa-check"></i><b>11.8</b> Urine creatinine</a></li>
+<li class="chapter" data-level="11.9" data-path="urine-acr-albumincreatinine-ratio.html"><a href="urine-acr-albumincreatinine-ratio.html"><i class="fa fa-check"></i><b>11.9</b> Urine ACR (Albumin:Creatinine Ratio)</a></li>
+<li class="chapter" data-level="11.10" data-path="bloodserum-creatinine.html"><a href="bloodserum-creatinine.html"><i class="fa fa-check"></i><b>11.10</b> Blood/Serum creatinine</a></li>
+<li class="chapter" data-level="11.11" data-path="hba1c.html"><a href="hba1c.html"><i class="fa fa-check"></i><b>11.11</b> HbA1c</a></li>
+<li class="chapter" data-level="11.12" data-path="bmi.html"><a href="bmi.html"><i class="fa fa-check"></i><b>11.12</b> BMI</a></li>
+<li class="chapter" data-level="11.13" data-path="blood-pressure.html"><a href="blood-pressure.html"><i class="fa fa-check"></i><b>11.13</b> Blood Pressure</a></li>
+<li class="chapter" data-level="11.14" data-path="reformat-and-trim-trajectory-table-for-each-biomarker.html"><a href="reformat-and-trim-trajectory-table-for-each-biomarker.html"><i class="fa fa-check"></i><b>11.14</b> Reformat and trim trajectory table for each biomarker</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="traj-combine.html"><a href="traj-combine.html"><i class="fa fa-check"></i><b>12</b> Combine biomarker trajectory extracted from from UKB and PCP data</a></li>
+<li class="chapter" data-level="13" data-path="phenotype-outcome-combine.html"><a href="phenotype-outcome-combine.html"><i class="fa fa-check"></i><b>13</b> Phenotype outcomes using combination of tables</a><ul>
+<li class="chapter" data-level="13.1" data-path="dm-2.html"><a href="dm-2.html"><i class="fa fa-check"></i><b>13.1</b> DM</a></li>
+<li class="chapter" data-level="13.2" data-path="dr-2.html"><a href="dr-2.html"><i class="fa fa-check"></i><b>13.2</b> DR</a></li>
+<li class="chapter" data-level="13.3" data-path="dkd.html"><a href="dkd.html"><i class="fa fa-check"></i><b>13.3</b> DKD</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="tte-macro.html"><a href="tte-macro.html"><i class="fa fa-check"></i><b>14</b> Generate time-to-event data for macrovascular diabetes complications</a><ul>
+<li class="chapter" data-level="14.1" data-path="mi-1.html"><a href="mi-1.html"><i class="fa fa-check"></i><b>14.1</b> MI</a></li>
+<li class="chapter" data-level="14.2" data-path="unstable-angina-1.html"><a href="unstable-angina-1.html"><i class="fa fa-check"></i><b>14.2</b> Unstable angina</a></li>
+<li class="chapter" data-level="14.3" data-path="ischemic-stroke-1.html"><a href="ischemic-stroke-1.html"><i class="fa fa-check"></i><b>14.3</b> Ischemic stroke</a></li>
+<li class="chapter" data-level="14.4" data-path="hemorrhagic-stroke-1.html"><a href="hemorrhagic-stroke-1.html"><i class="fa fa-check"></i><b>14.4</b> Hemorrhagic Stroke</a></li>
+<li class="chapter" data-level="14.5" data-path="stroke-1.html"><a href="stroke-1.html"><i class="fa fa-check"></i><b>14.5</b> Stroke</a></li>
+<li class="chapter" data-level="14.6" data-path="pci-1.html"><a href="pci-1.html"><i class="fa fa-check"></i><b>14.6</b> PCI</a></li>
+<li class="chapter" data-level="14.7" data-path="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><a href="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><i class="fa fa-check"></i><b>14.7</b> Composite CVD (MI, Unstable Angina, Ischemic Stroke, PCI or CVD death)</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="tte-dr.html"><a href="tte-dr.html"><i class="fa fa-check"></i><b>15</b> Generate time-to-event data for diabetic eye disease</a></li>
+<li class="chapter" data-level="16" data-path="tte-dkd.html"><a href="tte-dkd.html"><i class="fa fa-check"></i><b>16</b> Generate time-to-event data for diabetes related kidney disease</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">UK Biobank Phenotyping</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dm-2" class="section level2">
+<h2><span class="header-section-number">13.1</span> DM</h2>
+<p>Load the following datasets:</p>
+<ul>
+<li>diabetes multiple event table from PCP data</li>
+<li>diabetes multiple event table from UKB assessment center data</li>
+</ul>
+<div class="sourceCode" id="cb461"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb461-1"><a href="dm-2.html#cb461-1"></a>dm_pc &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;generated_data/dm_pc.RDS&quot;</span>)</span>
+<span id="cb461-2"><a href="dm-2.html#cb461-2"></a>dm_ukb &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;generated_data/dm_ukb.RDS&quot;</span>)</span></code></pre></div>
+<p>Create DM multiple and first occurrence event tables</p>
+<div class="sourceCode" id="cb462"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb462-1"><a href="dm-2.html#cb462-1"></a>dm &lt;-<span class="st"> </span>dm_pc <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">full_join</span>(dm_ukb) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">distinct</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(f.eid,event_dt)</span></code></pre></div>
+<pre><code>## Joining, by = c(&quot;f.eid&quot;, &quot;event_dt&quot;)</code></pre>
+<div class="sourceCode" id="cb464"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb464-1"><a href="dm-2.html#cb464-1"></a>dm_firstoccur &lt;-<span class="st"> </span>dm <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(f.eid) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(event_dt) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">slice</span>(<span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">ungroup</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb465-1"><a href="dm-2.html#cb465-1"></a><span class="kw">saveRDS</span>(dm,<span class="st">&quot;generated_data/dm.RDS&quot;</span>)</span>
+<span id="cb465-2"><a href="dm-2.html#cb465-2"></a><span class="kw">saveRDS</span>(dm_firstoccur,<span class="st">&quot;generated_data/dm_firstoccur.RDS&quot;</span>)</span></code></pre></div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="phenotype-outcome-combine.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="dr-2.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,606 @@
+# Curate biomarker trajectory data from primary care data {#traj-pcp}
+
+In this step, we curate biomarker trajectory data extracted from reformatted primary care table prepared in \@ref(prep_pcp_data).
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=T)
+```
+
+Load necessary packages
+```{r, message=F, warning=F}
+library(tidyverse)
+library(knitr)
+```
+
+Load reformatted primary care table 
+<!-- and remove events marked as special dates -->
+<!-- # gp_clinical <- gp_clinical[!gp_clinical$special_dt,] -->
+```{r, message=F}
+gp_clinical <- data.table::fread("generated_data/entire_gp_clinical_30March2021_formatted.txt")
+head(gp_clinical)
+```
+
+Read in the previously generated full code dictionary for primary care terms. 
+```{r}
+full_dict <- readRDS("generated_data/full_dict.RDS")
+tail(full_dict)
+```
+
+For the purpose of combining the dictionary with gp_clinical, remove terms with missing descriptions, additional descriptions for the same code, and identical codes+descriptions across terminology(read v2/CTV3)
+
+```{r, message=F, warning=F}
+full_dict <- full_dict %>%
+  select(-terminology) %>%
+  distinct() %>%
+  filter(term_description != "") %>%
+  distinct(code, .keep_all = T)
+
+tail(full_dict)
+```
+
+Add the term descriptions to gp_clinical.
+```{r, message=F}
+gp_clinical <- gp_clinical %>%
+  left_join(full_dict) 
+```
+
+
+Define the clinical terms to extract from gp_clinical for each biomarker. Each biomarker gets a string to be used in a grepl pattern matching query, and as such different patterns should be separated by '|', brackets used to denote multiple possible patterns to match, and '^' to denote the beginning of the string.
+```{r}
+BP_codes <- "^246[.cdgABCDEFGJNPQRSTVWXY012345679]|^XaF4[abFLOS]|^XaJ2[EFGH]|^XaKF[xw]|^G20"
+HDL_codes <- '^44d[23]|^X772M|^44P[5BC]|^XaEVr'
+LDL_codes <- '^44d[45]|^44P[6DE]|^XaEVs' 
+totchol_codes <- "^44P[.12349HJKZ]|^XE2eD|^XSK14|^XaFs9|^XaIRd|^XaJe9|^XaLux" 
+triglyc_codes <- '^44e|^44Q|^X772O|^XE2q9' 
+fastgluc_codes <- "^44[fg]1"
+randgluc_codes <- "^44[fg][0\\.]|^44TA|^XM0ly"
+a1c_codes <- "^XaPbt|^XaERp|^X772q|^42W[12345Z\\.]\\.|^44TB\\."
+height_weight_BMI_codes <- "^XaCDR|^XaJJH|^XaJqk|^XaZcl|^22K|^229|^22A|^162[23]|^X76CG|^XE1h4|^XM01G|^Xa7wI"
+blood_creatinine_codes <- '^44J3[.0123z]|^44J[CDF]|XE2q5|XaERc|XaERX|XaETQ|^4Q40.|X771Q'
+urine_creatinine_codes <- '^46M7'
+urine_albumin_codes <- '^46N4|^XE2eI|^46N8.|^46W[\\.01]|^XE2bw'
+UACR_codes <- '^46TC|^XE2n3|^X773Y|^46TD|^XE2n4'
+```
+
+## Total cholesterol
+UK Biobank measurements range from 0.601 to 15.46 mmol/L.  We filter the allowable range to lie between 0.5 and 30.
+```{r, message=F, warning=F}
+totchol <- gp_clinical %>%
+  filter(grepl(totchol_codes, code)) %>%
+  mutate(totchol = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(totchol > 0.5 & totchol < 30) %>%
+  filter(!(value3 %in% c("MEA001", "mg/mmol", "%", "MEA090", "MEA093", 
+                         "MEA099", "MEA110", "MEA142",  "MEA156", "mmo", 
+                         "mmol", "mmol/d", "mOsm/kg", "mPa/s", "nmol/l", 
+                         "U/mL", "umol/L")))
+
+totchol %>% group_by(code, term_description) %>% 
+  summarize(n=n(), mean = mean(totchol, na.rm=T)) %>% 
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=totchol, aes(x=log10(totchol))) + geom_density() + theme_minimal()
+```
+
+## HDL
+UK Biobank measurements range from 0.219 to 4.401 mmol/L.  We filter the allowable range to be under 10, but not 0.
+```{r, warning=F, message=F}
+HDL <- gp_clinical %>%
+  filter(grepl(HDL_codes, code)) %>% 
+  mutate(HDL = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(HDL > 0 & HDL < 10) %>%
+  filter(!(value3 %in% c("09", "MEA082", "MEA095", "MEA099", "MEA104", "MEA151", 
+                         "mmol", "mOsm/kg", "mg/mmol")))
+
+HDL %>% group_by(code, term_description) %>% 
+  summarize(n=n(), mean = mean(HDL, na.rm=T)) %>% 
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=HDL, aes(x=log10(HDL))) + geom_density() + theme_minimal()
+```
+
+## LDL
+UK Biobank measurements range from 0.226 to 9.797 mmol/L.  We filter the allowable range to be under 30, but not 0.
+```{r, warning=F, message=F}
+LDL <- gp_clinical %>%
+  filter(grepl(LDL_codes, code)) %>%
+  mutate(LDL = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(LDL > 0 & LDL < 30) %>%
+  filter(!(value3 %in% c("MEA142", "MEA151")))
+
+LDL %>% group_by(code, term_description) %>% 
+  summarize(n=n(), mean = mean(LDL, na.rm=T)) %>% 
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=LDL, aes(x=log10(LDL))) + geom_density() + theme_minimal()
+```
+
+## Triglycerides
+UK Biobank measurements range from 0.231 to 11.278 mmol/L. We filter the allowable range to be under 30, but not 0.
+```{r, warning=F, message=F}
+triglycerides <- gp_clinical %>%
+  filter(grepl(triglyc_codes, code)) %>%
+  mutate(triglyc = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(triglyc > 0 & triglyc < 30) %>%
+  filter(!(value3 %in% c("g", "g/l", "MEA099", "MEA156")))
+
+triglycerides %>% group_by(code, term_description) %>% 
+  summarize(n=n(), mean= mean(triglyc, na.rm=T)) %>% 
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=triglycerides, aes(x=log10(triglyc))) + geom_density() + theme_minimal()
+```
+
+## Fasting Glucose
+UK Biobank measurements for glucose range from 0.995 to 36.813 mmol/L.  We filter the allowable range of fasting glucose to be under 60, but not 0. 
+```{r, message=F, warning=F}
+fastgluc <- gp_clinical %>%
+  filter(grepl(fastgluc_codes, code)) %>%
+  mutate(fastgluc = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(fastgluc > 0 & fastgluc < 60) %>%
+  filter(value3 %in% c("", "MEA000", "MEA061", "MEA096", "MEA194", "Mmol/L", 
+                       "Unknown", "mmol/L", "mmol/l", "mU/l", "units"))
+
+fastgluc %>% group_by(code, term_description) %>% 
+  summarize(n=n(), mean = mean(fastgluc, na.rm=T)) %>% 
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=fastgluc, aes(x=log10(fastgluc))) + geom_density() + theme_minimal()
+```
+
+## Random glucose
+UK Biobank measurements for glucose range from 0.995 to 36.813 mmol/L.  We filter the allowable range of fasting glucose to be under 60, but not 0.
+```{r, message=F, warning=F}
+randgluc <- gp_clinical %>%
+  filter(grepl(randgluc_codes, code)) %>% 
+  mutate(randgluc = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(randgluc > 0 & randgluc < 60) %>%
+  filter(value3 %in% c("", "MEA000", "MEA061", "MEA096", "MEA194", "Mmol/L", 
+                       "Unknown", "mmol/L", "mmol/l", "mU/l", "units"))
+
+randgluc %>% group_by(code, term_description) %>% 
+  summarize(n=n(), mean = mean(randgluc, na.rm=T)) %>% 
+  arrange(desc(n)) %>% kable()
+
+ggplot(data = randgluc, aes(x=log10(randgluc))) + geom_density() + theme_minimal()
+```
+
+## Urine Albumin
+UK Biobank measurements for microalbumin in urine have a maximum value of 6746.5 mg/L, with many values below the measurement instrument's lower limit of detection of 6.7 mg/L. We filter the allowable range to be under 7,000, but not 0.
+```{r, message=F, warning=F}
+#Extract urine albumin
+ualb <- gp_clinical %>%
+  filter(grepl(urine_albumin_codes, code, ignore.case=T)) %>%
+  mutate(micro=grepl("micro", term_description, ignore.case=T)) %>%
+  mutate(value = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(!is.na(value)  & value != 0) %>% #& value < 500
+  filter(!(value3 %in% c("0.3", "MEA001", "mg/mmol", "ml/min", "mmol/L", "MEA086",
+                         "MEA096", "MEA120", "MEA142", "MEA166", "g/L", "MEA057"))) %>%  
+  filter(value < 7000) %>%
+  select(-value1, -value2) %>% 
+  dplyr::rename(code_ualb = code, term_description_ualb = term_description,
+                             ualb_mg_L = value) %>%
+  distinct()
+
+ualb %>% group_by(code_ualb, term_description_ualb) %>%
+  summarize(n=n(), mean = mean(ualb_mg_L)) %>%
+  arrange(desc(n)) %>% kable()
+
+```
+
+Based on the distributions, albumin values are given in mg/L, regardless of whether the term description says microalbumin or albumin. 
+```{r, message=F, warning=F}
+ggplot(data=ualb, aes(x=log10(ualb_mg_L), color = term_description_ualb)) + geom_density()
+```
+
+## Urine creatinine
+UK Biobank measurements range from 88 to 88,160 micromoles/L. We filter the allowable range to be below 88,000, but not 0.
+```{r, message=F, warning=F}
+ucreat <- gp_clinical %>%
+  filter(grepl(urine_creatinine_codes, code, ignore.case=T)) %>%
+  mutate(value = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(!is.na(value)  & value != 0) %>% 
+  mutate(ucreat_umol_L = value * 1000) %>%
+  filter(value3 != "MEA099" & value3 != "umol/l") %>%
+  filter(ucreat_umol_L < 88000) %>%
+  select(-value, -value1, -value2, -value3) %>%
+  dplyr::rename(code_ucreat = code, term_description_ucreat = term_description) %>%
+  distinct()
+
+ucreat %>% group_by(code_ucreat, term_description_ucreat) %>%
+  summarize(n=n(), mean = mean(ucreat_umol_L)) %>% kable()
+
+ggplot(data=ucreat, aes(x=log10(log10(ucreat_umol_L)))) + geom_density() + theme_minimal()
+```
+
+## Urine ACR (Albumin:Creatinine Ratio)
+This ratio will be needed to define micro/macroalbuminuria phenotypes. The calculated UACR values in UK Biobank lie between 0.15 and 2141.17.  For UACR calculated from primary care albumin and creatinine, we only filter based on the original albumin and creatinine measurements. For primary care records of UACR, we filter the value to be below 1000, but not 0.
+```{r, message=F, warning=F}
+#Manually generate the UACRs from urine creatinine and albumin.
+ratio_manual <- ualb %>%
+  inner_join(ucreat) %>%
+  mutate(UACR = ualb_mg_L/ucreat_umol_L *1000, manual=T)
+
+#Extract UACR from primary care that is already calculated
+ratio <- gp_clinical %>%
+  filter(grepl(UACR_codes, code, ignore.case=T)) %>%
+  mutate(UACR = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3)),
+         micro = grepl("micro", term_description),
+         manual = F) %>%
+  filter(!is.na(UACR)  & UACR != 0 & UACR < 1000) %>%
+  filter(!(value3 %in% c("%", "MEA001", "MEA083", "MEA096",
+                         "MEA156", "MEA169", "MEA241",
+                         "ml/min", "mg/L", "m1/min", "mmol/L", 
+                         "ng/mL","umol/L", "mg/l"))) %>%
+  select(-value1, -value2, -value3) %>%
+  distinct() %>%
+  dplyr::rename(code_uacr = code, term_description_uacr = term_description)
+
+#Combine the manually-calculated and already-calculated values of UACR
+UACR <- full_join(ratio, ratio_manual) %>%
+  distinct(f.eid, event_dt, .keep_all = T)
+
+UACR %>% group_by(manual, term_description_uacr, term_description_ualb) %>%
+  summarize(n=n(), mean = mean(UACR, na.rm=T)) %>%
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=UACR, aes(x=log10(UACR))) + geom_density() + theme_minimal()
+```
+
+
+## Blood/Serum creatinine
+This is needed to calculate eGFR. UK Biobank measures lie between 10.7 and 1499.3. We filter the allowable range to lie between 10 and 1500.
+```{r, warning=F, message=F}
+blood_creatinine <- gp_clinical %>%
+  filter(grepl(blood_creatinine_codes, code)) %>% 
+  mutate(blood_creatinine = coalesce(as.numeric(value1), as.numeric(value2))) %>%
+  filter(blood_creatinine > 10 & blood_creatinine < 1500) %>%
+  filter(!(value3 %in% 
+             c("m1/min", "MEA082", "MEA083", "MEA095", "MEA096", "mg/mmol", 
+               "ml/min", "mmol", "mmol/l", "mmol/L", "nmol/l", "pmol/l", 
+               "uL/cu mm", "um", "umo", "umol"))) %>% 
+  mutate(creatinine_type = ifelse(grepl("serum", term_description, ignore.case=T), "Serum", 
+                               ifelse(grepl("plasma", term_description, ignore.case=T), "Plasma",
+                                      "Unspecified"))) 
+
+blood_creatinine %>% group_by(code, term_description) %>% 
+  summarize(n=n(), mean=mean(blood_creatinine)) %>% 
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=blood_creatinine, aes(x=blood_creatinine, color=creatinine_type)) +
+  geom_density() + theme_minimal()
+```
+
+## HbA1c
+Calculate HbA1c in both % (US) and mmol/mol (UK). UK Biobank measurements lie between 15 and 515.2 mmol/mol.  In primary care data, some values are given in percent, some in mmol/mol. We filter the allowable range to lie between 4 and 18 (%) or between 20.2 and 173.2 (mmol/mol) to guard against including values recorded under the incorrect unit. Conversion between % and mmol/mol is performed using the IFCC-NGSP master equation (https://doi.org/10.1373/clinchem.2008.103556).
+
+```{r, message=F, warning=F}
+a1c <- gp_clinical %>%
+  filter(grepl(a1c_codes, code)) %>%
+  mutate(hba1c = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(hba1c > 0) %>%
+  mutate(value3 = toupper(value3)) %>%
+  mutate(value3 = ifelse(value3 %in%  c("MEA000", "MMOL/M", "MEA097", "UNKNOWN", "MEA001", 
+                                        "%", "HBA1C", "%TOTAL HB", "% TOTAL HB", "MEA215", 
+                                        "MMOL/MOL HB", "PER CENT", "%TOTAL"), "", value3)) %>%
+  mutate(units = ifelse(value3 != "", value3, 
+                        ifelse(code %in% c("XaPbt", "42W5."), "MMOL/MOL", "%"))) %>%
+  filter(units %in% c("%", "MMOL/MOL")) %>%
+  mutate(hba1c_percent = ifelse(units == "%", round(hba1c, 1), 
+                                round(hba1c/10.929 + 2.15, 1))) %>%
+  mutate(hba1c_mmol_mol = ifelse(units =="%", round(10.929 * (hba1c - 2.15), 1), 
+                                 round(hba1c, 1))) %>%
+  filter(hba1c_percent > 4 & hba1c_percent < 18) %>%
+  dplyr::rename(original_unit = units)
+
+a1c %>% group_by(code, term_description) %>%
+  summarize(n=n(), mean=mean(hba1c_percent, na.rm=T)) %>%
+  arrange(desc(n)) %>% kable()
+
+ggplot(data=a1c, aes(x = hba1c_percent, color = original_unit)) + geom_density()
+```
+
+## BMI
+Height may be measured using meters or centimeters. Height was filtered to lie between 1.25m (4ft 1.2 inches) and 2.1m (6ft 10.7 inches). Values between 125 and 210 were assumed to be in cm and so were divided by 100.
+Weight is measured in kg and was filtered to lie between 30kg(66.1 lb) and 200kg(440.9 lb).
+BMI was filtered to lie between 12 and 75 kg/m^2. 
+```{r, message=F, warning=F}
+#Extract height, weight, and BMI
+hwbmi <- gp_clinical %>%
+  filter(grepl(height_weight_BMI_codes, code)) %>%
+  mutate(value = coalesce(as.numeric(value1), as.numeric(value2), as.numeric(value3))) %>%
+  filter(!is.na(value) & value > 0) %>%
+  mutate(trait = ifelse(grepl("BMI|Body Mass Index", term_description, ignore.case=T), "BMI",
+                        ifelse(grepl("Height", term_description, ignore.case=T), "Height",
+                               "Weight"))) %>%
+  mutate(value = ifelse(trait == "Height" & value > 2.1, value/100, value)) %>% #cm to meters
+  filter((trait == "Weight" & value < 200 & value > 30) |
+         (trait == "Height" & value < 2.1 & value > 1.25 )|
+         (trait == "BMI" & value < 75 & value > 12)) %>% 
+  arrange(f.eid, event_dt)
+
+#Here are the resulting terms:
+hwbmi %>% group_by(code, term_description, trait) %>% 
+  summarize(n = n(), mean=round(mean(value), 1)) %>% 
+  arrange(trait, desc(n)) %>% kable()
+
+#Separate the traits
+weight <- hwbmi %>% filter(trait == "Weight") 
+height <- hwbmi %>% filter(trait == "Height") 
+BMI <- hwbmi %>% filter(trait == "BMI") 
+
+#Some records from data provider 2 give weight and BMI
+bmi_extra <- weight %>% 
+  filter(data_provider == 2) %>% 
+  mutate(bmi_extra = as.numeric(value3)) %>% 
+  filter(!is.na(bmi_extra)) %>%
+  filter(bmi_extra > 12)
+head(bmi_extra)
+
+#combine the traits in wider format
+weight_pre <- weight %>% select(-c(terminology, value1, value2, value3, trait)) %>%
+  dplyr::rename(weight = value, weight_code = code, weight_term_description = term_description)
+height_pre <- height %>% select(-c(terminology, value1, value2, value3, trait))  %>%
+  dplyr::rename(height = value, height_code = code, height_term_description = term_description)
+BMI_pre <- BMI %>% select(-c(terminology, value1, value2, value3, trait))  %>%
+  dplyr::rename(BMI = value, BMI_code = code, BMI_term_description = term_description)
+bmi_extra_pre <- bmi_extra %>% select(-c(terminology, term_description, value1, value2, value3, trait, value)) %>%
+  dplyr::rename(bmi_extra_code = code)
+
+joined_bmi <- full_join(weight_pre, height_pre) %>%
+              full_join(BMI_pre) %>%
+              full_join(bmi_extra_pre)
+head(joined_bmi)
+```
+
+
+Clean the combined data, filling in missing height values from previous/subsequent measurements or BMI. Filter out cases where the calculated and reported BMI differ by more than 1.5.
+```{r, message=F, warning=F}
+cleaned_bmi <- joined_bmi %>%
+  group_by(f.eid) %>%
+  fill(height, .direction = "downup") %>%
+  mutate(BMI_coalesce = round(coalesce(BMI, bmi_extra), 1),
+         BMI_calculated = round(weight/(height^2), 1),
+         BMI_mismatch = BMI_coalesce != BMI_calculated, 
+         BMI_diff = BMI_coalesce - BMI_calculated) %>%
+  filter(!(!is.na(BMI_diff) & abs(BMI_diff) > 1.5)) %>%
+  mutate(BMI_final = coalesce(BMI_calculated, BMI_coalesce)) %>%
+  mutate(height = ifelse(!is.na(height), height, sqrt(weight/BMI))) %>%
+  dplyr::rename(BMI_reported = BMI_coalesce, height_carried = height) %>%
+  filter(height_carried < 2.1 & height_carried > 1.25 & 
+           BMI_final < 75 & BMI_final > 12) %>%
+  select(f.eid, data_provider, event_dt, weight, height_carried, 
+         BMI_reported, BMI_calculated, BMI = BMI_final) %>% 
+  distinct() %>%
+  mutate(source="PC")
+
+ggplot(data=cleaned_bmi, aes(x=log10(BMI))) + geom_density() + theme_minimal()
+```
+
+```{r, include=FALSE}
+#bp$term_description[bp$term_description == ""] <- NA
+```
+
+## Blood Pressure
+To to extract blood pressure, it is necessary to consider both the cases where both Systolic and Diastolic BP are provided in the same record, as well as cases where Systolic and Diastolic BP are given in separate records. 
+```{r, message=F, warning=F}
+bp <- gp_clinical %>%
+  filter(grepl(BP_codes, code)) %>%
+  filter(value1 != "" | value2 != "" | value3 != "")  %>%
+  mutate(value1 = as.numeric(value1), value2 = as.numeric(value2), value3 = as.numeric(value3)) 
+
+#Remove some small values in value3 of unknown meaning
+bp$value3[bp$value3 < 10] <- NA
+
+#Separate the data into two types of record: One where 2 values are given in 1 record (e.g. Systolic and Diastolic) and another where there is only one value (i.e Systolic only or Diastolic only) given per record. 
+```
+
+Multiple values per record: Take the larger value to be systolic and the smaller value to be diastolic. Filter out any records where either of these values are 0.
+```{r, message=F, warning=F}
+bp_mult <- bp %>% 
+  rowwise() %>%
+  filter(sum(!is.na(value1), !is.na(value2), !is.na(value3)) == 2) %>%
+  ungroup() %>%
+  mutate(Systolic_bp_pc = pmax(value1, value2, value3, na.rm=T)) %>%
+  mutate(Diastolic_bp_pc = pmin(value1, value2, value3, na.rm=T)) %>%
+  filter(Systolic_bp_pc != 0 & Diastolic_bp_pc != 0)
+```
+
+
+One value per record: filter out those with a value of 0. 
+```{r, message=F, warning=F}
+bp_single <- bp %>% 
+  rowwise() %>%
+  filter(sum(!is.na(value1), !is.na(value2), !is.na(value3)) == 1) %>%
+  ungroup() %>%
+  mutate(value = coalesce(value1, value2, value3)) %>%
+  filter(value != 0) %>%
+  arrange(f.eid, event_dt) %>%
+  mutate(bp_type =  ifelse(grepl("systolic", term_description, ignore.case=T), "Systolic_bp_pc",
+               ifelse(grepl("diastolic", term_description, ignore.case = T), "Diastolic_bp_pc", "Unknown"))) %>%
+  select(-value1, -value2, -value3) %>%
+  distinct()
+
+#Here are the results for single type:
+bp_single %>% 
+  group_by(code, term_description, bp_type) %>% 
+  summarize(n=n(), mean=round(mean(value, 1))) %>% 
+  arrange(bp_type, desc(n)) 
+```
+
+Look at the remaining codes to see if they are systolic or diastolic.  For many of these, the same code is given twice, each with a different value. Sometimes an record is a duplicate of a systolic or diastolic measurement. If there are two *unique* values given per ID/date, then we can assume they are systolic (higher) and diastolic (lower). Otherwise, discard that set of values. 
+```{r, message=F, warning=F}
+#Unknowns - not specified as Diastolic vs. Systolic
+unknowns <- bp_single %>%
+  group_by(f.eid, event_dt) %>%
+  filter(sum(bp_type == "Unknown") > 0) %>%
+  mutate(n = length(unique(value))) %>%
+  filter(n == 2) %>%
+  mutate(Systolic_bp_pc = max(value)) %>%
+  mutate(Diastolic_bp_pc = min(value)) %>%
+  distinct(f.eid, event_dt, value, .keep_all = T) %>%
+  group_by(f.eid, event_dt) %>%
+  mutate(code_systolic = code[which(value == max(value))], 
+         code_diastolic = code[which(value == min(value))], 
+         term_description_systolic = term_description[which(value == max(value))], 
+         term_description_diastolic = term_description[which(value == min(value))])
+
+#Prepare for merging
+bp_single_less <- bp_single %>% 
+  distinct(f.eid, data_provider, event_dt, value, bp_type, .keep_all = T) %>%
+  group_by(f.eid, event_dt) %>%
+  filter(sum(bp_type == "Systolic_bp_pc") == 1 & 
+           sum(bp_type == "Diastolic_bp_pc") == 1) %>%
+  filter(bp_type != "Unknown")
+
+systolic <- bp_single_less %>%
+  filter(bp_type == "Systolic_bp_pc") %>%
+  dplyr::rename(code_systolic = code, 
+                Systolic_bp_pc = value, 
+                term_description_systolic = term_description) %>%
+  select(-bp_type)
+
+diastolic <- bp_single_less %>%
+  filter(bp_type == "Diastolic_bp_pc") %>%
+  dplyr::rename(code_diastolic = code, 
+                Diastolic_bp_pc = value, 
+                term_description_diastolic = term_description) %>%
+  select(-bp_type)
+        
+bp_single_wide <- full_join(systolic, diastolic)
+head(bp_single_wide)
+```
+
+Combine each of the cleaned subsets and implement some common sense filters (45 < Systolic bp < 300, 30 < Diastolic bp < Systolic bp) 
+```{r, messsage=F, warning=F}
+unknowns_less <- unknowns %>% 
+  select(-term_description, -value, -bp_type, -code, -n) %>%
+  distinct()
+
+bp_mult_less <- bp_mult %>% 
+  dplyr::rename(term_description_both = term_description) %>%
+  dplyr::rename(code_both = code) %>%
+  select(f.eid, event_dt, data_provider, terminology, Systolic_bp_pc, Diastolic_bp_pc, code_both, term_description_both) %>%
+  distinct()
+
+full_bp_clean <- full_join(unknowns_less, bp_single_wide) %>%
+  full_join(bp_mult_less) %>%
+  filter(Systolic_bp_pc > Diastolic_bp_pc) %>%
+  filter(Systolic_bp_pc >= 45 & Systolic_bp_pc <= 300) %>%
+  filter(Diastolic_bp_pc >= 30) %>%
+  distinct(f.eid, event_dt, Systolic_bp_pc, Diastolic_bp_pc, .keep_all=T)
+
+head(full_bp_clean)
+
+ggplot(data=full_bp_clean, aes(x=log10(Systolic_bp_pc))) + geom_density() + theme_minimal()
+ggplot(data=full_bp_clean, aes(x=log10(Diastolic_bp_pc))) + geom_density() + theme_minimal()
+```
+
+## Reformat and trim trajectory table for each biomarker
+
+```{r}
+sbp <- full_bp_clean %>% 
+  select(f.eid,Systolic_bp_pc,event_dt) %>% 
+  rename(measurement = Systolic_bp_pc) %>% 
+  mutate(biomarker = "sbp")
+
+dbp <- full_bp_clean %>% 
+  select(f.eid,Diastolic_bp_pc,event_dt) %>% 
+  rename(measurement = Diastolic_bp_pc) %>% 
+  mutate(biomarker = "dbp")
+
+cholesterol <- totchol %>% 
+  select(f.eid,totchol,event_dt) %>% 
+  rename(measurement = totchol) %>% 
+  mutate(biomarker = "chol")
+
+hdl <- HDL %>% 
+  select(f.eid,HDL,event_dt) %>% 
+  rename(measurement = HDL) %>% 
+  mutate(biomarker = "hdl")
+
+ldl <- LDL %>% 
+  select(f.eid,LDL,event_dt) %>% 
+  rename(measurement = LDL) %>% 
+  mutate(biomarker = "ldl")
+
+trigly <- triglycerides %>% 
+  select(f.eid,triglyc,event_dt) %>% 
+  rename(measurement = triglyc) %>% 
+  mutate(biomarker = "trig")
+
+glu_fast <- fastgluc %>%
+  select(f.eid,fastgluc,event_dt) %>% 
+  rename(measurement = fastgluc) %>%
+  mutate(biomarker = "glucose_fast")
+
+glu_rand <- randgluc %>%
+  select(f.eid,randgluc,event_dt) %>% 
+  rename(measurement = randgluc) %>% 
+  mutate(biomarker = "glucose_rand")
+
+hba1c <- a1c %>% 
+  select(f.eid,hba1c_mmol_mol,event_dt) %>% 
+  rename(measurement = hba1c_mmol_mol) %>%
+  mutate(biomarker = "hba1c")
+
+bmi <- cleaned_bmi %>%
+  select(f.eid,BMI,event_dt) %>%
+  rename(measurement = BMI) %>%
+  mutate(biomarker = "bmi")
+
+blood_creat <- blood_creatinine %>%
+  select(f.eid,blood_creatinine,event_dt) %>%
+  rename(measurement = blood_creatinine) %>%
+  mutate(biomarker = "creat_blood")
+
+uacr <- UACR %>%
+  select(f.eid,UACR,event_dt) %>%
+  rename(measurement = UACR) %>%
+  mutate(biomarker = "uacr")
+```
+
+Combine all of biomarker trajectory datasets into a long format. 
+```{r}
+biomarker_traj_tab_long <- bind_rows(list(sbp,dbp,cholesterol,hdl,ldl,trigly,
+                                          glu_fast,glu_rand,hba1c,bmi,blood_creat,uacr))
+```
+
+Create macro/microalbuminuria event table
+```{r}
+albuminuria_event_tab <- 
+  biomarker_traj_tab_long %>% 
+  filter(biomarker == "uacr") %>%
+    mutate(macroalbuminuria = ifelse(measurement < 33.9,F,T),
+           microalbuminuria = ifelse(measurement < 3.4,F,T)) %>%
+    select(f.eid,event_dt,macroalbuminuria,microalbuminuria) %>%
+    pivot_longer(cols=c(macroalbuminuria,microalbuminuria),values_to = "event", names_to = "type") %>%
+  select(f.eid,event,event_dt,type)
+```
+
+Filter out from biomarker trajectory table and albuminuria event table:
+
+- any unknown date of event
+- any unknown measurements (only applies to biomarker trajectory table)
+
+```{r}
+biomarker_traj_tab_long <- biomarker_traj_tab_long[!is.na(biomarker_traj_tab_long$event_dt),]
+biomarker_traj_tab_long <- biomarker_traj_tab_long[!is.na(biomarker_traj_tab_long$measurement),]
+
+albuminuria_event_tab <- albuminuria_event_tab[!is.na(albuminuria_event_tab$event_dt),]
+```
+
+Save the biomarker trajectory data and albuminuria event table extracted from the primary care data
+```{r}
+saveRDS(biomarker_traj_tab_long,"generated_data/biomarker_trajectory_pcp.RDS")
+saveRDS(albuminuria_event_tab,"generated_data/albuminuria_event_tab_pcp.RDS")
+```
+
+
+
+
+
+
+
+
+
+

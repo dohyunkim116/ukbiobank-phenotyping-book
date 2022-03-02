@@ -1,0 +1,8 @@
+book_filename: "ukb-phenotyping"
+language:
+  ui:
+    chapter_name: ""
+delete_merged_file: true
+new_session: true
+#rmd_files: ["index.Rmd", "01-reformat_raw_data.Rmd", "02-curate_demog_table.Rmd", "03-curate_all_ukb_events_table.Rmd",
+#"04-exclude_sex_mismatch_subjects.Rmd","05-prep_pcp_data.Rmd"]
