@@ -12,7 +12,7 @@ library(data.table)
 ```
 
 Execute the reformatting scripts. 
-```{r}
+```{r, warning=F}
 source("raw_data/demog_UKB_MOD.r")
 source("raw_data/assessment_center_UKB.r")
 source("raw_data/first_occurrences_UKB_MOD.r")
