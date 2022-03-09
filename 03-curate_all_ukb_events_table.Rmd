@@ -199,7 +199,7 @@ ICD10_codes_secondary_death_long <-
 ```
 
 Merge ICD10 codes and their event dates tables into a long format
-```{r}
+```{r, warning=F}
 ICD10_codes_long <- merge_long("f.41270","f.41280",ICD10_codes,ICD10_dates,"ICD10") %>% distinct()
 ```
 
@@ -229,7 +229,7 @@ OPCS4_codes_long <-
 
 ## Medical conditions self-report UKB
 
-```{r}
+```{r, warning=F}
 selfrep_codes <- demog %>%
   select(c(f.eid, starts_with("f.20002."))) %>%
   arrange(f.eid) %>% 
