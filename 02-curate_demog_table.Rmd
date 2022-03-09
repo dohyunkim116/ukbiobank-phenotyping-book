@@ -59,25 +59,26 @@ Note that there are subjects with unknown administrative censored date (i.e., no
 demog %>% filter(is.na(date_admin_censored)) %>% select(f.eid) %>% nrow()
 ```
 
-We will fill these values using the [data field 54](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=54) of UKB assessment center data. These fields include which city each participant went in for assessment or imaging, and can indicate where we would expect their inpatient record to originate. Load the data containing the field 54. Patient eids are displayed as Inf for privacy reasons.
+We will fill these values using the [data field 54](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=54) of UKB assessment center data. These fields include which city each participant went in for assessment or imaging, and can indicate where we would expect their inpatient record to originate. Load the data containing the field 54.  Patient eids are displayed as Inf for privacy reasons.
 ```{r}
 bd <- readRDS("generated_data/assessment_center_UKB.RDS")
 bd %>% head() %>% mutate(f.eid = Inf)
 ```
 
-The field "f.54.0.0" contains codes indicating the city where the initial assessment was taken. We see that there are only one subject that are missing this value.
+The field "f.54.0.0" contains codes indicating the city where the initial assessment was taken. We see that there is only one subject that is missing this value.
 ```{r}
-bd %>% filter(is.na(f.54.0.0)) %>% mutate(f.eid = Inf)
+rmid <- bd %>% filter(is.na(f.54.0.0)) 
+rmid %>% mutate(f.eid = Inf)
 ```
 
 This subject does exist in demographic table but all of the fields are missing except for the participant's ID.
-```{r}
-demog %>% filter(is.na(f.54.0.0)) %>% as_vector() %>% .[-1] %>% is.na %>% all
+```{r, message=F}
+demog %>% right_join(rmid) %>% as_vector() %>% .[-1] %>% is.na %>% all
 ```
 
 Remove this subject from the demographic table
-```{r}
-demog <- demog %>% filter(!is.na(f.54.0.0))
+```{r, message=F}
+demog <- demog %>% anti_join(rmid)
 ```
 
 Now, we will use the values in the field "f.54.0.0" to find out which city and in turn which country a participant went in for initial assessment. First, load the [mapping file](https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=10) from city code to city name.
@@ -113,8 +114,14 @@ city_to_country_map <-
   Barts = "eng") # hosptial in england
 ```
 
+```{r, echo=F, results = 'hide'}
+#Memory management, not echo
+demog <- demog %>% select(f.eid, date_admin_censored, f.191.0.0, date_init, DOB, date_repeat, SEX)
+gc()
+```
+
 Finally, using defined mappings, we fill in missing administrative censoring dates.
-```{r}
+```{r, message=F}
 demog <- demog %>% 
   left_join(bd %>% select(f.eid,`f.54.0.0`)) %>%
   rename(coding = `f.54.0.0`) %>%
