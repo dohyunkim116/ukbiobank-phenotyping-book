@@ -33,9 +33,9 @@ Define UKB study initiation date
 demog <- demog %>% rename(date_init = f.53.0.0, date_repeat = f.53.1.0)
 ```
 
-Define administrative censoring date (study end date). These dates are updated periodically. The most recent censoring dates can be found [here](https://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=Data_providers_and_dates#:~:text=Censoring%20dates&text=The%20censoring%20date%20is%20the,day%20of%20the%20previous%20month.) in the "Showcase censoring date" field of the table under the "Hospital inpatient data" section. The below censoring dates were based on the page accessed on Feb 22 2022. We will define dictionary that will be used to match hospital admission keys to admin censoring dates, and the mapping from country to administrative censoring date:
+Define administrative censoring date (study end date) based on [inpatient record origin](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=40022). These dates are updated periodically. The most recent censoring dates can be found [here](https://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=Data_providers_and_dates#:~:text=Censoring%20dates&text=The%20censoring%20date%20is%20the,day%20of%20the%20previous%20month.) in the "Showcase censoring date" field of the table under the "Hospital inpatient data" section. The below censoring dates were based on the page accessed on Feb 22 2022. We will define dictionary that will be used to match hospital admission keys to admin censoring dates, and the mapping from country to administrative censoring date:
 
-* Pateint Episode Database for Wales (PEDW): Feb 28 2018
+* Patient Episode Database for Wales (PEDW): Feb 28 2018
 * Scottish Morbidity Record (SMR): Jul 31 2021
 * Hospital Episode Statistics for England (HES): Sep 30 2021
 
@@ -54,39 +54,34 @@ demog <-
   mutate(date_admin_censored = as.Date(pmin(censor_dates[f.40022.0.0], censor_dates[f.40022.0.1],censor_dates[f.40022.0.2],na.rm=T)))
 ```
 
-Note that there are subjects with unknown adminstrative censored date. 
+Note that there are subjects with unknown administrative censored date (i.e., no inpatient record). 
 ```{r}
-demog %>% filter(is.na(date_admin_censored)) %>% select(f.eid) %>% head()
+demog %>% filter(is.na(date_admin_censored)) %>% select(f.eid) %>% nrow()
 ```
 
-We will fill these values using the data field 54 of UKB assessment center data. These fields include which city each participant went in for assessment or imaging. Load the data containing the field 54.
+We will fill these values using the [data field 54](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=54) of UKB assessment center data. These fields include which city each participant went in for assessment or imaging, and can indicate where we would expect their inpatient record to originate. Load the data containing the field 54. Patient eids are displayed as Inf for privacy reasons.
 ```{r}
 bd <- readRDS("generated_data/assessment_center_UKB.RDS")
-bd %>% head()
+bd %>% head() %>% mutate(f.eid = Inf)
 ```
 
 The field "f.54.0.0" contains codes indicating the city where the initial assessment was taken. We see that there are only one subject that are missing this value.
 ```{r}
-bd %>% filter(is.na(f.54.0.0))
-```
-
-In particular, this subject is missing all of the values for the assessment center visit.
-```{r}
-bd %>% filter(f.eid == 6025291)
+bd %>% filter(is.na(f.54.0.0)) %>% mutate(f.eid = Inf)
 ```
 
 This subject does exist in demographic table but all of the fields are missing except for the participant's ID.
 ```{r}
-demog %>% filter(f.eid == 6025291) %>% as_vector() %>% .[-1] %>% is.na %>% all
+demog %>% filter(is.na(f.54.0.0)) %>% as_vector() %>% .[-1] %>% is.na %>% all
 ```
 
 Remove this subject from the demographic table
 ```{r}
-demog <- demog %>% filter(f.eid != 6025291)
+demog <- demog %>% filter(!is.na(f.54.0.0))
 ```
 
-Now, we will use the values in the field "f.54.0.0" to find out which city and in turn which country a participant went in for initial assessment. First, load the mapping file from city code to city name.
-```{r}
+Now, we will use the values in the field "f.54.0.0" to find out which city and in turn which country a participant went in for initial assessment. First, load the [mapping file](https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=10) from city code to city name.
+```{r, message=F}
 code_to_city_mapping <- read_tsv("raw_data/f.54.0.0_coding.tsv")
 ```
 
