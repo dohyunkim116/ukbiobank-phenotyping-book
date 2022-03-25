@@ -14,7 +14,7 @@ We achieve the following:
   - diabetic kidney disease event table obtained from the UKB assesment center data (`phenotype_outcome_events_ukb.Rmd`)
   - kidney disease case multiple event table obtained from the primary care data (`phenotype_outcome_events_pcp.Rmd`)
   - low creatinine level event table obatained from the biomarker data (`compute_egfr.Rmd` in `phenotype_biomarkers/compute_egfr`)
-  - macroalbuminuria first occurrence event table obtained from the biomarkder data (`compute_acr_albuminuria.Rmd` in `phenotype_biomarkers/compute_acr_albuminuria`)
+  - macroalbuminuria first occurrence event table obtained from the biomarker data (`compute_acr_albuminuria.Rmd` in `phenotype_biomarkers/compute_acr_albuminuria`)
   
 Input and output files:
 

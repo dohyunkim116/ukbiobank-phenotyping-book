@@ -1,4 +1,4 @@
-# Filter out subjects with sex mistmatch {#exclude-sex-mismatch-subjects}
+# Filter out subjects with sex mismatch {#exclude-sex-mismatch-subjects}
 
 We exclude any subjects who have mismatch between self-reported sex and genetically determined sex from both processed demographic data and the master event table. The IDs of subjects with sex mismatch will be generated and later be used in preparing a primary care data in `prep_pcp_data`.
 
@@ -39,10 +39,6 @@ Get subject IDs that should be excluded because of mismatch in self-reported sex
 sex_mismatch_subject_ids <- pre_demog_sel %>% select(f.eid,SEX) %>% 
   full_join(sampleqc %>% select(f.eid,genetic_sex)) %>% 
   filter(SEX != genetic_sex) %>% .$f.eid 
-```
-
-```
-## Joining, by = "f.eid"
 ```
 
 Filter demographic table

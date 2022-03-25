@@ -111,6 +111,9 @@ demog <- demog %>%
   mutate(SEX = as.character(f.31.0.0))
 ```
 
+
+
+
 ## First occurrence event table and algorithmically defined outcome table
 
 Convert first occurrence data into a long format
@@ -119,6 +122,8 @@ Convert first occurrence data into a long format
 firstoccurs_long <- firstoccurs %>% 
   pivot_longer(-f.eid, names_to = "field", values_to = "event_dt", values_drop_na = T)
 ```
+
+
 
 Obtain algorithmically defined outcomes from demographic dataset.
 
@@ -177,11 +182,14 @@ custom_outcome_fields_table_long <-
   mutate(field = ifelse(field == "date_dr_self", "dr_self", field))
 ```
 
-## ICD 10
+## ICD 9 & 10
 
 Obtain relevant fields
 
 ```r
+ICD9_codes <- ICD %>% select(f.eid,starts_with('f.41271')) %>% arrange(f.eid) %>% data.frame()
+ICD9_dates <- ICD %>% select(f.eid,starts_with('f.41281.')) %>% arrange(f.eid) %>% data.frame()
+
 ICD10_codes <- ICD %>% select(f.eid,starts_with('f.41270')) %>% arrange(f.eid) %>% data.frame()
 ICD10_dates <- ICD %>% select(f.eid,starts_with('f.41280.')) %>% arrange(f.eid) %>% data.frame() 
 
@@ -189,6 +197,8 @@ ICD10_codes_primary_death <- ICD %>% select(f.eid,starts_with('f.40001')) %>% ar
 ICD10_codes_secondary_death <- ICD %>% select(f.eid,starts_with('f.40002')) %>% arrange(f.eid) %>% data.frame()
 ICD10_death_date <- ICD %>% select(f.eid, f.40000.0.0) %>% arrange(f.eid) %>% data.frame()
 ```
+
+
 
 Merge ICD10 primary death and death date tables into a long format
 
@@ -212,26 +222,23 @@ Merge ICD10 codes and their event dates tables into a long format
 ICD10_codes_long <- merge_long("f.41270","f.41280",ICD10_codes,ICD10_dates,"ICD10") %>% distinct()
 ```
 
+Merge ICD9 codes and their event dates tables into a long format
+
+```r
+ICD9_codes <- ICD9_codes %>% mutate_at(vars(f.41271.0.0:f.41271.0.46), as.character)
+ICD9_codes_long <- merge_long("f.41271","f.41281",ICD9_codes,ICD9_dates,"ICD9") %>% distinct()
 ```
-## Note: Using an external vector in selections is ambiguous.
-## ℹ Use `all_of(code_field)` instead of `code_field` to silence this message.
-## ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
-## This message is displayed once per session.
-## Note: Using an external vector in selections is ambiguous.
-## ℹ Use `all_of(date_field)` instead of `date_field` to silence this message.
-## ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
-## This message is displayed once per session.
-```
+
 
 Merge all of the ICD event tables with dates, and then remove observations with no codes (code == NA). 
 
 ```r
-ICD10_codes_full <- do.call(rbind,list(ICD10_codes_long,ICD10_codes_primary_death_long,ICD10_codes_secondary_death_long)) %>% filter(!is.na(code))
+ICD_codes_full <- do.call(rbind,list(ICD10_codes_long,ICD9_codes_long,ICD10_codes_primary_death_long,ICD10_codes_secondary_death_long)) %>% filter(!is.na(code))
 ```
 
 ## OPCS4
 
-OPCS4 event table is hospital admission data.
+OPCS4 event table is procedure codes from hospital admission data.
 
 ```r
 OPCS4 <- procs %>% 
@@ -265,28 +272,11 @@ selfrep_dates <- demog %>%
   mutate_at(vars(starts_with("f.20008.")), .funs = list(~ lubridate::date_decimal(.))) %>%
   mutate_at(vars(starts_with("f.20008.")), .funs = list(~ as.Date(.))) %>%
   arrange(f.eid)
-```
 
-```
-## Warning: `funs()` was deprecated in dplyr 0.8.0.
-## Please use a list of either functions or lambdas: 
-## 
-##   # Simple named list: 
-##   list(mean = mean, median = median)
-## 
-##   # Auto named with `tibble::lst()`: 
-##   tibble::lst(mean, median)
-## 
-##   # Using lambdas
-##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
-```
-
-```r
 selfrep_codes_long <- merge_long("f.20002","f.20008",selfrep_codes,selfrep_dates,"selfrep") %>% 
   distinct() %>% filter(!is.na(code))
 ```
+
 
 ## Self-reported operations UKB
 
@@ -309,6 +299,8 @@ selfrep_op_codes_long <- merge_long("f.20004","f.20010",selfrep_op_codes,selfrep
   distinct() %>% filter(!is.na(code))
 ```
 
+
+
 ## Standardize and merge event tables
 
 The following event tables are merged to produce a master event table of UKB assessment data:
@@ -326,8 +318,8 @@ The following event tables are merged to produce a master event table of UKB ass
 outcome_fields_table_long <- 
   outcome_fields_table_long %>% mutate(type = "outcome_fields") %>% rename(key=field)
 
-ICD10_codes_full <- 
-  ICD10_codes_full %>% mutate(code=as.character(code)) %>% rename(key=code)
+ICD_codes_full <- 
+  ICD_codes_full %>% mutate(code=as.character(code)) %>% rename(key=code)
 
 OPCS4_codes_long <- 
   OPCS4_codes_long %>% rename(key=code)
@@ -341,7 +333,7 @@ selfrep_op_codes_long <-
 custom_outcome_fields_table_long <-
   custom_outcome_fields_table_long %>% mutate(type = "custom_fields") %>% rename(key = field)
 
-event_tab <- bind_rows(list(outcome_fields_table_long,ICD10_codes_full,
+event_tab <- bind_rows(list(outcome_fields_table_long,ICD_codes_full,
                             OPCS4_codes_long,selfrep_codes_long,selfrep_op_codes_long,
                             custom_outcome_fields_table_long))
 ```

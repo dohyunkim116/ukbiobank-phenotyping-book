@@ -3,7 +3,7 @@ curate-demog-table
 curate-all-ukb_events-table
 first-occurrence-event-table-and-algorithmically-defined-outcome-table
 custom-defined-outcome-for-dr
-icd-10
+icd-9-10
 opcs4
 medical-conditions-self-report-ukb
 self-reported-operations-ukb

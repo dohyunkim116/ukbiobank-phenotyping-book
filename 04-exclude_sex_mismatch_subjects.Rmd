@@ -1,4 +1,4 @@
-# Filter out subjects with sex mistmatch {#exclude-sex-mismatch-subjects}
+# Filter out subjects with sex mismatch {#exclude-sex-mismatch-subjects}
 
 We exclude any subjects who have mismatch between self-reported sex and genetically determined sex from both processed demographic data and the master event table. The IDs of subjects with sex mismatch will be generated and later be used in preparing a primary care data in `prep_pcp_data`.
 
@@ -31,7 +31,7 @@ pre_all_ukb_events_tab <- readRDS("generated_data/pre_all_ukb_events_tab.RDS")
 ```
 
 Get subject IDs that should be excluded because of mismatch in self-reported sex and genetically determined sex. Note that everyone in demographics table has self-reported sex information.
-```{r}
+```{r, message=F}
 # this filtering step does not filter out 
 # any subject with missing genetically determined sex information
 sex_mismatch_subject_ids <- pre_demog_sel %>% select(f.eid,SEX) %>% 

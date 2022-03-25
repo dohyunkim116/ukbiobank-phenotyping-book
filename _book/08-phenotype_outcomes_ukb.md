@@ -407,6 +407,11 @@ ICD10 codes:
 - H36.0: Diabetic Retinopathy
 - H28.0: Diabetic Cataract
 
+ICD9 codes:
+
+- 2504: Diabetes with Ophthalmic manifestations
+- 3620: Diabetic retinopathy
+
 Self-reported condition codes:
 
 - 1276
@@ -419,6 +424,7 @@ Define patterns
 
 ```r
 dr_icd10 <- "E103|E113|E133|E143|H360|H280"
+dr_icd9 <- "^2504|^3620"
 dr_self <- "1276"
 dr_custom <- "dr_self"
 ```
@@ -426,7 +432,10 @@ dr_custom <- "dr_self"
 Get first occurrence composite CVD event tables. Note that we are not generating multiple events table for DR.
 
 ```r
-dr_firstoccur_ukb <- get_phenotype_tab(icd10_patterns_any = dr_icd10,selfrep_patterns = dr_self,custom_field_patterns = dr_custom,
+dr_firstoccur_ukb <- get_phenotype_tab(icd10_patterns_any = dr_icd10,
+                                       icd9_patterns_any = dr_icd9,
+                                       selfrep_patterns = dr_self,
+                                       custom_field_patterns = dr_custom,
                                     event_tab = event_tab,firstoccur = T)
 ```
 
@@ -447,6 +456,10 @@ ICD10 codes:
 - N18[0345]: CKD Stage 3-5, end stage
 - N083: Glomerular disorders in Diabetes Mellitus
 
+ICD9 codes:
+- 2503: Diabetes with renal manifestations
+- 5859: Renal failure
+
 Self-reported condition codes:
 
 - 1607
@@ -455,16 +468,23 @@ Self-reported condition codes:
 ```r
 dkd_field_patterns <- "42026"
 dkd_icd10 <- "E102|E112|E132|E142|N180|N183|N184|N185|N083"
+dkd_icd9 <- "^2503|^5859"
 dkd_self <- "1607"
 ```
 
 Get recurrent and first occurrence composite diabetic kidney disease event tables
 
 ```r
-dkd_ukb <- get_phenotype_tab(field_patterns = dkd_field_patterns,icd10_patterns_any = dkd_icd10,selfrep_patterns = dkd_self,
+dkd_ukb <- get_phenotype_tab(field_patterns = dkd_field_patterns,
+                             icd10_patterns_any = dkd_icd10,
+                             icd9_patterns_any = dkd_icd9,
+                             selfrep_patterns = dkd_self,
                   event_tab = event_tab,firstoccur = F)
 
-dkd_firstoccur_ukb <- get_phenotype_tab(field_patterns = dkd_field_patterns,icd10_patterns_any = dkd_icd10,selfrep_patterns = dkd_self,
+dkd_firstoccur_ukb <- get_phenotype_tab(field_patterns = dkd_field_patterns,
+                                        icd10_patterns_any = dkd_icd10,
+                                        icd9_patterns_any = dkd_icd9,
+                                        selfrep_patterns = dkd_self,
                   event_tab = event_tab,firstoccur = T)
 ```
 
@@ -524,24 +544,6 @@ exclude_ctrl_cereb_self <- "1082"
 cerebro_control_exclusion_events <- 
   get_phenotype_tab(icd10_patterns_any = exclude_ctrl_cereb_icd10,
                     selfrep_patterns = exclude_ctrl_cereb_self,event_tab = event_tab,firstoccur = F)
-cerebro_control_exclusion_events
-```
-
-```
-## # A tibble: 23,271 × 2
-##      f.eid event_dt  
-##      <int> <date>    
-##  1 1000526 2014-09-20
-##  2 1000723 2020-07-03
-##  3 1000723 2020-07-12
-##  4 1000792 2017-07-12
-##  5 1001231 2020-05-05
-##  6 1001355 2003-11-25
-##  7 1001511 2020-08-28
-##  8 1001870 2015-06-03
-##  9 1001870 2015-07-02
-## 10 1002013 2021-03-03
-## # … with 23,261 more rows
 ```
 
 How many unique subjects with cerebro control exclusion events?
@@ -592,7 +594,8 @@ saveRDS(other_revas_control_exclusion_events,"generated_data/other_revas_control
 Define patterns
 
 ```r
-exclude_ctrl_renal_icd10 <- "N181|N182|N0|N1|N2|Z49|Z992"
+exclude_ctrl_renal_icd10 <- "N0|N1|N2|Z49|Z992"
+exclude_ctrl_renal_icd9 <- "^58[0-9]|^59[1-4]|^590[23]|^V420|^V454|^V560|^V568"
 exclude_ctrl_renal_self <- "1192|1193|1194|1519|1520|1608|1609"
 exclude_ctrl_renal_selfop <- "1195|1487"
 exclude_ctrl_renal_opcs <- "M01|M02|M03|X40|X41|X42"
@@ -602,19 +605,20 @@ exclude_ctrl_renal_opcs <- "M01|M02|M03|X40|X41|X42"
 ```r
 dkd_control_exclusion_events <-
   get_phenotype_tab(icd10_patterns_any = exclude_ctrl_renal_icd10,
+                    icd9_patterns_any = exclude_ctrl_renal_icd9,
                     selfrep_patterns = exclude_ctrl_renal_self,
                     selfrep_op_patterns = exclude_ctrl_renal_selfop,
                     opcs_patterns = exclude_ctrl_renal_opcs,event_tab = event_tab,firstoccur = F)
 ```
 
-How many unique subjects with cardio control exclusion events?
+How many unique subjects with renal control exclusion events?
 
 ```r
 dkd_control_exclusion_events %>% .$f.eid %>% unique %>% length()
 ```
 
 ```
-## [1] 53782
+## [1] 53924
 ```
 
 
@@ -628,6 +632,7 @@ Define patterns
 
 ```r
 exclude_eye_icd10 <- "H25|H26|H28|H34|H35|H36|H40|H42"
+exclude_eye_icd9 <- "^36[256]"
 exclude_eye_self <- "1275|1277|1278|1281|1282|1527|1538|1530"
 exclude_eye_selfop <- "1434|1435|1436|1437"
 ```
@@ -636,6 +641,7 @@ exclude_eye_selfop <- "1434|1435|1436|1437"
 ```r
 dr_control_exclusion_events <- 
   get_phenotype_tab(icd10_patterns_any = exclude_eye_icd10,
+                    icd9_patterns_any = exclude_eye_icd9,
                     selfrep_patterns = exclude_eye_self,
                     selfrep_op_patterns = exclude_eye_selfop,event_tab = event_tab,firstoccur = F)
 ```
@@ -647,7 +653,7 @@ dr_control_exclusion_events %>% .$f.eid %>% unique %>% length()
 ```
 
 ```
-## [1] 83259
+## [1] 83278
 ```
 
 

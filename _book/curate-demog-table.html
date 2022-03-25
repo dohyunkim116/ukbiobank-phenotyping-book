@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>2 Curate demographic table | UK Biobank Phenotyping</title>
   <meta name="description" content="2 Curate demographic table | UK Biobank Phenotyping" />
-  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
 
   <meta property="og:title" content="2 Curate demographic table | UK Biobank Phenotyping" />
   <meta property="og:type" content="book" />
-  
   
   
   
@@ -24,7 +23,7 @@
 <meta name="author" content="Do Hyun Kim" />
 
 
-<meta name="date" content="2022-02-24" />
+<meta name="date" content="2022-03-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -50,24 +49,24 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -87,7 +86,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {  background-color: #f8f8f8; }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ef2929; } /* Alert */
 code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
@@ -132,111 +131,126 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Generating time-to-event data using UK biobank data</a></li>
-<li class="chapter" data-level="1" data-path="reformat-raw-data.html"><a href="reformat-raw-data.html"><i class="fa fa-check"></i><b>1</b> Clean raw UKB assesment center data</a></li>
-<li class="chapter" data-level="2" data-path="curate-demog-table.html"><a href="curate-demog-table.html"><i class="fa fa-check"></i><b>2</b> Curate demographic table</a></li>
-<li class="chapter" data-level="3" data-path="curate-all-ukb_events-table.html"><a href="curate-all-ukb_events-table.html"><i class="fa fa-check"></i><b>3</b> Curate all UKB events table</a><ul>
-<li class="chapter" data-level="3.1" data-path="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><a href="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><i class="fa fa-check"></i><b>3.1</b> First occurrence event table and algorithmically defined outcome table</a></li>
-<li class="chapter" data-level="3.2" data-path="custom-defined-outcome-for-dr.html"><a href="custom-defined-outcome-for-dr.html"><i class="fa fa-check"></i><b>3.2</b> Custom defined outcome for DR</a></li>
-<li class="chapter" data-level="3.3" data-path="icd-10.html"><a href="icd-10.html"><i class="fa fa-check"></i><b>3.3</b> ICD 10</a></li>
-<li class="chapter" data-level="3.4" data-path="opcs4.html"><a href="opcs4.html"><i class="fa fa-check"></i><b>3.4</b> OPCS4</a></li>
-<li class="chapter" data-level="3.5" data-path="medical-conditions-self-report-ukb.html"><a href="medical-conditions-self-report-ukb.html"><i class="fa fa-check"></i><b>3.5</b> Medical conditions self-report UKB</a></li>
-<li class="chapter" data-level="3.6" data-path="self-reported-operations-ukb.html"><a href="self-reported-operations-ukb.html"><i class="fa fa-check"></i><b>3.6</b> Self-reported operations UKB</a></li>
-<li class="chapter" data-level="3.7" data-path="standardize-and-merge-event-tables.html"><a href="standardize-and-merge-event-tables.html"><i class="fa fa-check"></i><b>3.7</b> Standardize and merge event tables</a></li>
-<li class="chapter" data-level="3.8" data-path="convert-ukb-special-dates-into-normal-dates.html"><a href="convert-ukb-special-dates-into-normal-dates.html"><i class="fa fa-check"></i><b>3.8</b> Convert UKB special dates into “normal” dates</a></li>
+<li><a href="index.html#generating-time-to-event-data-using-uk-biobank-data">Generating time-to-event data using UK biobank data<span></span></a></li>
+<li class="chapter" data-level="1" data-path="reformat-raw-data.html"><a href="reformat-raw-data.html"><i class="fa fa-check"></i><b>1</b> Clean raw UKB assesment center data<span></span></a></li>
+<li class="chapter" data-level="2" data-path="curate-demog-table.html"><a href="curate-demog-table.html"><i class="fa fa-check"></i><b>2</b> Curate demographic table<span></span></a></li>
+<li class="chapter" data-level="3" data-path="curate-all-ukb_events-table.html"><a href="curate-all-ukb_events-table.html"><i class="fa fa-check"></i><b>3</b> Curate all UKB events table<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><a href="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><i class="fa fa-check"></i><b>3.1</b> First occurrence event table and algorithmically defined outcome table<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path="custom-defined-outcome-for-dr.html"><a href="custom-defined-outcome-for-dr.html"><i class="fa fa-check"></i><b>3.2</b> Custom defined outcome for DR<span></span></a></li>
+<li class="chapter" data-level="3.3" data-path="icd-9-10.html"><a href="icd-9-10.html"><i class="fa fa-check"></i><b>3.3</b> ICD 9 &amp; 10<span></span></a></li>
+<li class="chapter" data-level="3.4" data-path="opcs4.html"><a href="opcs4.html"><i class="fa fa-check"></i><b>3.4</b> OPCS4<span></span></a></li>
+<li class="chapter" data-level="3.5" data-path="medical-conditions-self-report-ukb.html"><a href="medical-conditions-self-report-ukb.html"><i class="fa fa-check"></i><b>3.5</b> Medical conditions self-report UKB<span></span></a></li>
+<li class="chapter" data-level="3.6" data-path="self-reported-operations-ukb.html"><a href="self-reported-operations-ukb.html"><i class="fa fa-check"></i><b>3.6</b> Self-reported operations UKB<span></span></a></li>
+<li class="chapter" data-level="3.7" data-path="standardize-and-merge-event-tables.html"><a href="standardize-and-merge-event-tables.html"><i class="fa fa-check"></i><b>3.7</b> Standardize and merge event tables<span></span></a></li>
+<li class="chapter" data-level="3.8" data-path="convert-ukb-special-dates-into-normal-dates.html"><a href="convert-ukb-special-dates-into-normal-dates.html"><i class="fa fa-check"></i><b>3.8</b> Convert UKB special dates into “normal” dates<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="exclude-sex-mismatch-subjects.html"><a href="exclude-sex-mismatch-subjects.html"><i class="fa fa-check"></i><b>4</b> Filter out subjects with sex mistmatch</a></li>
-<li class="chapter" data-level="5" data-path="prep_pcp_data.html"><a href="prep_pcp_data.html"><i class="fa fa-check"></i><b>5</b> Prepare UKB Primary Care Data</a></li>
-<li class="chapter" data-level="6" data-path="make-code-dictionary.html"><a href="make-code-dictionary.html"><i class="fa fa-check"></i><b>6</b> Create a master code dictionary for primary care data</a><ul>
-<li class="chapter" data-level="6.1" data-path="read-v2.html"><a href="read-v2.html"><i class="fa fa-check"></i><b>6.1</b> Read v2</a></li>
-<li class="chapter" data-level="6.2" data-path="read-v3.html"><a href="read-v3.html"><i class="fa fa-check"></i><b>6.2</b> Read v3</a></li>
-<li class="chapter" data-level="6.3" data-path="tpp-local-codes.html"><a href="tpp-local-codes.html"><i class="fa fa-check"></i><b>6.3</b> TPP local codes</a></li>
-<li class="chapter" data-level="6.4" data-path="merge-read-v2-read-v3-and-tpp-dictionaries.html"><a href="merge-read-v2-read-v3-and-tpp-dictionaries.html"><i class="fa fa-check"></i><b>6.4</b> Merge Read v2, Read v3 and TPP dictionaries</a></li>
+<li class="chapter" data-level="4" data-path="exclude-sex-mismatch-subjects.html"><a href="exclude-sex-mismatch-subjects.html"><i class="fa fa-check"></i><b>4</b> Filter out subjects with sex mismatch<span></span></a></li>
+<li class="chapter" data-level="5" data-path="prep_pcp_data.html"><a href="prep_pcp_data.html"><i class="fa fa-check"></i><b>5</b> Prepare UKB Primary Care Data<span></span></a></li>
+<li class="chapter" data-level="6" data-path="make-code-dictionary.html"><a href="make-code-dictionary.html"><i class="fa fa-check"></i><b>6</b> Create a master code dictionary for primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="read-v2.html"><a href="read-v2.html"><i class="fa fa-check"></i><b>6.1</b> Read v2<span></span></a></li>
+<li class="chapter" data-level="6.2" data-path="read-v3.html"><a href="read-v3.html"><i class="fa fa-check"></i><b>6.2</b> Read v3<span></span></a></li>
+<li class="chapter" data-level="6.3" data-path="tpp-local-codes.html"><a href="tpp-local-codes.html"><i class="fa fa-check"></i><b>6.3</b> TPP local codes<span></span></a></li>
+<li class="chapter" data-level="6.4" data-path="merge-read-v2-read-v3-and-tpp-dictionaries.html"><a href="merge-read-v2-read-v3-and-tpp-dictionaries.html"><i class="fa fa-check"></i><b>6.4</b> Merge Read v2, Read v3 and TPP dictionaries<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="make-outcome-specific-code-dictionary.html"><a href="make-outcome-specific-code-dictionary.html"><i class="fa fa-check"></i><b>7</b> Make outcome-specific code dictionary</a><ul>
-<li class="chapter" data-level="7.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html"><i class="fa fa-check"></i><b>7.1</b> Prepare diabetes code dictionary</a><ul>
-<li class="chapter" data-level="7.1.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-keywords"><i class="fa fa-check"></i><b>7.1.1</b> Define keywords</a></li>
-<li class="chapter" data-level="7.1.2" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-codes"><i class="fa fa-check"></i><b>7.1.2</b> Define codes</a></li>
-<li class="chapter" data-level="7.1.3" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#create-diabetes-code-dictionary"><i class="fa fa-check"></i><b>7.1.3</b> Create diabetes code dictionary</a></li>
+<li class="chapter" data-level="7" data-path="make-outcome-specific-code-dictionary.html"><a href="make-outcome-specific-code-dictionary.html"><i class="fa fa-check"></i><b>7</b> Make outcome-specific code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html"><i class="fa fa-check"></i><b>7.1</b> Prepare diabetes code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-keywords"><i class="fa fa-check"></i><b>7.1.1</b> Define keywords<span></span></a></li>
+<li class="chapter" data-level="7.1.2" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-codes"><i class="fa fa-check"></i><b>7.1.2</b> Define codes<span></span></a></li>
+<li class="chapter" data-level="7.1.3" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#create-diabetes-code-dictionary"><i class="fa fa-check"></i><b>7.1.3</b> Create diabetes code dictionary<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.2</b> Prepare diabetic eye disease code dictionary</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-keywords-1"><i class="fa fa-check"></i><b>7.2.1</b> Define keywords</a></li>
-<li class="chapter" data-level="7.2.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-codes-1"><i class="fa fa-check"></i><b>7.2.2</b> Define codes</a></li>
-<li class="chapter" data-level="7.2.3" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#create-diabetic-eye-disease-code-dictionary"><i class="fa fa-check"></i><b>7.2.3</b> Create diabetic eye disease code dictionary</a></li>
+<li class="chapter" data-level="7.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.2</b> Prepare diabetic eye disease code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-keywords-1"><i class="fa fa-check"></i><b>7.2.1</b> Define keywords<span></span></a></li>
+<li class="chapter" data-level="7.2.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-codes-1"><i class="fa fa-check"></i><b>7.2.2</b> Define codes<span></span></a></li>
+<li class="chapter" data-level="7.2.3" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#create-diabetic-eye-disease-code-dictionary"><i class="fa fa-check"></i><b>7.2.3</b> Create diabetic eye disease code dictionary<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="7.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.3</b> Prepare diabetic kidney disease code dictionary</a><ul>
-<li class="chapter" data-level="7.3.1" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-keywords-2"><i class="fa fa-check"></i><b>7.3.1</b> Define Keywords</a></li>
-<li class="chapter" data-level="7.3.2" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-codes-2"><i class="fa fa-check"></i><b>7.3.2</b> Define codes</a></li>
-<li class="chapter" data-level="7.3.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#create-diabetic-kidney-disease-code-dictionary"><i class="fa fa-check"></i><b>7.3.3</b> Create diabetic kidney disease code dictionary</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="8" data-path="phenotype-outcomes-ukb.html"><a href="phenotype-outcomes-ukb.html"><i class="fa fa-check"></i><b>8</b> Phenotype outcome events using UKB assessment center data</a><ul>
-<li class="chapter" data-level="8.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.1</b> Phenotype outcome events using UKB assessment center data</a><ul>
-<li class="chapter" data-level="8.1.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dm"><i class="fa fa-check"></i><b>8.1.1</b> DM</a></li>
-<li class="chapter" data-level="8.1.2" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#mi"><i class="fa fa-check"></i><b>8.1.2</b> MI</a></li>
-<li class="chapter" data-level="8.1.3" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#unstable-angina"><i class="fa fa-check"></i><b>8.1.3</b> Unstable Angina</a></li>
-<li class="chapter" data-level="8.1.4" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ischemic-stroke"><i class="fa fa-check"></i><b>8.1.4</b> Ischemic Stroke</a></li>
-<li class="chapter" data-level="8.1.5" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#hemorrhagic-stroke"><i class="fa fa-check"></i><b>8.1.5</b> Hemorrhagic Stroke</a></li>
-<li class="chapter" data-level="8.1.6" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#stroke"><i class="fa fa-check"></i><b>8.1.6</b> Stroke</a></li>
-<li class="chapter" data-level="8.1.7" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#pci"><i class="fa fa-check"></i><b>8.1.7</b> PCI</a></li>
-<li class="chapter" data-level="8.1.8" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#cvd-death"><i class="fa fa-check"></i><b>8.1.8</b> CVD death</a></li>
-<li class="chapter" data-level="8.1.9" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#composite-cvd"><i class="fa fa-check"></i><b>8.1.9</b> Composite CVD</a></li>
-<li class="chapter" data-level="8.1.10" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dr"><i class="fa fa-check"></i><b>8.1.10</b> DR</a></li>
-<li class="chapter" data-level="8.1.11" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ckd"><i class="fa fa-check"></i><b>8.1.11</b> CKD</a></li>
-</ul></li>
-<li class="chapter" data-level="8.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.2</b> Phenotype control exclusion events using UKB assessment center data</a><ul>
-<li class="chapter" data-level="8.2.1" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cardiovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.1</b> Cardiovascular control exclusion events</a></li>
-<li class="chapter" data-level="8.2.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cerebrovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.2</b> Cerebrovascular control exclusion events</a></li>
-<li class="chapter" data-level="8.2.3" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#non-coronary-revascularization-procedure-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.3</b> Non-coronary revascularization procedure control exclusion events</a></li>
-<li class="chapter" data-level="8.2.4" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#renal-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.4</b> Renal disease control exclusion events</a></li>
-<li class="chapter" data-level="8.2.5" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#eye-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.5</b> Eye disease control exclusion events</a></li>
+<li class="chapter" data-level="7.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.3</b> Prepare diabetic kidney disease code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-keywords-2"><i class="fa fa-check"></i><b>7.3.1</b> Define Keywords<span></span></a></li>
+<li class="chapter" data-level="7.3.2" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-codes-2"><i class="fa fa-check"></i><b>7.3.2</b> Define codes<span></span></a></li>
+<li class="chapter" data-level="7.3.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#create-diabetic-kidney-disease-code-dictionary"><i class="fa fa-check"></i><b>7.3.3</b> Create diabetic kidney disease code dictionary<span></span></a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="phenotype-outcomes-pcp.html"><a href="phenotype-outcomes-pcp.html"><i class="fa fa-check"></i><b>9</b> Phenotype outcomes using primary care data</a><ul>
-<li class="chapter" data-level="9.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.1</b> Phenotype outcome events using primary care data</a><ul>
-<li class="chapter" data-level="9.1.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dm-1"><i class="fa fa-check"></i><b>9.1.1</b> DM</a></li>
-<li class="chapter" data-level="9.1.2" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dr-1"><i class="fa fa-check"></i><b>9.1.2</b> DR</a></li>
-<li class="chapter" data-level="9.1.3" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#ckd-1"><i class="fa fa-check"></i><b>9.1.3</b> CKD</a></li>
+<li class="chapter" data-level="8" data-path="phenotype-outcomes-ukb.html"><a href="phenotype-outcomes-ukb.html"><i class="fa fa-check"></i><b>8</b> Phenotype outcome events using UKB assessment center data<span></span></a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.1</b> Phenotype outcome events using UKB assessment center data<span></span></a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dm"><i class="fa fa-check"></i><b>8.1.1</b> DM<span></span></a></li>
+<li class="chapter" data-level="8.1.2" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#mi"><i class="fa fa-check"></i><b>8.1.2</b> MI<span></span></a></li>
+<li class="chapter" data-level="8.1.3" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#unstable-angina"><i class="fa fa-check"></i><b>8.1.3</b> Unstable Angina<span></span></a></li>
+<li class="chapter" data-level="8.1.4" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ischemic-stroke"><i class="fa fa-check"></i><b>8.1.4</b> Ischemic Stroke<span></span></a></li>
+<li class="chapter" data-level="8.1.5" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#hemorrhagic-stroke"><i class="fa fa-check"></i><b>8.1.5</b> Hemorrhagic Stroke<span></span></a></li>
+<li class="chapter" data-level="8.1.6" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#stroke"><i class="fa fa-check"></i><b>8.1.6</b> Stroke<span></span></a></li>
+<li class="chapter" data-level="8.1.7" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#pci"><i class="fa fa-check"></i><b>8.1.7</b> PCI<span></span></a></li>
+<li class="chapter" data-level="8.1.8" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#cvd-death"><i class="fa fa-check"></i><b>8.1.8</b> CVD death<span></span></a></li>
+<li class="chapter" data-level="8.1.9" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#composite-cvd"><i class="fa fa-check"></i><b>8.1.9</b> Composite CVD<span></span></a></li>
+<li class="chapter" data-level="8.1.10" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dr"><i class="fa fa-check"></i><b>8.1.10</b> DR<span></span></a></li>
+<li class="chapter" data-level="8.1.11" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ckd"><i class="fa fa-check"></i><b>8.1.11</b> CKD<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.2</b> Phenotype control exclusion events using primary care data</a><ul>
-<li class="chapter" data-level="9.2.1" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#non-diabetic-eye-disease-events"><i class="fa fa-check"></i><b>9.2.1</b> Non-diabetic eye disease events</a></li>
-<li class="chapter" data-level="9.2.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#kidney-disease-control-exclusion-events"><i class="fa fa-check"></i><b>9.2.2</b> Kidney disease control exclusion events</a></li>
+<li class="chapter" data-level="8.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.2</b> Phenotype control exclusion events using UKB assessment center data<span></span></a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cardiovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.1</b> Cardiovascular control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cerebrovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.2</b> Cerebrovascular control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.3" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#non-coronary-revascularization-procedure-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.3</b> Non-coronary revascularization procedure control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.4" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#renal-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.4</b> Renal disease control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.5" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#eye-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.5</b> Eye disease control exclusion events<span></span></a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="traj-ukb.html"><a href="traj-ukb.html"><i class="fa fa-check"></i><b>10</b> Create biomarker trajectory data from UK biobank assessment center data</a></li>
-<li class="chapter" data-level="11" data-path="traj-pcp.html"><a href="traj-pcp.html"><i class="fa fa-check"></i><b>11</b> Curate biomarker trajectory data from primary care data</a><ul>
-<li class="chapter" data-level="11.1" data-path="total-cholesterol.html"><a href="total-cholesterol.html"><i class="fa fa-check"></i><b>11.1</b> Total cholesterol</a></li>
-<li class="chapter" data-level="11.2" data-path="hdl.html"><a href="hdl.html"><i class="fa fa-check"></i><b>11.2</b> HDL</a></li>
-<li class="chapter" data-level="11.3" data-path="ldl.html"><a href="ldl.html"><i class="fa fa-check"></i><b>11.3</b> LDL</a></li>
-<li class="chapter" data-level="11.4" data-path="triglycerides.html"><a href="triglycerides.html"><i class="fa fa-check"></i><b>11.4</b> Triglycerides</a></li>
-<li class="chapter" data-level="11.5" data-path="fasting-glucose.html"><a href="fasting-glucose.html"><i class="fa fa-check"></i><b>11.5</b> Fasting Glucose</a></li>
-<li class="chapter" data-level="11.6" data-path="random-glucose.html"><a href="random-glucose.html"><i class="fa fa-check"></i><b>11.6</b> Random glucose</a></li>
-<li class="chapter" data-level="11.7" data-path="urine-albumin.html"><a href="urine-albumin.html"><i class="fa fa-check"></i><b>11.7</b> Urine Albumin</a></li>
-<li class="chapter" data-level="11.8" data-path="urine-creatinine.html"><a href="urine-creatinine.html"><i class="fa fa-check"></i><b>11.8</b> Urine creatinine</a></li>
-<li class="chapter" data-level="11.9" data-path="urine-acr-albumincreatinine-ratio.html"><a href="urine-acr-albumincreatinine-ratio.html"><i class="fa fa-check"></i><b>11.9</b> Urine ACR (Albumin:Creatinine Ratio)</a></li>
-<li class="chapter" data-level="11.10" data-path="bloodserum-creatinine.html"><a href="bloodserum-creatinine.html"><i class="fa fa-check"></i><b>11.10</b> Blood/Serum creatinine</a></li>
-<li class="chapter" data-level="11.11" data-path="hba1c.html"><a href="hba1c.html"><i class="fa fa-check"></i><b>11.11</b> HbA1c</a></li>
-<li class="chapter" data-level="11.12" data-path="bmi.html"><a href="bmi.html"><i class="fa fa-check"></i><b>11.12</b> BMI</a></li>
-<li class="chapter" data-level="11.13" data-path="blood-pressure.html"><a href="blood-pressure.html"><i class="fa fa-check"></i><b>11.13</b> Blood Pressure</a></li>
-<li class="chapter" data-level="11.14" data-path="reformat-and-trim-trajectory-table-for-each-biomarker.html"><a href="reformat-and-trim-trajectory-table-for-each-biomarker.html"><i class="fa fa-check"></i><b>11.14</b> Reformat and trim trajectory table for each biomarker</a></li>
+<li class="chapter" data-level="9" data-path="phenotype-outcomes-pcp.html"><a href="phenotype-outcomes-pcp.html"><i class="fa fa-check"></i><b>9</b> Phenotype outcomes using primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.1</b> Phenotype outcome events using primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dm-1"><i class="fa fa-check"></i><b>9.1.1</b> DM<span></span></a></li>
+<li class="chapter" data-level="9.1.2" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dr-1"><i class="fa fa-check"></i><b>9.1.2</b> DR<span></span></a></li>
+<li class="chapter" data-level="9.1.3" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#ckd-1"><i class="fa fa-check"></i><b>9.1.3</b> CKD<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="traj-combine.html"><a href="traj-combine.html"><i class="fa fa-check"></i><b>12</b> Combine biomarker trajectory extracted from from UKB and PCP data</a></li>
-<li class="chapter" data-level="13" data-path="phenotype-outcome-combine.html"><a href="phenotype-outcome-combine.html"><i class="fa fa-check"></i><b>13</b> Phenotype outcomes using combination of tables</a><ul>
-<li class="chapter" data-level="13.1" data-path="dm-2.html"><a href="dm-2.html"><i class="fa fa-check"></i><b>13.1</b> DM</a></li>
-<li class="chapter" data-level="13.2" data-path="dr-2.html"><a href="dr-2.html"><i class="fa fa-check"></i><b>13.2</b> DR</a></li>
-<li class="chapter" data-level="13.3" data-path="dkd.html"><a href="dkd.html"><i class="fa fa-check"></i><b>13.3</b> DKD</a></li>
+<li class="chapter" data-level="9.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.2</b> Phenotype control exclusion events using primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#non-diabetic-eye-disease-events"><i class="fa fa-check"></i><b>9.2.1</b> Non-diabetic eye disease events<span></span></a></li>
+<li class="chapter" data-level="9.2.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#kidney-disease-control-exclusion-events"><i class="fa fa-check"></i><b>9.2.2</b> Kidney disease control exclusion events<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="tte-macro.html"><a href="tte-macro.html"><i class="fa fa-check"></i><b>14</b> Generate time-to-event data for macrovascular diabetes complications</a><ul>
-<li class="chapter" data-level="14.1" data-path="mi-1.html"><a href="mi-1.html"><i class="fa fa-check"></i><b>14.1</b> MI</a></li>
-<li class="chapter" data-level="14.2" data-path="unstable-angina-1.html"><a href="unstable-angina-1.html"><i class="fa fa-check"></i><b>14.2</b> Unstable angina</a></li>
-<li class="chapter" data-level="14.3" data-path="ischemic-stroke-1.html"><a href="ischemic-stroke-1.html"><i class="fa fa-check"></i><b>14.3</b> Ischemic stroke</a></li>
-<li class="chapter" data-level="14.4" data-path="hemorrhagic-stroke-1.html"><a href="hemorrhagic-stroke-1.html"><i class="fa fa-check"></i><b>14.4</b> Hemorrhagic Stroke</a></li>
-<li class="chapter" data-level="14.5" data-path="stroke-1.html"><a href="stroke-1.html"><i class="fa fa-check"></i><b>14.5</b> Stroke</a></li>
-<li class="chapter" data-level="14.6" data-path="pci-1.html"><a href="pci-1.html"><i class="fa fa-check"></i><b>14.6</b> PCI</a></li>
-<li class="chapter" data-level="14.7" data-path="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><a href="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><i class="fa fa-check"></i><b>14.7</b> Composite CVD (MI, Unstable Angina, Ischemic Stroke, PCI or CVD death)</a></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="tte-dr.html"><a href="tte-dr.html"><i class="fa fa-check"></i><b>15</b> Generate time-to-event data for diabetic eye disease</a></li>
-<li class="chapter" data-level="16" data-path="tte-dkd.html"><a href="tte-dkd.html"><i class="fa fa-check"></i><b>16</b> Generate time-to-event data for diabetes related kidney disease</a></li>
+<li class="chapter" data-level="10" data-path="traj-ukb.html"><a href="traj-ukb.html"><i class="fa fa-check"></i><b>10</b> Create biomarker trajectory data from UK biobank assessment center data<span></span></a></li>
+<li class="chapter" data-level="11" data-path="traj-pcp.html"><a href="traj-pcp.html"><i class="fa fa-check"></i><b>11</b> Curate biomarker trajectory data from primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="total-cholesterol.html"><a href="total-cholesterol.html"><i class="fa fa-check"></i><b>11.1</b> Total cholesterol<span></span></a></li>
+<li class="chapter" data-level="11.2" data-path="hdl.html"><a href="hdl.html"><i class="fa fa-check"></i><b>11.2</b> HDL<span></span></a></li>
+<li class="chapter" data-level="11.3" data-path="ldl.html"><a href="ldl.html"><i class="fa fa-check"></i><b>11.3</b> LDL<span></span></a></li>
+<li class="chapter" data-level="11.4" data-path="triglycerides.html"><a href="triglycerides.html"><i class="fa fa-check"></i><b>11.4</b> Triglycerides<span></span></a></li>
+<li class="chapter" data-level="11.5" data-path="fasting-glucose.html"><a href="fasting-glucose.html"><i class="fa fa-check"></i><b>11.5</b> Fasting Glucose<span></span></a></li>
+<li class="chapter" data-level="11.6" data-path="random-glucose.html"><a href="random-glucose.html"><i class="fa fa-check"></i><b>11.6</b> Random glucose<span></span></a></li>
+<li class="chapter" data-level="11.7" data-path="urine-albumin.html"><a href="urine-albumin.html"><i class="fa fa-check"></i><b>11.7</b> Urine Albumin<span></span></a></li>
+<li class="chapter" data-level="11.8" data-path="urine-creatinine.html"><a href="urine-creatinine.html"><i class="fa fa-check"></i><b>11.8</b> Urine creatinine<span></span></a></li>
+<li class="chapter" data-level="11.9" data-path="urine-acr-albumincreatinine-ratio.html"><a href="urine-acr-albumincreatinine-ratio.html"><i class="fa fa-check"></i><b>11.9</b> Urine ACR (Albumin:Creatinine Ratio)<span></span></a></li>
+<li class="chapter" data-level="11.10" data-path="bloodserum-creatinine.html"><a href="bloodserum-creatinine.html"><i class="fa fa-check"></i><b>11.10</b> Blood/Serum creatinine<span></span></a></li>
+<li class="chapter" data-level="11.11" data-path="hba1c.html"><a href="hba1c.html"><i class="fa fa-check"></i><b>11.11</b> HbA1c<span></span></a></li>
+<li class="chapter" data-level="11.12" data-path="bmi.html"><a href="bmi.html"><i class="fa fa-check"></i><b>11.12</b> BMI<span></span></a></li>
+<li class="chapter" data-level="11.13" data-path="blood-pressure.html"><a href="blood-pressure.html"><i class="fa fa-check"></i><b>11.13</b> Blood Pressure<span></span></a></li>
+<li class="chapter" data-level="11.14" data-path="reformat-and-trim-trajectory-table-for-each-biomarker.html"><a href="reformat-and-trim-trajectory-table-for-each-biomarker.html"><i class="fa fa-check"></i><b>11.14</b> Reformat and trim trajectory table for each biomarker<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="traj-combine.html"><a href="traj-combine.html"><i class="fa fa-check"></i><b>12</b> Combine biomarker trajectory extracted from from UKB and PCP data<span></span></a></li>
+<li class="chapter" data-level="13" data-path="phenotype-outcome-combine.html"><a href="phenotype-outcome-combine.html"><i class="fa fa-check"></i><b>13</b> Phenotype outcomes using combination of tables<span></span></a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="dm-2.html"><a href="dm-2.html"><i class="fa fa-check"></i><b>13.1</b> DM<span></span></a></li>
+<li class="chapter" data-level="13.2" data-path="dr-2.html"><a href="dr-2.html"><i class="fa fa-check"></i><b>13.2</b> DR<span></span></a></li>
+<li class="chapter" data-level="13.3" data-path="dkd.html"><a href="dkd.html"><i class="fa fa-check"></i><b>13.3</b> DKD<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="tte-macro.html"><a href="tte-macro.html"><i class="fa fa-check"></i><b>14</b> Generate time-to-event data for macrovascular diabetes complications<span></span></a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="mi-1.html"><a href="mi-1.html"><i class="fa fa-check"></i><b>14.1</b> MI<span></span></a></li>
+<li class="chapter" data-level="14.2" data-path="unstable-angina-1.html"><a href="unstable-angina-1.html"><i class="fa fa-check"></i><b>14.2</b> Unstable angina<span></span></a></li>
+<li class="chapter" data-level="14.3" data-path="ischemic-stroke-1.html"><a href="ischemic-stroke-1.html"><i class="fa fa-check"></i><b>14.3</b> Ischemic stroke<span></span></a></li>
+<li class="chapter" data-level="14.4" data-path="hemorrhagic-stroke-1.html"><a href="hemorrhagic-stroke-1.html"><i class="fa fa-check"></i><b>14.4</b> Hemorrhagic Stroke<span></span></a></li>
+<li class="chapter" data-level="14.5" data-path="stroke-1.html"><a href="stroke-1.html"><i class="fa fa-check"></i><b>14.5</b> Stroke<span></span></a></li>
+<li class="chapter" data-level="14.6" data-path="pci-1.html"><a href="pci-1.html"><i class="fa fa-check"></i><b>14.6</b> PCI<span></span></a></li>
+<li class="chapter" data-level="14.7" data-path="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><a href="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><i class="fa fa-check"></i><b>14.7</b> Composite CVD (MI, Unstable Angina, Ischemic Stroke, PCI or CVD death)<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="tte-dr.html"><a href="tte-dr.html"><i class="fa fa-check"></i><b>15</b> Generate time-to-event data for diabetic eye disease<span></span></a></li>
+<li class="chapter" data-level="16" data-path="tte-dkd.html"><a href="tte-dkd.html"><i class="fa fa-check"></i><b>16</b> Generate time-to-event data for diabetes related kidney disease<span></span></a></li>
 </ul>
 
       </nav>
@@ -254,48 +268,47 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="curate-demog-table" class="section level1">
-<h1><span class="header-section-number">2</span> Curate demographic table</h1>
+<div id="curate-demog-table" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">2</span> Curate demographic table<a href="curate-demog-table.html#curate-demog-table" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p>We curate demographic information such as the date of birth, age at the study initiation and censored date which will be used in defining time-to-event outcome.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="curate-demog-table.html#cb1-1"></a><span class="kw">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="curate-demog-table.html#cb1-2"></a><span class="kw">library</span>(data.table)</span>
-<span id="cb1-3"><a href="curate-demog-table.html#cb1-3"></a><span class="kw">library</span>(lubridate)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="curate-demog-table.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-2"><a href="curate-demog-table.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb4-3"><a href="curate-demog-table.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div>
 Demographic data contain a number of fields. We are only interested in several of them and want to further define a few more fields that will be used later in generating time-to-event data.
-
 <p>Load formatted raw demographic data</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="curate-demog-table.html#cb2-1"></a>demog &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;generated_data/demog_UKB.RDS&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="curate-demog-table.html#cb5-1" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;generated_data/demog_UKB.RDS&quot;</span>)</span></code></pre></div>
 <p>Define the date of birth and gender</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="curate-demog-table.html#cb3-1"></a>demog &lt;-<span class="st"> </span>demog <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb3-2"><a href="curate-demog-table.html#cb3-2"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">YOB =</span> f.<span class="dv">34</span>.<span class="fl">0.0</span>) <span class="op">%&gt;%</span></span>
-<span id="cb3-3"><a href="curate-demog-table.html#cb3-3"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">MOB =</span> f.<span class="dv">52</span>.<span class="fl">0.0</span>) <span class="op">%&gt;%</span></span>
-<span id="cb3-4"><a href="curate-demog-table.html#cb3-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">DOB =</span> lubridate<span class="op">::</span><span class="kw">make_date</span>(YOB, MOB)) <span class="op">%&gt;%</span></span>
-<span id="cb3-5"><a href="curate-demog-table.html#cb3-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">SEX =</span> <span class="kw">as.character</span>(f.<span class="dv">31</span>.<span class="fl">0.0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="curate-demog-table.html#cb6-1" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> demog <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="curate-demog-table.html#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">YOB =</span> f.<span class="dv">34</span>.<span class="fl">0.0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="curate-demog-table.html#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">MOB =</span> f.<span class="dv">52</span>.<span class="fl">0.0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="curate-demog-table.html#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DOB =</span> lubridate<span class="sc">::</span><span class="fu">make_date</span>(YOB, MOB)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="curate-demog-table.html#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">SEX =</span> <span class="fu">as.character</span>(f.<span class="dv">31</span>.<span class="fl">0.0</span>))</span></code></pre></div>
 <p>Define UKB study initiation date</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="curate-demog-table.html#cb4-1"></a>demog &lt;-<span class="st"> </span>demog <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="dt">date_init =</span> f.<span class="dv">53</span>.<span class="fl">0.0</span>, <span class="dt">date_repeat =</span> f.<span class="dv">53</span>.<span class="fl">1.0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="curate-demog-table.html#cb7-1" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> demog <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">date_init =</span> f.<span class="dv">53</span>.<span class="fl">0.0</span>, <span class="at">date_repeat =</span> f.<span class="dv">53</span>.<span class="fl">1.0</span>)</span></code></pre></div>
 <p>Define administrative censoring date (study end date) based on <a href="https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=40022">inpatient record origin</a>. These dates are updated periodically. The most recent censoring dates can be found <a href="https://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=Data_providers_and_dates#:~:text=Censoring%20dates&amp;text=The%20censoring%20date%20is%20the,day%20of%20the%20previous%20month.">here</a> in the “Showcase censoring date” field of the table under the “Hospital inpatient data” section. The below censoring dates were based on the page accessed on Feb 22 2022. We will define dictionary that will be used to match hospital admission keys to admin censoring dates, and the mapping from country to administrative censoring date:</p>
 <ul>
 <li>Patient Episode Database for Wales (PEDW): Feb 28 2018</li>
 <li>Scottish Morbidity Record (SMR): Jul 31 2021</li>
 <li>Hospital Episode Statistics for England (HES): Sep 30 2021</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="curate-demog-table.html#cb5-1"></a>censor_dates &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">PEDW =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2018-02-28&quot;</span>),</span>
-<span id="cb5-2"><a href="curate-demog-table.html#cb5-2"></a>                   <span class="dt">SMR =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2021-07-31&quot;</span>),</span>
-<span id="cb5-3"><a href="curate-demog-table.html#cb5-3"></a>                   <span class="dt">HES =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2021-09-30&quot;</span>))</span>
-<span id="cb5-4"><a href="curate-demog-table.html#cb5-4"></a></span>
-<span id="cb5-5"><a href="curate-demog-table.html#cb5-5"></a>country_to_censor_date_mapping &lt;-<span class="st"> </span></span>
-<span id="cb5-6"><a href="curate-demog-table.html#cb5-6"></a><span class="st">  </span><span class="kw">c</span>(<span class="dt">wal =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2018-02-28&quot;</span>),</span>
-<span id="cb5-7"><a href="curate-demog-table.html#cb5-7"></a>    <span class="dt">scot =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2021-07-31&quot;</span>),</span>
-<span id="cb5-8"><a href="curate-demog-table.html#cb5-8"></a>    <span class="dt">eng =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2021-09-30&quot;</span>))</span>
-<span id="cb5-9"><a href="curate-demog-table.html#cb5-9"></a></span>
-<span id="cb5-10"><a href="curate-demog-table.html#cb5-10"></a>demog &lt;-<span class="st"> </span></span>
-<span id="cb5-11"><a href="curate-demog-table.html#cb5-11"></a><span class="st">  </span>demog <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb5-12"><a href="curate-demog-table.html#cb5-12"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date_admin_censored =</span> <span class="kw">as.Date</span>(<span class="kw">pmin</span>(censor_dates[f.<span class="dv">40022</span>.<span class="fl">0.0</span>], censor_dates[f.<span class="dv">40022</span>.<span class="fl">0.1</span>],censor_dates[f.<span class="dv">40022</span>.<span class="fl">0.2</span>],<span class="dt">na.rm=</span>T)))</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="curate-demog-table.html#cb8-1" aria-hidden="true" tabindex="-1"></a>censor_dates <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">PEDW =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2018-02-28&quot;</span>),</span>
+<span id="cb8-2"><a href="curate-demog-table.html#cb8-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">SMR =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2021-07-31&quot;</span>),</span>
+<span id="cb8-3"><a href="curate-demog-table.html#cb8-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">HES =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2021-09-30&quot;</span>))</span>
+<span id="cb8-4"><a href="curate-demog-table.html#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="curate-demog-table.html#cb8-5" aria-hidden="true" tabindex="-1"></a>country_to_censor_date_mapping <span class="ot">&lt;-</span> </span>
+<span id="cb8-6"><a href="curate-demog-table.html#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">wal =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2018-02-28&quot;</span>),</span>
+<span id="cb8-7"><a href="curate-demog-table.html#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">scot =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2021-07-31&quot;</span>),</span>
+<span id="cb8-8"><a href="curate-demog-table.html#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">eng =</span> <span class="fu">as.Date</span>(<span class="st">&quot;2021-09-30&quot;</span>))</span>
+<span id="cb8-9"><a href="curate-demog-table.html#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="curate-demog-table.html#cb8-10" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> </span>
+<span id="cb8-11"><a href="curate-demog-table.html#cb8-11" aria-hidden="true" tabindex="-1"></a>  demog <span class="sc">%&gt;%</span> </span>
+<span id="cb8-12"><a href="curate-demog-table.html#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_admin_censored =</span> <span class="fu">as.Date</span>(<span class="fu">pmin</span>(censor_dates[f.<span class="dv">40022</span>.<span class="fl">0.0</span>], censor_dates[f.<span class="dv">40022</span>.<span class="fl">0.1</span>],censor_dates[f.<span class="dv">40022</span>.<span class="fl">0.2</span>],<span class="at">na.rm=</span>T)))</span></code></pre></div>
 <p>Note that there are subjects with unknown administrative censored date (i.e., no inpatient record).</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="curate-demog-table.html#cb6-1"></a>demog <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="kw">is.na</span>(date_admin_censored)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(f.eid) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">nrow</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="curate-demog-table.html#cb9-1" aria-hidden="true" tabindex="-1"></a>demog <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.na</span>(date_admin_censored)) <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">nrow</span>()</span></code></pre></div>
 <pre><code>## [1] 61909</code></pre>
 <p>We will fill these values using the <a href="https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=54">data field 54</a> of UKB assessment center data. These fields include which city each participant went in for assessment or imaging, and can indicate where we would expect their inpatient record to originate. Load the data containing the field 54. Patient eids are displayed as Inf for privacy reasons.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="curate-demog-table.html#cb8-1"></a>bd &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;generated_data/assessment_center_UKB.RDS&quot;</span>)</span>
-<span id="cb8-2"><a href="curate-demog-table.html#cb8-2"></a>bd <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">f.eid =</span> <span class="ot">Inf</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="curate-demog-table.html#cb11-1" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;generated_data/assessment_center_UKB.RDS&quot;</span>)</span>
+<span id="cb11-2"><a href="curate-demog-table.html#cb11-2" aria-hidden="true" tabindex="-1"></a>bd <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">f.eid =</span> <span class="cn">Inf</span>)</span></code></pre></div>
 <pre><code>##   f.eid f.54.0.0 f.54.1.0 f.54.2.0 f.54.3.0
 ## 1   Inf    11005       NA       NA       NA
 ## 2   Inf    11021       NA       NA       NA
@@ -304,53 +317,53 @@ Demographic data contain a number of fields. We are only interested in several o
 ## 5   Inf    11011       NA       NA       NA
 ## 6   Inf    11017       NA       NA       NA</code></pre>
 <p>The field “f.54.0.0” contains codes indicating the city where the initial assessment was taken. We see that there is only one subject that is missing this value.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="curate-demog-table.html#cb10-1"></a>rmid &lt;-<span class="st"> </span>bd <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="kw">is.na</span>(f.<span class="dv">54</span>.<span class="fl">0.0</span>)) </span>
-<span id="cb10-2"><a href="curate-demog-table.html#cb10-2"></a>rmid <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">f.eid =</span> <span class="ot">Inf</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="curate-demog-table.html#cb13-1" aria-hidden="true" tabindex="-1"></a>rmid <span class="ot">&lt;-</span> bd <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.na</span>(f.<span class="dv">54</span>.<span class="fl">0.0</span>)) </span>
+<span id="cb13-2"><a href="curate-demog-table.html#cb13-2" aria-hidden="true" tabindex="-1"></a>rmid <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">f.eid =</span> <span class="cn">Inf</span>)</span></code></pre></div>
 <pre><code>##   f.eid f.54.0.0 f.54.1.0 f.54.2.0 f.54.3.0
 ## 1   Inf       NA       NA       NA       NA</code></pre>
 <p>This subject does exist in demographic table but all of the fields are missing except for the participant’s ID.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="curate-demog-table.html#cb12-1"></a>demog <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">right_join</span>(rmid) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as_vector</span>() <span class="op">%&gt;%</span><span class="st"> </span>.[<span class="op">-</span><span class="dv">1</span>] <span class="op">%&gt;%</span><span class="st"> </span>is.na <span class="op">%&gt;%</span><span class="st"> </span>all</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="curate-demog-table.html#cb15-1" aria-hidden="true" tabindex="-1"></a>demog <span class="sc">%&gt;%</span> <span class="fu">right_join</span>(rmid) <span class="sc">%&gt;%</span> <span class="fu">as_vector</span>() <span class="sc">%&gt;%</span> .[<span class="sc">-</span><span class="dv">1</span>] <span class="sc">%&gt;%</span> is.na <span class="sc">%&gt;%</span> all</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>Remove this subject from the demographic table</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="curate-demog-table.html#cb14-1"></a>demog &lt;-<span class="st"> </span>demog <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">anti_join</span>(rmid)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="curate-demog-table.html#cb17-1" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> demog <span class="sc">%&gt;%</span> <span class="fu">anti_join</span>(rmid)</span></code></pre></div>
 <p>Now, we will use the values in the field “f.54.0.0” to find out which city and in turn which country a participant went in for initial assessment. First, load the <a href="https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=10">mapping file</a> from city code to city name.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="curate-demog-table.html#cb15-1"></a>code_to_city_mapping &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(<span class="st">&quot;raw_data/f.54.0.0_coding.tsv&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="curate-demog-table.html#cb18-1" aria-hidden="true" tabindex="-1"></a>code_to_city_mapping <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;raw_data/f.54.0.0_coding.tsv&quot;</span>)</span></code></pre></div>
 <p>Second, define the mapping from city name to country name.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="curate-demog-table.html#cb16-1"></a>city_to_country_map &lt;-<span class="st"> </span></span>
-<span id="cb16-2"><a href="curate-demog-table.html#cb16-2"></a><span class="st">  </span><span class="kw">c</span>(<span class="dt">Glasgow =</span> <span class="st">&quot;scot&quot;</span>,</span>
-<span id="cb16-3"><a href="curate-demog-table.html#cb16-3"></a>  <span class="dt">Edinburgh =</span> <span class="st">&quot;scot&quot;</span>,</span>
-<span id="cb16-4"><a href="curate-demog-table.html#cb16-4"></a>  <span class="dt">Newcastle =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-5"><a href="curate-demog-table.html#cb16-5"></a>  <span class="dt">Middlesborough =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-6"><a href="curate-demog-table.html#cb16-6"></a>  <span class="dt">Leeds =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-7"><a href="curate-demog-table.html#cb16-7"></a>  <span class="dt">Sheffield =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-8"><a href="curate-demog-table.html#cb16-8"></a>  <span class="dt">Bury =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-9"><a href="curate-demog-table.html#cb16-9"></a>  <span class="dt">Liverpool =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-10"><a href="curate-demog-table.html#cb16-10"></a>  <span class="dt">Manchester =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-11"><a href="curate-demog-table.html#cb16-11"></a>  <span class="st">&quot;Stockport (pilot)&quot;</span> =<span class="st"> &quot;eng&quot;</span>,</span>
-<span id="cb16-12"><a href="curate-demog-table.html#cb16-12"></a>  <span class="dt">Stoke =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-13"><a href="curate-demog-table.html#cb16-13"></a>  <span class="dt">Nottingham =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-14"><a href="curate-demog-table.html#cb16-14"></a>  <span class="dt">Birmingham =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-15"><a href="curate-demog-table.html#cb16-15"></a>  <span class="dt">Oxford =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-16"><a href="curate-demog-table.html#cb16-16"></a>  <span class="dt">Reading =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-17"><a href="curate-demog-table.html#cb16-17"></a>  <span class="dt">Hounslow =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-18"><a href="curate-demog-table.html#cb16-18"></a>  <span class="st">&quot;Central London&quot;</span> =<span class="st"> &quot;eng&quot;</span>,</span>
-<span id="cb16-19"><a href="curate-demog-table.html#cb16-19"></a>  <span class="dt">Croydon =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-20"><a href="curate-demog-table.html#cb16-20"></a>  <span class="dt">Bristol =</span> <span class="st">&quot;eng&quot;</span>,</span>
-<span id="cb16-21"><a href="curate-demog-table.html#cb16-21"></a>  <span class="dt">Wrexham =</span> <span class="st">&quot;wal&quot;</span>,</span>
-<span id="cb16-22"><a href="curate-demog-table.html#cb16-22"></a>  <span class="dt">Swansea =</span> <span class="st">&quot;wal&quot;</span>,</span>
-<span id="cb16-23"><a href="curate-demog-table.html#cb16-23"></a>  <span class="dt">Cardiff =</span> <span class="st">&quot;wal&quot;</span>,</span>
-<span id="cb16-24"><a href="curate-demog-table.html#cb16-24"></a>  <span class="dt">Barts =</span> <span class="st">&quot;eng&quot;</span>) <span class="co"># hosptial in england</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="curate-demog-table.html#cb19-1" aria-hidden="true" tabindex="-1"></a>city_to_country_map <span class="ot">&lt;-</span> </span>
+<span id="cb19-2"><a href="curate-demog-table.html#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">Glasgow =</span> <span class="st">&quot;scot&quot;</span>,</span>
+<span id="cb19-3"><a href="curate-demog-table.html#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Edinburgh =</span> <span class="st">&quot;scot&quot;</span>,</span>
+<span id="cb19-4"><a href="curate-demog-table.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Newcastle =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-5"><a href="curate-demog-table.html#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Middlesborough =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-6"><a href="curate-demog-table.html#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Leeds =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-7"><a href="curate-demog-table.html#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sheffield =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-8"><a href="curate-demog-table.html#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Bury =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-9"><a href="curate-demog-table.html#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Liverpool =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-10"><a href="curate-demog-table.html#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Manchester =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-11"><a href="curate-demog-table.html#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Stockport (pilot)&quot;</span> <span class="ot">=</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-12"><a href="curate-demog-table.html#cb19-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Stoke =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-13"><a href="curate-demog-table.html#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Nottingham =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-14"><a href="curate-demog-table.html#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Birmingham =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-15"><a href="curate-demog-table.html#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Oxford =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-16"><a href="curate-demog-table.html#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Reading =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-17"><a href="curate-demog-table.html#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">Hounslow =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-18"><a href="curate-demog-table.html#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Central London&quot;</span> <span class="ot">=</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-19"><a href="curate-demog-table.html#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">Croydon =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-20"><a href="curate-demog-table.html#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">Bristol =</span> <span class="st">&quot;eng&quot;</span>,</span>
+<span id="cb19-21"><a href="curate-demog-table.html#cb19-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">Wrexham =</span> <span class="st">&quot;wal&quot;</span>,</span>
+<span id="cb19-22"><a href="curate-demog-table.html#cb19-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">Swansea =</span> <span class="st">&quot;wal&quot;</span>,</span>
+<span id="cb19-23"><a href="curate-demog-table.html#cb19-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">Cardiff =</span> <span class="st">&quot;wal&quot;</span>,</span>
+<span id="cb19-24"><a href="curate-demog-table.html#cb19-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Barts =</span> <span class="st">&quot;eng&quot;</span>) <span class="co"># hosptial in england</span></span></code></pre></div>
 <p>Finally, using defined mappings, we fill in missing administrative censoring dates.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="curate-demog-table.html#cb17-1"></a>demog &lt;-<span class="st"> </span>demog <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb17-2"><a href="curate-demog-table.html#cb17-2"></a><span class="st">  </span><span class="kw">left_join</span>(bd <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(f.eid,<span class="st">`</span><span class="dt">f.54.0.0</span><span class="st">`</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb17-3"><a href="curate-demog-table.html#cb17-3"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">coding =</span> <span class="st">`</span><span class="dt">f.54.0.0</span><span class="st">`</span>) <span class="op">%&gt;%</span></span>
-<span id="cb17-4"><a href="curate-demog-table.html#cb17-4"></a><span class="st">  </span><span class="kw">left_join</span>(code_to_city_mapping, <span class="dt">by =</span> <span class="st">&quot;coding&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb17-5"><a href="curate-demog-table.html#cb17-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">country =</span> city_to_country_map[meaning]) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb17-6"><a href="curate-demog-table.html#cb17-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date_admin_censored =</span> <span class="kw">if_else</span>(<span class="op">!</span><span class="kw">is.na</span>(date_admin_censored),date_admin_censored,</span>
-<span id="cb17-7"><a href="curate-demog-table.html#cb17-7"></a>                                      country_to_censor_date_mapping[country]))</span>
-<span id="cb17-8"><a href="curate-demog-table.html#cb17-8"></a><span class="kw">attr</span>(demog<span class="op">$</span>date_admin_censored,<span class="st">&quot;names&quot;</span>) &lt;-<span class="st"> </span><span class="ot">NULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="curate-demog-table.html#cb20-1" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> demog <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="curate-demog-table.html#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bd <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,<span class="st">`</span><span class="at">f.54.0.0</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="curate-demog-table.html#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">coding =</span> <span class="st">`</span><span class="at">f.54.0.0</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="curate-demog-table.html#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(code_to_city_mapping, <span class="at">by =</span> <span class="st">&quot;coding&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-5"><a href="curate-demog-table.html#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> city_to_country_map[meaning]) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-6"><a href="curate-demog-table.html#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_admin_censored =</span> <span class="fu">if_else</span>(<span class="sc">!</span><span class="fu">is.na</span>(date_admin_censored),date_admin_censored,</span>
+<span id="cb20-7"><a href="curate-demog-table.html#cb20-7" aria-hidden="true" tabindex="-1"></a>                                      country_to_censor_date_mapping[country]))</span>
+<span id="cb20-8"><a href="curate-demog-table.html#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(demog<span class="sc">$</span>date_admin_censored,<span class="st">&quot;names&quot;</span>) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div>
 <p>Load reformatted raw ICD table</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="curate-demog-table.html#cb18-1"></a>ICD &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;generated_data/ICD_UKB.RDS&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="curate-demog-table.html#cb21-1" aria-hidden="true" tabindex="-1"></a>ICD <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;generated_data/ICD_UKB.RDS&quot;</span>)</span></code></pre></div>
 <p>Define:</p>
 <ul>
 <li>date of death</li>
@@ -359,22 +372,22 @@ Demographic data contain a number of fields. We are only interested in several o
 <li>age at second-visit date</li>
 <li>date censored</li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="curate-demog-table.html#cb19-1"></a>date_death_tab &lt;-<span class="st"> </span>ICD <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(f.eid, f.<span class="dv">40000</span>.<span class="fl">0.0</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">arrange</span>(f.eid) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">data.frame</span>()</span>
-<span id="cb19-2"><a href="curate-demog-table.html#cb19-2"></a>demog &lt;-<span class="st"> </span>demog <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">left_join</span>(date_death_tab, <span class="dt">by =</span> <span class="st">&quot;f.eid&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb19-3"><a href="curate-demog-table.html#cb19-3"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">date_death =</span> <span class="st">&quot;f.40000.0.0&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb19-4"><a href="curate-demog-table.html#cb19-4"></a><span class="st">  </span><span class="kw">rename</span>(<span class="dt">date_lost_fu =</span> <span class="st">&quot;f.191.0.0&quot;</span>)</span>
-<span id="cb19-5"><a href="curate-demog-table.html#cb19-5"></a></span>
-<span id="cb19-6"><a href="curate-demog-table.html#cb19-6"></a>demog &lt;-<span class="st"> </span>demog <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb19-7"><a href="curate-demog-table.html#cb19-7"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">age_init =</span> <span class="kw">decimal_date</span>(date_init) <span class="op">-</span><span class="st"> </span><span class="kw">decimal_date</span>(DOB), </span>
-<span id="cb19-8"><a href="curate-demog-table.html#cb19-8"></a>         <span class="dt">age_repeat =</span> <span class="kw">decimal_date</span>(date_repeat) <span class="op">-</span><span class="st"> </span><span class="kw">decimal_date</span>(DOB)) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb19-9"><a href="curate-demog-table.html#cb19-9"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date_censored =</span> <span class="kw">pmin</span>(date_admin_censored,date_lost_fu,date_death,<span class="dt">na.rm =</span> T))</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="curate-demog-table.html#cb22-1" aria-hidden="true" tabindex="-1"></a>date_death_tab <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid, f.<span class="dv">40000</span>.<span class="fl">0.0</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span>
+<span id="cb22-2"><a href="curate-demog-table.html#cb22-2" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> demog <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(date_death_tab, <span class="at">by =</span> <span class="st">&quot;f.eid&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="curate-demog-table.html#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">date_death =</span> <span class="st">&quot;f.40000.0.0&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="curate-demog-table.html#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">date_lost_fu =</span> <span class="st">&quot;f.191.0.0&quot;</span>)</span>
+<span id="cb22-5"><a href="curate-demog-table.html#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="curate-demog-table.html#cb22-6" aria-hidden="true" tabindex="-1"></a>demog <span class="ot">&lt;-</span> demog <span class="sc">%&gt;%</span> </span>
+<span id="cb22-7"><a href="curate-demog-table.html#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age_init =</span> <span class="fu">decimal_date</span>(date_init) <span class="sc">-</span> <span class="fu">decimal_date</span>(DOB), </span>
+<span id="cb22-8"><a href="curate-demog-table.html#cb22-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">age_repeat =</span> <span class="fu">decimal_date</span>(date_repeat) <span class="sc">-</span> <span class="fu">decimal_date</span>(DOB)) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-9"><a href="curate-demog-table.html#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_censored =</span> <span class="fu">pmin</span>(date_admin_censored,date_lost_fu,date_death,<span class="at">na.rm =</span> T))</span></code></pre></div>
 <p>Select needed columns from demographic table</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="curate-demog-table.html#cb20-1"></a>demog_sel &lt;-<span class="st"> </span>demog <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(f.eid,DOB,SEX,</span>
-<span id="cb20-2"><a href="curate-demog-table.html#cb20-2"></a>                              age_init,age_repeat,</span>
-<span id="cb20-3"><a href="curate-demog-table.html#cb20-3"></a>                              date_init,date_repeat,</span>
-<span id="cb20-4"><a href="curate-demog-table.html#cb20-4"></a>                              date_censored)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="curate-demog-table.html#cb23-1" aria-hidden="true" tabindex="-1"></a>demog_sel <span class="ot">&lt;-</span> demog <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,DOB,SEX,</span>
+<span id="cb23-2"><a href="curate-demog-table.html#cb23-2" aria-hidden="true" tabindex="-1"></a>                              age_init,age_repeat,</span>
+<span id="cb23-3"><a href="curate-demog-table.html#cb23-3" aria-hidden="true" tabindex="-1"></a>                              date_init,date_repeat,</span>
+<span id="cb23-4"><a href="curate-demog-table.html#cb23-4" aria-hidden="true" tabindex="-1"></a>                              date_censored)</span></code></pre></div>
 <p>Save demographic table. Note that this table includes subjects with genetic and reported sex mismatch</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="curate-demog-table.html#cb21-1"></a><span class="kw">saveRDS</span>(demog_sel,<span class="st">&quot;generated_data/pre_demog_sel.RDS&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="curate-demog-table.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(demog_sel,<span class="st">&quot;generated_data/pre_demog_sel.RDS&quot;</span>)</span></code></pre></div>
 
 </div>
             </section>
@@ -437,6 +450,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

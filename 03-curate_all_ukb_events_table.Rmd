@@ -110,12 +110,31 @@ demog <- demog %>%
   mutate(SEX = as.character(f.31.0.0))
 ```
 
+```{r, echo=F, results='hide'}
+#reduce datasets for memory management
+#chunk not displayed
+algo_outcome_fields <- paste0("f.",c("42000", "42008", "42010","42012","42006", "42026"),".0.0")
+demog <- demog %>% select(f.eid, YOB, MOB, DOB, SEX, all_of(algo_outcome_fields), 
+                          starts_with(c("f.5901.", "f.20002.", "f.20004.", "f.20008.", "f.20010.")))
+ICD <- ICD %>% select(f.eid, 
+                      starts_with(c("f.40000", "f.40001", "f.40002", "f.41271", "f.41281", "f.41280", "f.41270")))
+procs <- procs %>% select(f.eid, starts_with(c("f.41272", "f.41282")))
+gc()
+```
+
+
 ## First occurrence event table and algorithmically defined outcome table
 
 Convert first occurrence data into a long format
 ```{r}
 firstoccurs_long <- firstoccurs %>% 
   pivot_longer(-f.eid, names_to = "field", values_to = "event_dt", values_drop_na = T)
+```
+
+```{r, echo=F, results='hide'}
+#Mem
+rm(firstoccurs)
+gc()
 ```
 
 Obtain algorithmically defined outcomes from demographic dataset.
@@ -172,16 +191,25 @@ custom_outcome_fields_table_long <-
   mutate(field = ifelse(field == "date_dr_self", "dr_self", field))
 ```
 
-## ICD 10
+## ICD 9 & 10
 
 Obtain relevant fields
 ```{r}
+ICD9_codes <- ICD %>% select(f.eid,starts_with('f.41271')) %>% arrange(f.eid) %>% data.frame()
+ICD9_dates <- ICD %>% select(f.eid,starts_with('f.41281.')) %>% arrange(f.eid) %>% data.frame()
+
 ICD10_codes <- ICD %>% select(f.eid,starts_with('f.41270')) %>% arrange(f.eid) %>% data.frame()
 ICD10_dates <- ICD %>% select(f.eid,starts_with('f.41280.')) %>% arrange(f.eid) %>% data.frame() 
 
 ICD10_codes_primary_death <- ICD %>% select(f.eid,starts_with('f.40001')) %>% arrange(f.eid) %>% data.frame()
 ICD10_codes_secondary_death <- ICD %>% select(f.eid,starts_with('f.40002')) %>% arrange(f.eid) %>% data.frame()
 ICD10_death_date <- ICD %>% select(f.eid, f.40000.0.0) %>% arrange(f.eid) %>% data.frame()
+```
+
+```{r, echo=F, results='hide'}
+#mem
+rm(ICD)
+gc()
 ```
 
 Merge ICD10 primary death and death date tables into a long format
@@ -199,18 +227,25 @@ ICD10_codes_secondary_death_long <-
 ```
 
 Merge ICD10 codes and their event dates tables into a long format
-```{r, warning=F}
+```{r, warning=F, message=F}
 ICD10_codes_long <- merge_long("f.41270","f.41280",ICD10_codes,ICD10_dates,"ICD10") %>% distinct()
 ```
 
+Merge ICD9 codes and their event dates tables into a long format
+```{r}
+ICD9_codes <- ICD9_codes %>% mutate_at(vars(f.41271.0.0:f.41271.0.46), as.character)
+ICD9_codes_long <- merge_long("f.41271","f.41281",ICD9_codes,ICD9_dates,"ICD9") %>% distinct()
+```
+
+
 Merge all of the ICD event tables with dates, and then remove observations with no codes (code == NA). 
 ```{r}
-ICD10_codes_full <- do.call(rbind,list(ICD10_codes_long,ICD10_codes_primary_death_long,ICD10_codes_secondary_death_long)) %>% filter(!is.na(code))
+ICD_codes_full <- do.call(rbind,list(ICD10_codes_long,ICD9_codes_long,ICD10_codes_primary_death_long,ICD10_codes_secondary_death_long)) %>% filter(!is.na(code))
 ```
 
 ## OPCS4
 
-OPCS4 event table is hospital admission data.
+OPCS4 event table is procedure codes from hospital admission data.
 ```{r}
 OPCS4 <- procs %>% 
   select(c(f.eid, starts_with('f.41272.'))) %>% 
@@ -247,6 +282,7 @@ selfrep_codes_long <- merge_long("f.20002","f.20008",selfrep_codes,selfrep_dates
   distinct() %>% filter(!is.na(code))
 ```
 
+
 ## Self-reported operations UKB
 
 ```{r}
@@ -267,6 +303,12 @@ selfrep_op_codes_long <- merge_long("f.20004","f.20010",selfrep_op_codes,selfrep
   distinct() %>% filter(!is.na(code))
 ```
 
+```{r, echo=F, results='hide'}
+#mem
+rm(procs)
+gc()
+```
+
 ## Standardize and merge event tables
 
 The following event tables are merged to produce a master event table of UKB assessment data:
@@ -283,8 +325,8 @@ The following event tables are merged to produce a master event table of UKB ass
 outcome_fields_table_long <- 
   outcome_fields_table_long %>% mutate(type = "outcome_fields") %>% rename(key=field)
 
-ICD10_codes_full <- 
-  ICD10_codes_full %>% mutate(code=as.character(code)) %>% rename(key=code)
+ICD_codes_full <- 
+  ICD_codes_full %>% mutate(code=as.character(code)) %>% rename(key=code)
 
 OPCS4_codes_long <- 
   OPCS4_codes_long %>% rename(key=code)
@@ -298,7 +340,7 @@ selfrep_op_codes_long <-
 custom_outcome_fields_table_long <-
   custom_outcome_fields_table_long %>% mutate(type = "custom_fields") %>% rename(key = field)
 
-event_tab <- bind_rows(list(outcome_fields_table_long,ICD10_codes_full,
+event_tab <- bind_rows(list(outcome_fields_table_long,ICD_codes_full,
                             OPCS4_codes_long,selfrep_codes_long,selfrep_op_codes_long,
                             custom_outcome_fields_table_long))
 ```

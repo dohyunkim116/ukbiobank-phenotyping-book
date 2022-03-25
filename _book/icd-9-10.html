@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>9 Phenotype outcomes using primary care data | UK Biobank Phenotyping</title>
-  <meta name="description" content="9 Phenotype outcomes using primary care data | UK Biobank Phenotyping" />
+  <title>3.3 ICD 9 &amp; 10 | UK Biobank Phenotyping</title>
+  <meta name="description" content="3.3 ICD 9 &amp; 10 | UK Biobank Phenotyping" />
   <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="9 Phenotype outcomes using primary care data | UK Biobank Phenotyping" />
+  <meta property="og:title" content="3.3 ICD 9 &amp; 10 | UK Biobank Phenotyping" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="9 Phenotype outcomes using primary care data | UK Biobank Phenotyping" />
+  <meta name="twitter:title" content="3.3 ICD 9 &amp; 10 | UK Biobank Phenotyping" />
   
   
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"/>
-<link rel="next" href="phenotype-outcome-events-using-primary-care-data.html"/>
+<link rel="prev" href="custom-defined-outcome-for-dr.html"/>
+<link rel="next" href="opcs4.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -268,48 +268,41 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="phenotype-outcomes-pcp" class="section level1 hasAnchor" number="9">
-<h1><span class="header-section-number">9</span> Phenotype outcomes using primary care data<a href="phenotype-outcomes-pcp.html#phenotype-outcomes-pcp" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>We acheive the following in this folder:</p>
-<ul>
-<li>Generate <strong>diabetes first occurrence</strong> and multiple event table (<code>phenotype_outcome_events_pcp.Rmd</code>)</li>
-<li>Generate <strong>advanced chronic disease/diabetic kidney disease</strong> first occurrence and multiple event tables (<code>phenotype_outcome_events_pcp.Rmd</code>)</li>
-<li>Generate <strong>diabetic eye disease</strong> first occurrence and multiple event tables (<code>phenotype_outcome_events_pcp.Rmd</code>)</li>
-<li>Generate <strong>kidney disease control exclusion</strong> event table (<code>phenotype_control_exclusion_events_pcp.Rmd</code>)</li>
-<li>Generate <strong>non-diabetic eye disease</strong> event table that will be used to exclude controls from generated time-to-event data later (<code>phenotype_control_exclusion_events_pcp.Rmd</code>)</li>
-</ul>
-<p>We utilize outcome-specific dictionaries generated in <code>make_outcome_specific_code_dictionary</code> to subset a primary care data and to generate different event tables.</p>
-<p>Input and output files:</p>
-<ul>
-<li><p>Input:</p>
-<ul>
-<li><code>entire_gp_clinical_30March2021_formatted.txt</code></li>
-<li><code>dm_dict.RDS</code></li>
-<li><code>dm_eye_disease_dict.RDS</code></li>
-<li><code>kidney_disease_case_dict.RDS</code></li>
-<li><code>nondm_eye_disease_dict.RDS</code></li>
-<li><code>kidney_disease_control_exclusion_dict.RDS</code></li>
-</ul></li>
-<li><p>Output:</p>
-<ul>
-<li><code>dm_pc.RDS</code></li>
-<li><code>dm_firstoccur_pc.RDS</code></li>
-<li><code>dr_pc.RDS</code></li>
-<li><code>dr_firstoccur_pc.RDS</code></li>
-<li><code>kidney_disease_case_pc.RDS</code></li>
-<li><code>kidney_disease_case_firstoccur_pc.RDS</code></li>
-<li><code>kidney_disease_control_exclusion_pc.RDS</code></li>
-<li><code>nondm_eye_disease_pc.RDS</code></li>
-</ul></li>
-</ul>
+<div id="icd-9-10" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> ICD 9 &amp; 10<a href="icd-9-10.html#icd-9-10" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Obtain relevant fields</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="icd-9-10.html#cb32-1" aria-hidden="true" tabindex="-1"></a>ICD9_codes <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,<span class="fu">starts_with</span>(<span class="st">&#39;f.41271&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span>
+<span id="cb32-2"><a href="icd-9-10.html#cb32-2" aria-hidden="true" tabindex="-1"></a>ICD9_dates <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,<span class="fu">starts_with</span>(<span class="st">&#39;f.41281.&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span>
+<span id="cb32-3"><a href="icd-9-10.html#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="icd-9-10.html#cb32-4" aria-hidden="true" tabindex="-1"></a>ICD10_codes <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,<span class="fu">starts_with</span>(<span class="st">&#39;f.41270&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span>
+<span id="cb32-5"><a href="icd-9-10.html#cb32-5" aria-hidden="true" tabindex="-1"></a>ICD10_dates <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,<span class="fu">starts_with</span>(<span class="st">&#39;f.41280.&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>() </span>
+<span id="cb32-6"><a href="icd-9-10.html#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="icd-9-10.html#cb32-7" aria-hidden="true" tabindex="-1"></a>ICD10_codes_primary_death <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,<span class="fu">starts_with</span>(<span class="st">&#39;f.40001&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span>
+<span id="cb32-8"><a href="icd-9-10.html#cb32-8" aria-hidden="true" tabindex="-1"></a>ICD10_codes_secondary_death <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid,<span class="fu">starts_with</span>(<span class="st">&#39;f.40002&#39;</span>)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span>
+<span id="cb32-9"><a href="icd-9-10.html#cb32-9" aria-hidden="true" tabindex="-1"></a>ICD10_death_date <span class="ot">&lt;-</span> ICD <span class="sc">%&gt;%</span> <span class="fu">select</span>(f.eid, f.<span class="dv">40000</span>.<span class="fl">0.0</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(f.eid) <span class="sc">%&gt;%</span> <span class="fu">data.frame</span>()</span></code></pre></div>
+<p>Merge ICD10 primary death and death date tables into a long format</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="icd-9-10.html#cb33-1" aria-hidden="true" tabindex="-1"></a>ICD10_codes_primary_death_long <span class="ot">&lt;-</span></span>
+<span id="cb33-2"><a href="icd-9-10.html#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ICD10_codes_primary_death <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="sc">-</span>f.eid),ICD10_death_date,<span class="at">by=</span><span class="st">&quot;f.eid&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-3"><a href="icd-9-10.html#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>name) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">code=</span>value,<span class="at">event_dt=</span><span class="st">`</span><span class="at">f.40000.0.0</span><span class="st">`</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">type=</span><span class="st">&quot;ICD10_death_primary&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">distinct</span>()</span></code></pre></div>
+<p>Merge ICD10 secondary death and death date tables into a long format</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="icd-9-10.html#cb34-1" aria-hidden="true" tabindex="-1"></a>ICD10_codes_secondary_death_long <span class="ot">&lt;-</span></span>
+<span id="cb34-2"><a href="icd-9-10.html#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ICD10_codes_secondary_death <span class="sc">%&gt;%</span> <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="sc">-</span>f.eid),ICD10_death_date,<span class="at">by=</span><span class="st">&quot;f.eid&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-3"><a href="icd-9-10.html#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>name) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">code=</span>value,<span class="at">event_dt=</span><span class="st">`</span><span class="at">f.40000.0.0</span><span class="st">`</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">type=</span><span class="st">&quot;ICD10_death_secondary&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">distinct</span>()</span></code></pre></div>
+<p>Merge ICD10 codes and their event dates tables into a long format</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="icd-9-10.html#cb35-1" aria-hidden="true" tabindex="-1"></a>ICD10_codes_long <span class="ot">&lt;-</span> <span class="fu">merge_long</span>(<span class="st">&quot;f.41270&quot;</span>,<span class="st">&quot;f.41280&quot;</span>,ICD10_codes,ICD10_dates,<span class="st">&quot;ICD10&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">distinct</span>()</span></code></pre></div>
+<p>Merge ICD9 codes and their event dates tables into a long format</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="icd-9-10.html#cb36-1" aria-hidden="true" tabindex="-1"></a>ICD9_codes <span class="ot">&lt;-</span> ICD9_codes <span class="sc">%&gt;%</span> <span class="fu">mutate_at</span>(<span class="fu">vars</span>(f.<span class="dv">41271</span>.<span class="fl">0.0</span><span class="sc">:</span>f.<span class="dv">41271</span>.<span class="fl">0.46</span>), as.character)</span>
+<span id="cb36-2"><a href="icd-9-10.html#cb36-2" aria-hidden="true" tabindex="-1"></a>ICD9_codes_long <span class="ot">&lt;-</span> <span class="fu">merge_long</span>(<span class="st">&quot;f.41271&quot;</span>,<span class="st">&quot;f.41281&quot;</span>,ICD9_codes,ICD9_dates,<span class="st">&quot;ICD9&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">distinct</span>()</span></code></pre></div>
+<p>Merge all of the ICD event tables with dates, and then remove observations with no codes (code == NA).</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="icd-9-10.html#cb37-1" aria-hidden="true" tabindex="-1"></a>ICD_codes_full <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind,<span class="fu">list</span>(ICD10_codes_long,ICD9_codes_long,ICD10_codes_primary_death_long,ICD10_codes_secondary_death_long)) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(code))</span></code></pre></div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="phenotype-outcome-events-using-primary-care-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="custom-defined-outcome-for-dr.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="opcs4.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

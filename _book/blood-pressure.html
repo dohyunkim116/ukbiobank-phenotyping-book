@@ -6,11 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>11.13 Blood Pressure | UK Biobank Phenotyping</title>
   <meta name="description" content="11.13 Blood Pressure | UK Biobank Phenotyping" />
-  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
 
   <meta property="og:title" content="11.13 Blood Pressure | UK Biobank Phenotyping" />
   <meta property="og:type" content="book" />
-  
   
   
   
@@ -24,7 +23,7 @@
 <meta name="author" content="Do Hyun Kim" />
 
 
-<meta name="date" content="2022-02-24" />
+<meta name="date" content="2022-03-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -50,24 +49,24 @@
 
 
 
-<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
-<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
-<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -87,7 +86,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {  background-color: #f8f8f8; }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ef2929; } /* Alert */
 code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
@@ -132,111 +131,126 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Generating time-to-event data using UK biobank data</a></li>
-<li class="chapter" data-level="1" data-path="reformat-raw-data.html"><a href="reformat-raw-data.html"><i class="fa fa-check"></i><b>1</b> Clean raw UKB assesment center data</a></li>
-<li class="chapter" data-level="2" data-path="curate-demog-table.html"><a href="curate-demog-table.html"><i class="fa fa-check"></i><b>2</b> Curate demographic table</a></li>
-<li class="chapter" data-level="3" data-path="curate-all-ukb_events-table.html"><a href="curate-all-ukb_events-table.html"><i class="fa fa-check"></i><b>3</b> Curate all UKB events table</a><ul>
-<li class="chapter" data-level="3.1" data-path="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><a href="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><i class="fa fa-check"></i><b>3.1</b> First occurrence event table and algorithmically defined outcome table</a></li>
-<li class="chapter" data-level="3.2" data-path="custom-defined-outcome-for-dr.html"><a href="custom-defined-outcome-for-dr.html"><i class="fa fa-check"></i><b>3.2</b> Custom defined outcome for DR</a></li>
-<li class="chapter" data-level="3.3" data-path="icd-10.html"><a href="icd-10.html"><i class="fa fa-check"></i><b>3.3</b> ICD 10</a></li>
-<li class="chapter" data-level="3.4" data-path="opcs4.html"><a href="opcs4.html"><i class="fa fa-check"></i><b>3.4</b> OPCS4</a></li>
-<li class="chapter" data-level="3.5" data-path="medical-conditions-self-report-ukb.html"><a href="medical-conditions-self-report-ukb.html"><i class="fa fa-check"></i><b>3.5</b> Medical conditions self-report UKB</a></li>
-<li class="chapter" data-level="3.6" data-path="self-reported-operations-ukb.html"><a href="self-reported-operations-ukb.html"><i class="fa fa-check"></i><b>3.6</b> Self-reported operations UKB</a></li>
-<li class="chapter" data-level="3.7" data-path="standardize-and-merge-event-tables.html"><a href="standardize-and-merge-event-tables.html"><i class="fa fa-check"></i><b>3.7</b> Standardize and merge event tables</a></li>
-<li class="chapter" data-level="3.8" data-path="convert-ukb-special-dates-into-normal-dates.html"><a href="convert-ukb-special-dates-into-normal-dates.html"><i class="fa fa-check"></i><b>3.8</b> Convert UKB special dates into “normal” dates</a></li>
+<li><a href="index.html#generating-time-to-event-data-using-uk-biobank-data">Generating time-to-event data using UK biobank data<span></span></a></li>
+<li class="chapter" data-level="1" data-path="reformat-raw-data.html"><a href="reformat-raw-data.html"><i class="fa fa-check"></i><b>1</b> Clean raw UKB assesment center data<span></span></a></li>
+<li class="chapter" data-level="2" data-path="curate-demog-table.html"><a href="curate-demog-table.html"><i class="fa fa-check"></i><b>2</b> Curate demographic table<span></span></a></li>
+<li class="chapter" data-level="3" data-path="curate-all-ukb_events-table.html"><a href="curate-all-ukb_events-table.html"><i class="fa fa-check"></i><b>3</b> Curate all UKB events table<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><a href="first-occurrence-event-table-and-algorithmically-defined-outcome-table.html"><i class="fa fa-check"></i><b>3.1</b> First occurrence event table and algorithmically defined outcome table<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path="custom-defined-outcome-for-dr.html"><a href="custom-defined-outcome-for-dr.html"><i class="fa fa-check"></i><b>3.2</b> Custom defined outcome for DR<span></span></a></li>
+<li class="chapter" data-level="3.3" data-path="icd-9-10.html"><a href="icd-9-10.html"><i class="fa fa-check"></i><b>3.3</b> ICD 9 &amp; 10<span></span></a></li>
+<li class="chapter" data-level="3.4" data-path="opcs4.html"><a href="opcs4.html"><i class="fa fa-check"></i><b>3.4</b> OPCS4<span></span></a></li>
+<li class="chapter" data-level="3.5" data-path="medical-conditions-self-report-ukb.html"><a href="medical-conditions-self-report-ukb.html"><i class="fa fa-check"></i><b>3.5</b> Medical conditions self-report UKB<span></span></a></li>
+<li class="chapter" data-level="3.6" data-path="self-reported-operations-ukb.html"><a href="self-reported-operations-ukb.html"><i class="fa fa-check"></i><b>3.6</b> Self-reported operations UKB<span></span></a></li>
+<li class="chapter" data-level="3.7" data-path="standardize-and-merge-event-tables.html"><a href="standardize-and-merge-event-tables.html"><i class="fa fa-check"></i><b>3.7</b> Standardize and merge event tables<span></span></a></li>
+<li class="chapter" data-level="3.8" data-path="convert-ukb-special-dates-into-normal-dates.html"><a href="convert-ukb-special-dates-into-normal-dates.html"><i class="fa fa-check"></i><b>3.8</b> Convert UKB special dates into “normal” dates<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="exclude-sex-mismatch-subjects.html"><a href="exclude-sex-mismatch-subjects.html"><i class="fa fa-check"></i><b>4</b> Filter out subjects with sex mistmatch</a></li>
-<li class="chapter" data-level="5" data-path="prep_pcp_data.html"><a href="prep_pcp_data.html"><i class="fa fa-check"></i><b>5</b> Prepare UKB Primary Care Data</a></li>
-<li class="chapter" data-level="6" data-path="make-code-dictionary.html"><a href="make-code-dictionary.html"><i class="fa fa-check"></i><b>6</b> Create a master code dictionary for primary care data</a><ul>
-<li class="chapter" data-level="6.1" data-path="read-v2.html"><a href="read-v2.html"><i class="fa fa-check"></i><b>6.1</b> Read v2</a></li>
-<li class="chapter" data-level="6.2" data-path="read-v3.html"><a href="read-v3.html"><i class="fa fa-check"></i><b>6.2</b> Read v3</a></li>
-<li class="chapter" data-level="6.3" data-path="tpp-local-codes.html"><a href="tpp-local-codes.html"><i class="fa fa-check"></i><b>6.3</b> TPP local codes</a></li>
-<li class="chapter" data-level="6.4" data-path="merge-read-v2-read-v3-and-tpp-dictionaries.html"><a href="merge-read-v2-read-v3-and-tpp-dictionaries.html"><i class="fa fa-check"></i><b>6.4</b> Merge Read v2, Read v3 and TPP dictionaries</a></li>
+<li class="chapter" data-level="4" data-path="exclude-sex-mismatch-subjects.html"><a href="exclude-sex-mismatch-subjects.html"><i class="fa fa-check"></i><b>4</b> Filter out subjects with sex mismatch<span></span></a></li>
+<li class="chapter" data-level="5" data-path="prep_pcp_data.html"><a href="prep_pcp_data.html"><i class="fa fa-check"></i><b>5</b> Prepare UKB Primary Care Data<span></span></a></li>
+<li class="chapter" data-level="6" data-path="make-code-dictionary.html"><a href="make-code-dictionary.html"><i class="fa fa-check"></i><b>6</b> Create a master code dictionary for primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="read-v2.html"><a href="read-v2.html"><i class="fa fa-check"></i><b>6.1</b> Read v2<span></span></a></li>
+<li class="chapter" data-level="6.2" data-path="read-v3.html"><a href="read-v3.html"><i class="fa fa-check"></i><b>6.2</b> Read v3<span></span></a></li>
+<li class="chapter" data-level="6.3" data-path="tpp-local-codes.html"><a href="tpp-local-codes.html"><i class="fa fa-check"></i><b>6.3</b> TPP local codes<span></span></a></li>
+<li class="chapter" data-level="6.4" data-path="merge-read-v2-read-v3-and-tpp-dictionaries.html"><a href="merge-read-v2-read-v3-and-tpp-dictionaries.html"><i class="fa fa-check"></i><b>6.4</b> Merge Read v2, Read v3 and TPP dictionaries<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="7" data-path="make-outcome-specific-code-dictionary.html"><a href="make-outcome-specific-code-dictionary.html"><i class="fa fa-check"></i><b>7</b> Make outcome-specific code dictionary</a><ul>
-<li class="chapter" data-level="7.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html"><i class="fa fa-check"></i><b>7.1</b> Prepare diabetes code dictionary</a><ul>
-<li class="chapter" data-level="7.1.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-keywords"><i class="fa fa-check"></i><b>7.1.1</b> Define keywords</a></li>
-<li class="chapter" data-level="7.1.2" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-codes"><i class="fa fa-check"></i><b>7.1.2</b> Define codes</a></li>
-<li class="chapter" data-level="7.1.3" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#create-diabetes-code-dictionary"><i class="fa fa-check"></i><b>7.1.3</b> Create diabetes code dictionary</a></li>
+<li class="chapter" data-level="7" data-path="make-outcome-specific-code-dictionary.html"><a href="make-outcome-specific-code-dictionary.html"><i class="fa fa-check"></i><b>7</b> Make outcome-specific code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html"><i class="fa fa-check"></i><b>7.1</b> Prepare diabetes code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-keywords"><i class="fa fa-check"></i><b>7.1.1</b> Define keywords<span></span></a></li>
+<li class="chapter" data-level="7.1.2" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#define-codes"><i class="fa fa-check"></i><b>7.1.2</b> Define codes<span></span></a></li>
+<li class="chapter" data-level="7.1.3" data-path="prepare-diabetes-code-dictionary.html"><a href="prepare-diabetes-code-dictionary.html#create-diabetes-code-dictionary"><i class="fa fa-check"></i><b>7.1.3</b> Create diabetes code dictionary<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="7.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.2</b> Prepare diabetic eye disease code dictionary</a><ul>
-<li class="chapter" data-level="7.2.1" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-keywords-1"><i class="fa fa-check"></i><b>7.2.1</b> Define keywords</a></li>
-<li class="chapter" data-level="7.2.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-codes-1"><i class="fa fa-check"></i><b>7.2.2</b> Define codes</a></li>
-<li class="chapter" data-level="7.2.3" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#create-diabetic-eye-disease-code-dictionary"><i class="fa fa-check"></i><b>7.2.3</b> Create diabetic eye disease code dictionary</a></li>
+<li class="chapter" data-level="7.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.2</b> Prepare diabetic eye disease code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.2.1" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-keywords-1"><i class="fa fa-check"></i><b>7.2.1</b> Define keywords<span></span></a></li>
+<li class="chapter" data-level="7.2.2" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#define-codes-1"><i class="fa fa-check"></i><b>7.2.2</b> Define codes<span></span></a></li>
+<li class="chapter" data-level="7.2.3" data-path="prepare-diabetic-eye-disease-code-dictionary.html"><a href="prepare-diabetic-eye-disease-code-dictionary.html#create-diabetic-eye-disease-code-dictionary"><i class="fa fa-check"></i><b>7.2.3</b> Create diabetic eye disease code dictionary<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="7.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.3</b> Prepare diabetic kidney disease code dictionary</a><ul>
-<li class="chapter" data-level="7.3.1" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-keywords-2"><i class="fa fa-check"></i><b>7.3.1</b> Define Keywords</a></li>
-<li class="chapter" data-level="7.3.2" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-codes-2"><i class="fa fa-check"></i><b>7.3.2</b> Define codes</a></li>
-<li class="chapter" data-level="7.3.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#create-diabetic-kidney-disease-code-dictionary"><i class="fa fa-check"></i><b>7.3.3</b> Create diabetic kidney disease code dictionary</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="8" data-path="phenotype-outcomes-ukb.html"><a href="phenotype-outcomes-ukb.html"><i class="fa fa-check"></i><b>8</b> Phenotype outcome events using UKB assessment center data</a><ul>
-<li class="chapter" data-level="8.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.1</b> Phenotype outcome events using UKB assessment center data</a><ul>
-<li class="chapter" data-level="8.1.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dm"><i class="fa fa-check"></i><b>8.1.1</b> DM</a></li>
-<li class="chapter" data-level="8.1.2" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#mi"><i class="fa fa-check"></i><b>8.1.2</b> MI</a></li>
-<li class="chapter" data-level="8.1.3" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#unstable-angina"><i class="fa fa-check"></i><b>8.1.3</b> Unstable Angina</a></li>
-<li class="chapter" data-level="8.1.4" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ischemic-stroke"><i class="fa fa-check"></i><b>8.1.4</b> Ischemic Stroke</a></li>
-<li class="chapter" data-level="8.1.5" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#hemorrhagic-stroke"><i class="fa fa-check"></i><b>8.1.5</b> Hemorrhagic Stroke</a></li>
-<li class="chapter" data-level="8.1.6" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#stroke"><i class="fa fa-check"></i><b>8.1.6</b> Stroke</a></li>
-<li class="chapter" data-level="8.1.7" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#pci"><i class="fa fa-check"></i><b>8.1.7</b> PCI</a></li>
-<li class="chapter" data-level="8.1.8" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#cvd-death"><i class="fa fa-check"></i><b>8.1.8</b> CVD death</a></li>
-<li class="chapter" data-level="8.1.9" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#composite-cvd"><i class="fa fa-check"></i><b>8.1.9</b> Composite CVD</a></li>
-<li class="chapter" data-level="8.1.10" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dr"><i class="fa fa-check"></i><b>8.1.10</b> DR</a></li>
-<li class="chapter" data-level="8.1.11" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ckd"><i class="fa fa-check"></i><b>8.1.11</b> CKD</a></li>
-</ul></li>
-<li class="chapter" data-level="8.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.2</b> Phenotype control exclusion events using UKB assessment center data</a><ul>
-<li class="chapter" data-level="8.2.1" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cardiovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.1</b> Cardiovascular control exclusion events</a></li>
-<li class="chapter" data-level="8.2.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cerebrovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.2</b> Cerebrovascular control exclusion events</a></li>
-<li class="chapter" data-level="8.2.3" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#non-coronary-revascularization-procedure-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.3</b> Non-coronary revascularization procedure control exclusion events</a></li>
-<li class="chapter" data-level="8.2.4" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#renal-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.4</b> Renal disease control exclusion events</a></li>
-<li class="chapter" data-level="8.2.5" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#eye-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.5</b> Eye disease control exclusion events</a></li>
+<li class="chapter" data-level="7.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html"><i class="fa fa-check"></i><b>7.3</b> Prepare diabetic kidney disease code dictionary<span></span></a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-keywords-2"><i class="fa fa-check"></i><b>7.3.1</b> Define Keywords<span></span></a></li>
+<li class="chapter" data-level="7.3.2" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#define-codes-2"><i class="fa fa-check"></i><b>7.3.2</b> Define codes<span></span></a></li>
+<li class="chapter" data-level="7.3.3" data-path="prepare-diabetic-kidney-disease-code-dictionary.html"><a href="prepare-diabetic-kidney-disease-code-dictionary.html#create-diabetic-kidney-disease-code-dictionary"><i class="fa fa-check"></i><b>7.3.3</b> Create diabetic kidney disease code dictionary<span></span></a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="phenotype-outcomes-pcp.html"><a href="phenotype-outcomes-pcp.html"><i class="fa fa-check"></i><b>9</b> Phenotype outcomes using primary care data</a><ul>
-<li class="chapter" data-level="9.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.1</b> Phenotype outcome events using primary care data</a><ul>
-<li class="chapter" data-level="9.1.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dm-1"><i class="fa fa-check"></i><b>9.1.1</b> DM</a></li>
-<li class="chapter" data-level="9.1.2" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dr-1"><i class="fa fa-check"></i><b>9.1.2</b> DR</a></li>
-<li class="chapter" data-level="9.1.3" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#ckd-1"><i class="fa fa-check"></i><b>9.1.3</b> CKD</a></li>
+<li class="chapter" data-level="8" data-path="phenotype-outcomes-ukb.html"><a href="phenotype-outcomes-ukb.html"><i class="fa fa-check"></i><b>8</b> Phenotype outcome events using UKB assessment center data<span></span></a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.1</b> Phenotype outcome events using UKB assessment center data<span></span></a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dm"><i class="fa fa-check"></i><b>8.1.1</b> DM<span></span></a></li>
+<li class="chapter" data-level="8.1.2" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#mi"><i class="fa fa-check"></i><b>8.1.2</b> MI<span></span></a></li>
+<li class="chapter" data-level="8.1.3" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#unstable-angina"><i class="fa fa-check"></i><b>8.1.3</b> Unstable Angina<span></span></a></li>
+<li class="chapter" data-level="8.1.4" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ischemic-stroke"><i class="fa fa-check"></i><b>8.1.4</b> Ischemic Stroke<span></span></a></li>
+<li class="chapter" data-level="8.1.5" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#hemorrhagic-stroke"><i class="fa fa-check"></i><b>8.1.5</b> Hemorrhagic Stroke<span></span></a></li>
+<li class="chapter" data-level="8.1.6" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#stroke"><i class="fa fa-check"></i><b>8.1.6</b> Stroke<span></span></a></li>
+<li class="chapter" data-level="8.1.7" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#pci"><i class="fa fa-check"></i><b>8.1.7</b> PCI<span></span></a></li>
+<li class="chapter" data-level="8.1.8" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#cvd-death"><i class="fa fa-check"></i><b>8.1.8</b> CVD death<span></span></a></li>
+<li class="chapter" data-level="8.1.9" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#composite-cvd"><i class="fa fa-check"></i><b>8.1.9</b> Composite CVD<span></span></a></li>
+<li class="chapter" data-level="8.1.10" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#dr"><i class="fa fa-check"></i><b>8.1.10</b> DR<span></span></a></li>
+<li class="chapter" data-level="8.1.11" data-path="phenotype-outcome-events-using-ukb-assessment-center-data.html"><a href="phenotype-outcome-events-using-ukb-assessment-center-data.html#ckd"><i class="fa fa-check"></i><b>8.1.11</b> CKD<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.2</b> Phenotype control exclusion events using primary care data</a><ul>
-<li class="chapter" data-level="9.2.1" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#non-diabetic-eye-disease-events"><i class="fa fa-check"></i><b>9.2.1</b> Non-diabetic eye disease events</a></li>
-<li class="chapter" data-level="9.2.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#kidney-disease-control-exclusion-events"><i class="fa fa-check"></i><b>9.2.2</b> Kidney disease control exclusion events</a></li>
+<li class="chapter" data-level="8.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><i class="fa fa-check"></i><b>8.2</b> Phenotype control exclusion events using UKB assessment center data<span></span></a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cardiovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.1</b> Cardiovascular control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.2" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#cerebrovascular-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.2</b> Cerebrovascular control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.3" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#non-coronary-revascularization-procedure-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.3</b> Non-coronary revascularization procedure control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.4" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#renal-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.4</b> Renal disease control exclusion events<span></span></a></li>
+<li class="chapter" data-level="8.2.5" data-path="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html"><a href="phenotype-control-exclusion-events-using-ukb-assessment-center-data.html#eye-disease-control-exclusion-events"><i class="fa fa-check"></i><b>8.2.5</b> Eye disease control exclusion events<span></span></a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="traj-ukb.html"><a href="traj-ukb.html"><i class="fa fa-check"></i><b>10</b> Create biomarker trajectory data from UK biobank assessment center data</a></li>
-<li class="chapter" data-level="11" data-path="traj-pcp.html"><a href="traj-pcp.html"><i class="fa fa-check"></i><b>11</b> Curate biomarker trajectory data from primary care data</a><ul>
-<li class="chapter" data-level="11.1" data-path="total-cholesterol.html"><a href="total-cholesterol.html"><i class="fa fa-check"></i><b>11.1</b> Total cholesterol</a></li>
-<li class="chapter" data-level="11.2" data-path="hdl.html"><a href="hdl.html"><i class="fa fa-check"></i><b>11.2</b> HDL</a></li>
-<li class="chapter" data-level="11.3" data-path="ldl.html"><a href="ldl.html"><i class="fa fa-check"></i><b>11.3</b> LDL</a></li>
-<li class="chapter" data-level="11.4" data-path="triglycerides.html"><a href="triglycerides.html"><i class="fa fa-check"></i><b>11.4</b> Triglycerides</a></li>
-<li class="chapter" data-level="11.5" data-path="fasting-glucose.html"><a href="fasting-glucose.html"><i class="fa fa-check"></i><b>11.5</b> Fasting Glucose</a></li>
-<li class="chapter" data-level="11.6" data-path="random-glucose.html"><a href="random-glucose.html"><i class="fa fa-check"></i><b>11.6</b> Random glucose</a></li>
-<li class="chapter" data-level="11.7" data-path="urine-albumin.html"><a href="urine-albumin.html"><i class="fa fa-check"></i><b>11.7</b> Urine Albumin</a></li>
-<li class="chapter" data-level="11.8" data-path="urine-creatinine.html"><a href="urine-creatinine.html"><i class="fa fa-check"></i><b>11.8</b> Urine creatinine</a></li>
-<li class="chapter" data-level="11.9" data-path="urine-acr-albumincreatinine-ratio.html"><a href="urine-acr-albumincreatinine-ratio.html"><i class="fa fa-check"></i><b>11.9</b> Urine ACR (Albumin:Creatinine Ratio)</a></li>
-<li class="chapter" data-level="11.10" data-path="bloodserum-creatinine.html"><a href="bloodserum-creatinine.html"><i class="fa fa-check"></i><b>11.10</b> Blood/Serum creatinine</a></li>
-<li class="chapter" data-level="11.11" data-path="hba1c.html"><a href="hba1c.html"><i class="fa fa-check"></i><b>11.11</b> HbA1c</a></li>
-<li class="chapter" data-level="11.12" data-path="bmi.html"><a href="bmi.html"><i class="fa fa-check"></i><b>11.12</b> BMI</a></li>
-<li class="chapter" data-level="11.13" data-path="blood-pressure.html"><a href="blood-pressure.html"><i class="fa fa-check"></i><b>11.13</b> Blood Pressure</a></li>
-<li class="chapter" data-level="11.14" data-path="reformat-and-trim-trajectory-table-for-each-biomarker.html"><a href="reformat-and-trim-trajectory-table-for-each-biomarker.html"><i class="fa fa-check"></i><b>11.14</b> Reformat and trim trajectory table for each biomarker</a></li>
+<li class="chapter" data-level="9" data-path="phenotype-outcomes-pcp.html"><a href="phenotype-outcomes-pcp.html"><i class="fa fa-check"></i><b>9</b> Phenotype outcomes using primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.1</b> Phenotype outcome events using primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="9.1.1" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dm-1"><i class="fa fa-check"></i><b>9.1.1</b> DM<span></span></a></li>
+<li class="chapter" data-level="9.1.2" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#dr-1"><i class="fa fa-check"></i><b>9.1.2</b> DR<span></span></a></li>
+<li class="chapter" data-level="9.1.3" data-path="phenotype-outcome-events-using-primary-care-data.html"><a href="phenotype-outcome-events-using-primary-care-data.html#ckd-1"><i class="fa fa-check"></i><b>9.1.3</b> CKD<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="12" data-path="traj-combine.html"><a href="traj-combine.html"><i class="fa fa-check"></i><b>12</b> Combine biomarker trajectory extracted from from UKB and PCP data</a></li>
-<li class="chapter" data-level="13" data-path="phenotype-outcome-combine.html"><a href="phenotype-outcome-combine.html"><i class="fa fa-check"></i><b>13</b> Phenotype outcomes using combination of tables</a><ul>
-<li class="chapter" data-level="13.1" data-path="dm-2.html"><a href="dm-2.html"><i class="fa fa-check"></i><b>13.1</b> DM</a></li>
-<li class="chapter" data-level="13.2" data-path="dr-2.html"><a href="dr-2.html"><i class="fa fa-check"></i><b>13.2</b> DR</a></li>
-<li class="chapter" data-level="13.3" data-path="dkd.html"><a href="dkd.html"><i class="fa fa-check"></i><b>13.3</b> DKD</a></li>
+<li class="chapter" data-level="9.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html"><i class="fa fa-check"></i><b>9.2</b> Phenotype control exclusion events using primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#non-diabetic-eye-disease-events"><i class="fa fa-check"></i><b>9.2.1</b> Non-diabetic eye disease events<span></span></a></li>
+<li class="chapter" data-level="9.2.2" data-path="phenotype-control-exclusion-events-using-primary-care-data.html"><a href="phenotype-control-exclusion-events-using-primary-care-data.html#kidney-disease-control-exclusion-events"><i class="fa fa-check"></i><b>9.2.2</b> Kidney disease control exclusion events<span></span></a></li>
 </ul></li>
-<li class="chapter" data-level="14" data-path="tte-macro.html"><a href="tte-macro.html"><i class="fa fa-check"></i><b>14</b> Generate time-to-event data for macrovascular diabetes complications</a><ul>
-<li class="chapter" data-level="14.1" data-path="mi-1.html"><a href="mi-1.html"><i class="fa fa-check"></i><b>14.1</b> MI</a></li>
-<li class="chapter" data-level="14.2" data-path="unstable-angina-1.html"><a href="unstable-angina-1.html"><i class="fa fa-check"></i><b>14.2</b> Unstable angina</a></li>
-<li class="chapter" data-level="14.3" data-path="ischemic-stroke-1.html"><a href="ischemic-stroke-1.html"><i class="fa fa-check"></i><b>14.3</b> Ischemic stroke</a></li>
-<li class="chapter" data-level="14.4" data-path="hemorrhagic-stroke-1.html"><a href="hemorrhagic-stroke-1.html"><i class="fa fa-check"></i><b>14.4</b> Hemorrhagic Stroke</a></li>
-<li class="chapter" data-level="14.5" data-path="stroke-1.html"><a href="stroke-1.html"><i class="fa fa-check"></i><b>14.5</b> Stroke</a></li>
-<li class="chapter" data-level="14.6" data-path="pci-1.html"><a href="pci-1.html"><i class="fa fa-check"></i><b>14.6</b> PCI</a></li>
-<li class="chapter" data-level="14.7" data-path="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><a href="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><i class="fa fa-check"></i><b>14.7</b> Composite CVD (MI, Unstable Angina, Ischemic Stroke, PCI or CVD death)</a></li>
 </ul></li>
-<li class="chapter" data-level="15" data-path="tte-dr.html"><a href="tte-dr.html"><i class="fa fa-check"></i><b>15</b> Generate time-to-event data for diabetic eye disease</a></li>
-<li class="chapter" data-level="16" data-path="tte-dkd.html"><a href="tte-dkd.html"><i class="fa fa-check"></i><b>16</b> Generate time-to-event data for diabetes related kidney disease</a></li>
+<li class="chapter" data-level="10" data-path="traj-ukb.html"><a href="traj-ukb.html"><i class="fa fa-check"></i><b>10</b> Create biomarker trajectory data from UK biobank assessment center data<span></span></a></li>
+<li class="chapter" data-level="11" data-path="traj-pcp.html"><a href="traj-pcp.html"><i class="fa fa-check"></i><b>11</b> Curate biomarker trajectory data from primary care data<span></span></a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="total-cholesterol.html"><a href="total-cholesterol.html"><i class="fa fa-check"></i><b>11.1</b> Total cholesterol<span></span></a></li>
+<li class="chapter" data-level="11.2" data-path="hdl.html"><a href="hdl.html"><i class="fa fa-check"></i><b>11.2</b> HDL<span></span></a></li>
+<li class="chapter" data-level="11.3" data-path="ldl.html"><a href="ldl.html"><i class="fa fa-check"></i><b>11.3</b> LDL<span></span></a></li>
+<li class="chapter" data-level="11.4" data-path="triglycerides.html"><a href="triglycerides.html"><i class="fa fa-check"></i><b>11.4</b> Triglycerides<span></span></a></li>
+<li class="chapter" data-level="11.5" data-path="fasting-glucose.html"><a href="fasting-glucose.html"><i class="fa fa-check"></i><b>11.5</b> Fasting Glucose<span></span></a></li>
+<li class="chapter" data-level="11.6" data-path="random-glucose.html"><a href="random-glucose.html"><i class="fa fa-check"></i><b>11.6</b> Random glucose<span></span></a></li>
+<li class="chapter" data-level="11.7" data-path="urine-albumin.html"><a href="urine-albumin.html"><i class="fa fa-check"></i><b>11.7</b> Urine Albumin<span></span></a></li>
+<li class="chapter" data-level="11.8" data-path="urine-creatinine.html"><a href="urine-creatinine.html"><i class="fa fa-check"></i><b>11.8</b> Urine creatinine<span></span></a></li>
+<li class="chapter" data-level="11.9" data-path="urine-acr-albumincreatinine-ratio.html"><a href="urine-acr-albumincreatinine-ratio.html"><i class="fa fa-check"></i><b>11.9</b> Urine ACR (Albumin:Creatinine Ratio)<span></span></a></li>
+<li class="chapter" data-level="11.10" data-path="bloodserum-creatinine.html"><a href="bloodserum-creatinine.html"><i class="fa fa-check"></i><b>11.10</b> Blood/Serum creatinine<span></span></a></li>
+<li class="chapter" data-level="11.11" data-path="hba1c.html"><a href="hba1c.html"><i class="fa fa-check"></i><b>11.11</b> HbA1c<span></span></a></li>
+<li class="chapter" data-level="11.12" data-path="bmi.html"><a href="bmi.html"><i class="fa fa-check"></i><b>11.12</b> BMI<span></span></a></li>
+<li class="chapter" data-level="11.13" data-path="blood-pressure.html"><a href="blood-pressure.html"><i class="fa fa-check"></i><b>11.13</b> Blood Pressure<span></span></a></li>
+<li class="chapter" data-level="11.14" data-path="reformat-and-trim-trajectory-table-for-each-biomarker.html"><a href="reformat-and-trim-trajectory-table-for-each-biomarker.html"><i class="fa fa-check"></i><b>11.14</b> Reformat and trim trajectory table for each biomarker<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="traj-combine.html"><a href="traj-combine.html"><i class="fa fa-check"></i><b>12</b> Combine biomarker trajectory extracted from from UKB and PCP data<span></span></a></li>
+<li class="chapter" data-level="13" data-path="phenotype-outcome-combine.html"><a href="phenotype-outcome-combine.html"><i class="fa fa-check"></i><b>13</b> Phenotype outcomes using combination of tables<span></span></a>
+<ul>
+<li class="chapter" data-level="13.1" data-path="dm-2.html"><a href="dm-2.html"><i class="fa fa-check"></i><b>13.1</b> DM<span></span></a></li>
+<li class="chapter" data-level="13.2" data-path="dr-2.html"><a href="dr-2.html"><i class="fa fa-check"></i><b>13.2</b> DR<span></span></a></li>
+<li class="chapter" data-level="13.3" data-path="dkd.html"><a href="dkd.html"><i class="fa fa-check"></i><b>13.3</b> DKD<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="tte-macro.html"><a href="tte-macro.html"><i class="fa fa-check"></i><b>14</b> Generate time-to-event data for macrovascular diabetes complications<span></span></a>
+<ul>
+<li class="chapter" data-level="14.1" data-path="mi-1.html"><a href="mi-1.html"><i class="fa fa-check"></i><b>14.1</b> MI<span></span></a></li>
+<li class="chapter" data-level="14.2" data-path="unstable-angina-1.html"><a href="unstable-angina-1.html"><i class="fa fa-check"></i><b>14.2</b> Unstable angina<span></span></a></li>
+<li class="chapter" data-level="14.3" data-path="ischemic-stroke-1.html"><a href="ischemic-stroke-1.html"><i class="fa fa-check"></i><b>14.3</b> Ischemic stroke<span></span></a></li>
+<li class="chapter" data-level="14.4" data-path="hemorrhagic-stroke-1.html"><a href="hemorrhagic-stroke-1.html"><i class="fa fa-check"></i><b>14.4</b> Hemorrhagic Stroke<span></span></a></li>
+<li class="chapter" data-level="14.5" data-path="stroke-1.html"><a href="stroke-1.html"><i class="fa fa-check"></i><b>14.5</b> Stroke<span></span></a></li>
+<li class="chapter" data-level="14.6" data-path="pci-1.html"><a href="pci-1.html"><i class="fa fa-check"></i><b>14.6</b> PCI<span></span></a></li>
+<li class="chapter" data-level="14.7" data-path="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><a href="composite-cvd-mi-unstable-angina-ischemic-stroke-pci-or-cvd-death.html"><i class="fa fa-check"></i><b>14.7</b> Composite CVD (MI, Unstable Angina, Ischemic Stroke, PCI or CVD death)<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="tte-dr.html"><a href="tte-dr.html"><i class="fa fa-check"></i><b>15</b> Generate time-to-event data for diabetic eye disease<span></span></a></li>
+<li class="chapter" data-level="16" data-path="tte-dkd.html"><a href="tte-dkd.html"><i class="fa fa-check"></i><b>16</b> Generate time-to-event data for diabetes related kidney disease<span></span></a></li>
 </ul>
 
       </nav>
@@ -254,100 +268,100 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="blood-pressure" class="section level2">
-<h2><span class="header-section-number">11.13</span> Blood Pressure</h2>
+<div id="blood-pressure" class="section level2 hasAnchor" number="11.13">
+<h2><span class="header-section-number">11.13</span> Blood Pressure<a href="blood-pressure.html#blood-pressure" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>To to extract blood pressure, it is necessary to consider both the cases where both Systolic and Diastolic BP are provided in the same record, as well as cases where Systolic and Diastolic BP are given in separate records.</p>
-<div class="sourceCode" id="cb427"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb427-1"><a href="blood-pressure.html#cb427-1"></a>bp &lt;-<span class="st"> </span>gp_clinical <span class="op">%&gt;%</span></span>
-<span id="cb427-2"><a href="blood-pressure.html#cb427-2"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">grepl</span>(BP_codes, code)) <span class="op">%&gt;%</span></span>
-<span id="cb427-3"><a href="blood-pressure.html#cb427-3"></a><span class="st">  </span><span class="kw">filter</span>(value1 <span class="op">!=</span><span class="st"> &quot;&quot;</span> <span class="op">|</span><span class="st"> </span>value2 <span class="op">!=</span><span class="st"> &quot;&quot;</span> <span class="op">|</span><span class="st"> </span>value3 <span class="op">!=</span><span class="st"> &quot;&quot;</span>)  <span class="op">%&gt;%</span></span>
-<span id="cb427-4"><a href="blood-pressure.html#cb427-4"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value1 =</span> <span class="kw">as.numeric</span>(value1), <span class="dt">value2 =</span> <span class="kw">as.numeric</span>(value2), <span class="dt">value3 =</span> <span class="kw">as.numeric</span>(value3)) </span>
-<span id="cb427-5"><a href="blood-pressure.html#cb427-5"></a></span>
-<span id="cb427-6"><a href="blood-pressure.html#cb427-6"></a><span class="co">#Remove some small values in value3 of unknown meaning</span></span>
-<span id="cb427-7"><a href="blood-pressure.html#cb427-7"></a>bp<span class="op">$</span>value3[bp<span class="op">$</span>value3 <span class="op">&lt;</span><span class="st"> </span><span class="dv">10</span>] &lt;-<span class="st"> </span><span class="ot">NA</span></span>
-<span id="cb427-8"><a href="blood-pressure.html#cb427-8"></a></span>
-<span id="cb427-9"><a href="blood-pressure.html#cb427-9"></a><span class="co">#Separate the data into two types of record: One where 2 values are given in 1 record (e.g. Systolic and Diastolic) and another where there is only one value (i.e Systolic only or Diastolic only) given per record. </span></span></code></pre></div>
+<div class="sourceCode" id="cb243"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb243-1"><a href="blood-pressure.html#cb243-1" aria-hidden="true" tabindex="-1"></a>bp <span class="ot">&lt;-</span> gp_clinical <span class="sc">%&gt;%</span></span>
+<span id="cb243-2"><a href="blood-pressure.html#cb243-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(BP_codes, code)) <span class="sc">%&gt;%</span></span>
+<span id="cb243-3"><a href="blood-pressure.html#cb243-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value1 <span class="sc">!=</span> <span class="st">&quot;&quot;</span> <span class="sc">|</span> value2 <span class="sc">!=</span> <span class="st">&quot;&quot;</span> <span class="sc">|</span> value3 <span class="sc">!=</span> <span class="st">&quot;&quot;</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb243-4"><a href="blood-pressure.html#cb243-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value1 =</span> <span class="fu">as.numeric</span>(value1), <span class="at">value2 =</span> <span class="fu">as.numeric</span>(value2), <span class="at">value3 =</span> <span class="fu">as.numeric</span>(value3)) </span>
+<span id="cb243-5"><a href="blood-pressure.html#cb243-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb243-6"><a href="blood-pressure.html#cb243-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Remove some small values in value3 of unknown meaning</span></span>
+<span id="cb243-7"><a href="blood-pressure.html#cb243-7" aria-hidden="true" tabindex="-1"></a>bp<span class="sc">$</span>value3[bp<span class="sc">$</span>value3 <span class="sc">&lt;</span> <span class="dv">10</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb243-8"><a href="blood-pressure.html#cb243-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb243-9"><a href="blood-pressure.html#cb243-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Separate the data into two types of record: One where 2 values are given in 1 record (e.g. Systolic and Diastolic) and another where there is only one value (i.e Systolic only or Diastolic only) given per record. </span></span></code></pre></div>
 <p>Multiple values per record: Take the larger value to be systolic and the smaller value to be diastolic. Filter out any records where either of these values are 0.</p>
-<div class="sourceCode" id="cb428"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb428-1"><a href="blood-pressure.html#cb428-1"></a>bp_mult &lt;-<span class="st"> </span>bp <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb428-2"><a href="blood-pressure.html#cb428-2"></a><span class="st">  </span><span class="kw">rowwise</span>() <span class="op">%&gt;%</span></span>
-<span id="cb428-3"><a href="blood-pressure.html#cb428-3"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(value1), <span class="op">!</span><span class="kw">is.na</span>(value2), <span class="op">!</span><span class="kw">is.na</span>(value3)) <span class="op">==</span><span class="st"> </span><span class="dv">2</span>) <span class="op">%&gt;%</span></span>
-<span id="cb428-4"><a href="blood-pressure.html#cb428-4"></a><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></span>
-<span id="cb428-5"><a href="blood-pressure.html#cb428-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Systolic_bp_pc =</span> <span class="kw">pmax</span>(value1, value2, value3, <span class="dt">na.rm=</span>T)) <span class="op">%&gt;%</span></span>
-<span id="cb428-6"><a href="blood-pressure.html#cb428-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Diastolic_bp_pc =</span> <span class="kw">pmin</span>(value1, value2, value3, <span class="dt">na.rm=</span>T)) <span class="op">%&gt;%</span></span>
-<span id="cb428-7"><a href="blood-pressure.html#cb428-7"></a><span class="st">  </span><span class="kw">filter</span>(Systolic_bp_pc <span class="op">!=</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>Diastolic_bp_pc <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="blood-pressure.html#cb244-1" aria-hidden="true" tabindex="-1"></a>bp_mult <span class="ot">&lt;-</span> bp <span class="sc">%&gt;%</span> </span>
+<span id="cb244-2"><a href="blood-pressure.html#cb244-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb244-3"><a href="blood-pressure.html#cb244-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(value1), <span class="sc">!</span><span class="fu">is.na</span>(value2), <span class="sc">!</span><span class="fu">is.na</span>(value3)) <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb244-4"><a href="blood-pressure.html#cb244-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb244-5"><a href="blood-pressure.html#cb244-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Systolic_bp_pc =</span> <span class="fu">pmax</span>(value1, value2, value3, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span></span>
+<span id="cb244-6"><a href="blood-pressure.html#cb244-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Diastolic_bp_pc =</span> <span class="fu">pmin</span>(value1, value2, value3, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span></span>
+<span id="cb244-7"><a href="blood-pressure.html#cb244-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Systolic_bp_pc <span class="sc">!=</span> <span class="dv">0</span> <span class="sc">&amp;</span> Diastolic_bp_pc <span class="sc">!=</span> <span class="dv">0</span>)</span></code></pre></div>
 <p>One value per record: filter out those with a value of 0.</p>
-<div class="sourceCode" id="cb429"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb429-1"><a href="blood-pressure.html#cb429-1"></a>bp_single &lt;-<span class="st"> </span>bp <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb429-2"><a href="blood-pressure.html#cb429-2"></a><span class="st">  </span><span class="kw">rowwise</span>() <span class="op">%&gt;%</span></span>
-<span id="cb429-3"><a href="blood-pressure.html#cb429-3"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">sum</span>(<span class="op">!</span><span class="kw">is.na</span>(value1), <span class="op">!</span><span class="kw">is.na</span>(value2), <span class="op">!</span><span class="kw">is.na</span>(value3)) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
-<span id="cb429-4"><a href="blood-pressure.html#cb429-4"></a><span class="st">  </span><span class="kw">ungroup</span>() <span class="op">%&gt;%</span></span>
-<span id="cb429-5"><a href="blood-pressure.html#cb429-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">value =</span> <span class="kw">coalesce</span>(value1, value2, value3)) <span class="op">%&gt;%</span></span>
-<span id="cb429-6"><a href="blood-pressure.html#cb429-6"></a><span class="st">  </span><span class="kw">filter</span>(value <span class="op">!=</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span></span>
-<span id="cb429-7"><a href="blood-pressure.html#cb429-7"></a><span class="st">  </span><span class="kw">arrange</span>(f.eid, event_dt) <span class="op">%&gt;%</span></span>
-<span id="cb429-8"><a href="blood-pressure.html#cb429-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">bp_type =</span>  <span class="kw">ifelse</span>(<span class="kw">grepl</span>(<span class="st">&quot;systolic&quot;</span>, term_description, <span class="dt">ignore.case=</span>T), <span class="st">&quot;Systolic_bp_pc&quot;</span>,</span>
-<span id="cb429-9"><a href="blood-pressure.html#cb429-9"></a>               <span class="kw">ifelse</span>(<span class="kw">grepl</span>(<span class="st">&quot;diastolic&quot;</span>, term_description, <span class="dt">ignore.case =</span> T), <span class="st">&quot;Diastolic_bp_pc&quot;</span>, <span class="st">&quot;Unknown&quot;</span>))) <span class="op">%&gt;%</span></span>
-<span id="cb429-10"><a href="blood-pressure.html#cb429-10"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>value1, <span class="op">-</span>value2, <span class="op">-</span>value3) <span class="op">%&gt;%</span></span>
-<span id="cb429-11"><a href="blood-pressure.html#cb429-11"></a><span class="st">  </span><span class="kw">distinct</span>()</span>
-<span id="cb429-12"><a href="blood-pressure.html#cb429-12"></a></span>
-<span id="cb429-13"><a href="blood-pressure.html#cb429-13"></a><span class="co">#Here are the results for single type:</span></span>
-<span id="cb429-14"><a href="blood-pressure.html#cb429-14"></a>bp_single <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb429-15"><a href="blood-pressure.html#cb429-15"></a><span class="st">  </span><span class="kw">group_by</span>(code, term_description, bp_type) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb429-16"><a href="blood-pressure.html#cb429-16"></a><span class="st">  </span><span class="kw">summarize</span>(<span class="dt">n=</span><span class="kw">n</span>(), <span class="dt">mean=</span><span class="kw">round</span>(<span class="kw">mean</span>(value, <span class="dv">1</span>))) <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb429-17"><a href="blood-pressure.html#cb429-17"></a><span class="st">  </span><span class="kw">arrange</span>(bp_type, <span class="kw">desc</span>(n)) </span></code></pre></div>
-<pre><code>## # A tibble: 33 × 5
+<div class="sourceCode" id="cb245"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb245-1"><a href="blood-pressure.html#cb245-1" aria-hidden="true" tabindex="-1"></a>bp_single <span class="ot">&lt;-</span> bp <span class="sc">%&gt;%</span> </span>
+<span id="cb245-2"><a href="blood-pressure.html#cb245-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb245-3"><a href="blood-pressure.html#cb245-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(value1), <span class="sc">!</span><span class="fu">is.na</span>(value2), <span class="sc">!</span><span class="fu">is.na</span>(value3)) <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb245-4"><a href="blood-pressure.html#cb245-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb245-5"><a href="blood-pressure.html#cb245-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">coalesce</span>(value1, value2, value3)) <span class="sc">%&gt;%</span></span>
+<span id="cb245-6"><a href="blood-pressure.html#cb245-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb245-7"><a href="blood-pressure.html#cb245-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(f.eid, event_dt) <span class="sc">%&gt;%</span></span>
+<span id="cb245-8"><a href="blood-pressure.html#cb245-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bp_type =</span>  <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">&quot;systolic&quot;</span>, term_description, <span class="at">ignore.case=</span>T), <span class="st">&quot;Systolic_bp_pc&quot;</span>,</span>
+<span id="cb245-9"><a href="blood-pressure.html#cb245-9" aria-hidden="true" tabindex="-1"></a>               <span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">&quot;diastolic&quot;</span>, term_description, <span class="at">ignore.case =</span> T), <span class="st">&quot;Diastolic_bp_pc&quot;</span>, <span class="st">&quot;Unknown&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb245-10"><a href="blood-pressure.html#cb245-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>value1, <span class="sc">-</span>value2, <span class="sc">-</span>value3) <span class="sc">%&gt;%</span></span>
+<span id="cb245-11"><a href="blood-pressure.html#cb245-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb245-12"><a href="blood-pressure.html#cb245-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb245-13"><a href="blood-pressure.html#cb245-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Here are the results for single type:</span></span>
+<span id="cb245-14"><a href="blood-pressure.html#cb245-14" aria-hidden="true" tabindex="-1"></a>bp_single <span class="sc">%&gt;%</span> </span>
+<span id="cb245-15"><a href="blood-pressure.html#cb245-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(code, term_description, bp_type) <span class="sc">%&gt;%</span> </span>
+<span id="cb245-16"><a href="blood-pressure.html#cb245-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean=</span><span class="fu">round</span>(<span class="fu">mean</span>(value, <span class="dv">1</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb245-17"><a href="blood-pressure.html#cb245-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(bp_type, <span class="fu">desc</span>(n)) </span></code></pre></div>
+<pre><code>## # A tibble: 33 x 5
 ## # Groups:   code, term_description [33]
 ##    code  term_description                              bp_type           n  mean
 ##    &lt;chr&gt; &lt;chr&gt;                                         &lt;chr&gt;         &lt;int&gt; &lt;dbl&gt;
-##  1 246A. O/E - Diastolic BP reading                    Diastolic_b… 3.13e6    80
-##  2 XaJ2F Sitting diastolic blood pressure              Diastolic_b… 3.78e3    80
-##  3 XaKFw Average home diastolic blood pressure         Diastolic_b… 3.54e3    79
-##  4 XaF4b Average 24 hour diastolic blood pressure      Diastolic_b… 1.72e3    79
-##  5 XaF4a Average day interval diastolic blood pressure Diastolic_b… 8.73e2    83
-##  6 246R. Sitting diastolic blood pressure              Diastolic_b… 5.49e2    82
-##  7 XaJ2H Lying diastolic blood pressure                Diastolic_b… 4.88e2    80
-##  8 246c. Average home diastolic blood pressure         Diastolic_b… 1.08e2    82
-##  9 XaF4S Average diastolic blood pressure              Diastolic_b… 8.5 e1    81
-## 10 246V. Average 24 hour diastolic blood pressure      Diastolic_b… 1.1 e1    91
-## # … with 23 more rows</code></pre>
+##  1 246A. O/E - Diastolic BP reading                    Diastolic_b~ 3.13e6    80
+##  2 XaJ2F Sitting diastolic blood pressure              Diastolic_b~ 3.78e3    80
+##  3 XaKFw Average home diastolic blood pressure         Diastolic_b~ 3.54e3    79
+##  4 XaF4b Average 24 hour diastolic blood pressure      Diastolic_b~ 1.72e3    79
+##  5 XaF4a Average day interval diastolic blood pressure Diastolic_b~ 8.73e2    83
+##  6 246R. Sitting diastolic blood pressure              Diastolic_b~ 5.49e2    82
+##  7 XaJ2H Lying diastolic blood pressure                Diastolic_b~ 4.88e2    80
+##  8 246c. Average home diastolic blood pressure         Diastolic_b~ 1.08e2    82
+##  9 XaF4S Average diastolic blood pressure              Diastolic_b~ 8.5 e1    81
+## 10 246V. Average 24 hour diastolic blood pressure      Diastolic_b~ 1.1 e1    91
+## # ... with 23 more rows</code></pre>
 <p>Look at the remaining codes to see if they are systolic or diastolic. For many of these, the same code is given twice, each with a different value. Sometimes an record is a duplicate of a systolic or diastolic measurement. If there are two <em>unique</em> values given per ID/date, then we can assume they are systolic (higher) and diastolic (lower). Otherwise, discard that set of values.</p>
-<div class="sourceCode" id="cb431"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb431-1"><a href="blood-pressure.html#cb431-1"></a><span class="co">#Unknowns - not specified as Diastolic vs. Systolic</span></span>
-<span id="cb431-2"><a href="blood-pressure.html#cb431-2"></a>unknowns &lt;-<span class="st"> </span>bp_single <span class="op">%&gt;%</span></span>
-<span id="cb431-3"><a href="blood-pressure.html#cb431-3"></a><span class="st">  </span><span class="kw">group_by</span>(f.eid, event_dt) <span class="op">%&gt;%</span></span>
-<span id="cb431-4"><a href="blood-pressure.html#cb431-4"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">sum</span>(bp_type <span class="op">==</span><span class="st"> &quot;Unknown&quot;</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>) <span class="op">%&gt;%</span></span>
-<span id="cb431-5"><a href="blood-pressure.html#cb431-5"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">n =</span> <span class="kw">length</span>(<span class="kw">unique</span>(value))) <span class="op">%&gt;%</span></span>
-<span id="cb431-6"><a href="blood-pressure.html#cb431-6"></a><span class="st">  </span><span class="kw">filter</span>(n <span class="op">==</span><span class="st"> </span><span class="dv">2</span>) <span class="op">%&gt;%</span></span>
-<span id="cb431-7"><a href="blood-pressure.html#cb431-7"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Systolic_bp_pc =</span> <span class="kw">max</span>(value)) <span class="op">%&gt;%</span></span>
-<span id="cb431-8"><a href="blood-pressure.html#cb431-8"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Diastolic_bp_pc =</span> <span class="kw">min</span>(value)) <span class="op">%&gt;%</span></span>
-<span id="cb431-9"><a href="blood-pressure.html#cb431-9"></a><span class="st">  </span><span class="kw">distinct</span>(f.eid, event_dt, value, <span class="dt">.keep_all =</span> T) <span class="op">%&gt;%</span></span>
-<span id="cb431-10"><a href="blood-pressure.html#cb431-10"></a><span class="st">  </span><span class="kw">group_by</span>(f.eid, event_dt) <span class="op">%&gt;%</span></span>
-<span id="cb431-11"><a href="blood-pressure.html#cb431-11"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">code_systolic =</span> code[<span class="kw">which</span>(value <span class="op">==</span><span class="st"> </span><span class="kw">max</span>(value))], </span>
-<span id="cb431-12"><a href="blood-pressure.html#cb431-12"></a>         <span class="dt">code_diastolic =</span> code[<span class="kw">which</span>(value <span class="op">==</span><span class="st"> </span><span class="kw">min</span>(value))], </span>
-<span id="cb431-13"><a href="blood-pressure.html#cb431-13"></a>         <span class="dt">term_description_systolic =</span> term_description[<span class="kw">which</span>(value <span class="op">==</span><span class="st"> </span><span class="kw">max</span>(value))], </span>
-<span id="cb431-14"><a href="blood-pressure.html#cb431-14"></a>         <span class="dt">term_description_diastolic =</span> term_description[<span class="kw">which</span>(value <span class="op">==</span><span class="st"> </span><span class="kw">min</span>(value))])</span>
-<span id="cb431-15"><a href="blood-pressure.html#cb431-15"></a></span>
-<span id="cb431-16"><a href="blood-pressure.html#cb431-16"></a><span class="co">#Prepare for merging</span></span>
-<span id="cb431-17"><a href="blood-pressure.html#cb431-17"></a>bp_single_less &lt;-<span class="st"> </span>bp_single <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb431-18"><a href="blood-pressure.html#cb431-18"></a><span class="st">  </span><span class="kw">distinct</span>(f.eid, data_provider, event_dt, value, bp_type, <span class="dt">.keep_all =</span> T) <span class="op">%&gt;%</span></span>
-<span id="cb431-19"><a href="blood-pressure.html#cb431-19"></a><span class="st">  </span><span class="kw">group_by</span>(f.eid, event_dt) <span class="op">%&gt;%</span></span>
-<span id="cb431-20"><a href="blood-pressure.html#cb431-20"></a><span class="st">  </span><span class="kw">filter</span>(<span class="kw">sum</span>(bp_type <span class="op">==</span><span class="st"> &quot;Systolic_bp_pc&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="dv">1</span> <span class="op">&amp;</span><span class="st"> </span></span>
-<span id="cb431-21"><a href="blood-pressure.html#cb431-21"></a><span class="st">           </span><span class="kw">sum</span>(bp_type <span class="op">==</span><span class="st"> &quot;Diastolic_bp_pc&quot;</span>) <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span></span>
-<span id="cb431-22"><a href="blood-pressure.html#cb431-22"></a><span class="st">  </span><span class="kw">filter</span>(bp_type <span class="op">!=</span><span class="st"> &quot;Unknown&quot;</span>)</span>
-<span id="cb431-23"><a href="blood-pressure.html#cb431-23"></a></span>
-<span id="cb431-24"><a href="blood-pressure.html#cb431-24"></a>systolic &lt;-<span class="st"> </span>bp_single_less <span class="op">%&gt;%</span></span>
-<span id="cb431-25"><a href="blood-pressure.html#cb431-25"></a><span class="st">  </span><span class="kw">filter</span>(bp_type <span class="op">==</span><span class="st"> &quot;Systolic_bp_pc&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb431-26"><a href="blood-pressure.html#cb431-26"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">code_systolic =</span> code, </span>
-<span id="cb431-27"><a href="blood-pressure.html#cb431-27"></a>                <span class="dt">Systolic_bp_pc =</span> value, </span>
-<span id="cb431-28"><a href="blood-pressure.html#cb431-28"></a>                <span class="dt">term_description_systolic =</span> term_description) <span class="op">%&gt;%</span></span>
-<span id="cb431-29"><a href="blood-pressure.html#cb431-29"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>bp_type)</span>
-<span id="cb431-30"><a href="blood-pressure.html#cb431-30"></a></span>
-<span id="cb431-31"><a href="blood-pressure.html#cb431-31"></a>diastolic &lt;-<span class="st"> </span>bp_single_less <span class="op">%&gt;%</span></span>
-<span id="cb431-32"><a href="blood-pressure.html#cb431-32"></a><span class="st">  </span><span class="kw">filter</span>(bp_type <span class="op">==</span><span class="st"> &quot;Diastolic_bp_pc&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb431-33"><a href="blood-pressure.html#cb431-33"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">code_diastolic =</span> code, </span>
-<span id="cb431-34"><a href="blood-pressure.html#cb431-34"></a>                <span class="dt">Diastolic_bp_pc =</span> value, </span>
-<span id="cb431-35"><a href="blood-pressure.html#cb431-35"></a>                <span class="dt">term_description_diastolic =</span> term_description) <span class="op">%&gt;%</span></span>
-<span id="cb431-36"><a href="blood-pressure.html#cb431-36"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>bp_type)</span>
-<span id="cb431-37"><a href="blood-pressure.html#cb431-37"></a>        </span>
-<span id="cb431-38"><a href="blood-pressure.html#cb431-38"></a>bp_single_wide &lt;-<span class="st"> </span><span class="kw">full_join</span>(systolic, diastolic)</span>
-<span id="cb431-39"><a href="blood-pressure.html#cb431-39"></a><span class="kw">head</span>(bp_single_wide)</span></code></pre></div>
-<pre><code>## # A tibble: 6 × 12
+<div class="sourceCode" id="cb247"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb247-1"><a href="blood-pressure.html#cb247-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Unknowns - not specified as Diastolic vs. Systolic</span></span>
+<span id="cb247-2"><a href="blood-pressure.html#cb247-2" aria-hidden="true" tabindex="-1"></a>unknowns <span class="ot">&lt;-</span> bp_single <span class="sc">%&gt;%</span></span>
+<span id="cb247-3"><a href="blood-pressure.html#cb247-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(f.eid, event_dt) <span class="sc">%&gt;%</span></span>
+<span id="cb247-4"><a href="blood-pressure.html#cb247-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">sum</span>(bp_type <span class="sc">==</span> <span class="st">&quot;Unknown&quot;</span>) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb247-5"><a href="blood-pressure.html#cb247-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> <span class="fu">length</span>(<span class="fu">unique</span>(value))) <span class="sc">%&gt;%</span></span>
+<span id="cb247-6"><a href="blood-pressure.html#cb247-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb247-7"><a href="blood-pressure.html#cb247-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Systolic_bp_pc =</span> <span class="fu">max</span>(value)) <span class="sc">%&gt;%</span></span>
+<span id="cb247-8"><a href="blood-pressure.html#cb247-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Diastolic_bp_pc =</span> <span class="fu">min</span>(value)) <span class="sc">%&gt;%</span></span>
+<span id="cb247-9"><a href="blood-pressure.html#cb247-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(f.eid, event_dt, value, <span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb247-10"><a href="blood-pressure.html#cb247-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(f.eid, event_dt) <span class="sc">%&gt;%</span></span>
+<span id="cb247-11"><a href="blood-pressure.html#cb247-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">code_systolic =</span> code[<span class="fu">which</span>(value <span class="sc">==</span> <span class="fu">max</span>(value))], </span>
+<span id="cb247-12"><a href="blood-pressure.html#cb247-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">code_diastolic =</span> code[<span class="fu">which</span>(value <span class="sc">==</span> <span class="fu">min</span>(value))], </span>
+<span id="cb247-13"><a href="blood-pressure.html#cb247-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">term_description_systolic =</span> term_description[<span class="fu">which</span>(value <span class="sc">==</span> <span class="fu">max</span>(value))], </span>
+<span id="cb247-14"><a href="blood-pressure.html#cb247-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">term_description_diastolic =</span> term_description[<span class="fu">which</span>(value <span class="sc">==</span> <span class="fu">min</span>(value))])</span>
+<span id="cb247-15"><a href="blood-pressure.html#cb247-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb247-16"><a href="blood-pressure.html#cb247-16" aria-hidden="true" tabindex="-1"></a><span class="co">#Prepare for merging</span></span>
+<span id="cb247-17"><a href="blood-pressure.html#cb247-17" aria-hidden="true" tabindex="-1"></a>bp_single_less <span class="ot">&lt;-</span> bp_single <span class="sc">%&gt;%</span> </span>
+<span id="cb247-18"><a href="blood-pressure.html#cb247-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(f.eid, data_provider, event_dt, value, bp_type, <span class="at">.keep_all =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb247-19"><a href="blood-pressure.html#cb247-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(f.eid, event_dt) <span class="sc">%&gt;%</span></span>
+<span id="cb247-20"><a href="blood-pressure.html#cb247-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">sum</span>(bp_type <span class="sc">==</span> <span class="st">&quot;Systolic_bp_pc&quot;</span>) <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> </span>
+<span id="cb247-21"><a href="blood-pressure.html#cb247-21" aria-hidden="true" tabindex="-1"></a>           <span class="fu">sum</span>(bp_type <span class="sc">==</span> <span class="st">&quot;Diastolic_bp_pc&quot;</span>) <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb247-22"><a href="blood-pressure.html#cb247-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(bp_type <span class="sc">!=</span> <span class="st">&quot;Unknown&quot;</span>)</span>
+<span id="cb247-23"><a href="blood-pressure.html#cb247-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb247-24"><a href="blood-pressure.html#cb247-24" aria-hidden="true" tabindex="-1"></a>systolic <span class="ot">&lt;-</span> bp_single_less <span class="sc">%&gt;%</span></span>
+<span id="cb247-25"><a href="blood-pressure.html#cb247-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(bp_type <span class="sc">==</span> <span class="st">&quot;Systolic_bp_pc&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb247-26"><a href="blood-pressure.html#cb247-26" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">code_systolic =</span> code, </span>
+<span id="cb247-27"><a href="blood-pressure.html#cb247-27" aria-hidden="true" tabindex="-1"></a>                <span class="at">Systolic_bp_pc =</span> value, </span>
+<span id="cb247-28"><a href="blood-pressure.html#cb247-28" aria-hidden="true" tabindex="-1"></a>                <span class="at">term_description_systolic =</span> term_description) <span class="sc">%&gt;%</span></span>
+<span id="cb247-29"><a href="blood-pressure.html#cb247-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>bp_type)</span>
+<span id="cb247-30"><a href="blood-pressure.html#cb247-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb247-31"><a href="blood-pressure.html#cb247-31" aria-hidden="true" tabindex="-1"></a>diastolic <span class="ot">&lt;-</span> bp_single_less <span class="sc">%&gt;%</span></span>
+<span id="cb247-32"><a href="blood-pressure.html#cb247-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(bp_type <span class="sc">==</span> <span class="st">&quot;Diastolic_bp_pc&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb247-33"><a href="blood-pressure.html#cb247-33" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">code_diastolic =</span> code, </span>
+<span id="cb247-34"><a href="blood-pressure.html#cb247-34" aria-hidden="true" tabindex="-1"></a>                <span class="at">Diastolic_bp_pc =</span> value, </span>
+<span id="cb247-35"><a href="blood-pressure.html#cb247-35" aria-hidden="true" tabindex="-1"></a>                <span class="at">term_description_diastolic =</span> term_description) <span class="sc">%&gt;%</span></span>
+<span id="cb247-36"><a href="blood-pressure.html#cb247-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>bp_type)</span>
+<span id="cb247-37"><a href="blood-pressure.html#cb247-37" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb247-38"><a href="blood-pressure.html#cb247-38" aria-hidden="true" tabindex="-1"></a>bp_single_wide <span class="ot">&lt;-</span> <span class="fu">full_join</span>(systolic, diastolic)</span>
+<span id="cb247-39"><a href="blood-pressure.html#cb247-39" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bp_single_wide)</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 12
 ## # Groups:   f.eid, event_dt [6]
 ##     f.eid data_provider event_dt   code_systolic terminology special_dt
 ##     &lt;int&gt;         &lt;int&gt; &lt;date&gt;     &lt;chr&gt;         &lt;chr&gt;       &lt;lgl&gt;     
@@ -357,30 +371,34 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 ## 4 1000068             3 1999-01-07 2469.         read3       FALSE     
 ## 5 1000068             3 2001-07-20 2469.         read3       FALSE     
 ## 6 1000068             3 2001-11-21 2469.         read3       FALSE     
-## # … with 6 more variables: term_description_systolic &lt;chr&gt;,
+## # ... with 6 more variables: term_description_systolic &lt;chr&gt;,
 ## #   terminology_note &lt;chr&gt;, Systolic_bp_pc &lt;dbl&gt;, code_diastolic &lt;chr&gt;,
 ## #   term_description_diastolic &lt;chr&gt;, Diastolic_bp_pc &lt;dbl&gt;</code></pre>
 <p>Combine each of the cleaned subsets and implement some common sense filters (45 &lt; Systolic bp &lt; 300, 30 &lt; Diastolic bp &lt; Systolic bp)</p>
-<div class="sourceCode" id="cb433"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb433-1"><a href="blood-pressure.html#cb433-1"></a>unknowns_less &lt;-<span class="st"> </span>unknowns <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb433-2"><a href="blood-pressure.html#cb433-2"></a><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>term_description, <span class="op">-</span>value, <span class="op">-</span>bp_type, <span class="op">-</span>code, <span class="op">-</span>n) <span class="op">%&gt;%</span></span>
-<span id="cb433-3"><a href="blood-pressure.html#cb433-3"></a><span class="st">  </span><span class="kw">distinct</span>()</span>
-<span id="cb433-4"><a href="blood-pressure.html#cb433-4"></a></span>
-<span id="cb433-5"><a href="blood-pressure.html#cb433-5"></a>bp_mult_less &lt;-<span class="st"> </span>bp_mult <span class="op">%&gt;%</span><span class="st"> </span></span>
-<span id="cb433-6"><a href="blood-pressure.html#cb433-6"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">term_description_both =</span> term_description) <span class="op">%&gt;%</span></span>
-<span id="cb433-7"><a href="blood-pressure.html#cb433-7"></a><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">rename</span>(<span class="dt">code_both =</span> code) <span class="op">%&gt;%</span></span>
-<span id="cb433-8"><a href="blood-pressure.html#cb433-8"></a><span class="st">  </span><span class="kw">select</span>(f.eid, event_dt, data_provider, terminology, Systolic_bp_pc, Diastolic_bp_pc, code_both, term_description_both) <span class="op">%&gt;%</span></span>
-<span id="cb433-9"><a href="blood-pressure.html#cb433-9"></a><span class="st">  </span><span class="kw">distinct</span>()</span>
-<span id="cb433-10"><a href="blood-pressure.html#cb433-10"></a></span>
-<span id="cb433-11"><a href="blood-pressure.html#cb433-11"></a>full_bp_clean &lt;-<span class="st"> </span><span class="kw">full_join</span>(unknowns_less, bp_single_wide) <span class="op">%&gt;%</span></span>
-<span id="cb433-12"><a href="blood-pressure.html#cb433-12"></a><span class="st">  </span><span class="kw">full_join</span>(bp_mult_less) <span class="op">%&gt;%</span></span>
-<span id="cb433-13"><a href="blood-pressure.html#cb433-13"></a><span class="st">  </span><span class="kw">filter</span>(Systolic_bp_pc <span class="op">&gt;</span><span class="st"> </span>Diastolic_bp_pc) <span class="op">%&gt;%</span></span>
-<span id="cb433-14"><a href="blood-pressure.html#cb433-14"></a><span class="st">  </span><span class="kw">filter</span>(Systolic_bp_pc <span class="op">&gt;=</span><span class="st"> </span><span class="dv">45</span> <span class="op">&amp;</span><span class="st"> </span>Systolic_bp_pc <span class="op">&lt;=</span><span class="st"> </span><span class="dv">300</span>) <span class="op">%&gt;%</span></span>
-<span id="cb433-15"><a href="blood-pressure.html#cb433-15"></a><span class="st">  </span><span class="kw">filter</span>(Diastolic_bp_pc <span class="op">&gt;=</span><span class="st"> </span><span class="dv">30</span>) <span class="op">%&gt;%</span></span>
-<span id="cb433-16"><a href="blood-pressure.html#cb433-16"></a><span class="st">  </span><span class="kw">distinct</span>(f.eid, event_dt, Systolic_bp_pc, Diastolic_bp_pc, <span class="dt">.keep_all=</span>T)</span></code></pre></div>
-<pre><code>## Joining, by = c(&quot;f.eid&quot;, &quot;data_provider&quot;, &quot;event_dt&quot;, &quot;terminology&quot;, &quot;special_dt&quot;, &quot;terminology_note&quot;, &quot;Systolic_bp_pc&quot;, &quot;Diastolic_bp_pc&quot;, &quot;code_systolic&quot;, &quot;code_diastolic&quot;, &quot;term_description_systolic&quot;, &quot;term_description_diastolic&quot;)
-## Joining, by = c(&quot;f.eid&quot;, &quot;data_provider&quot;, &quot;event_dt&quot;, &quot;terminology&quot;, &quot;Systolic_bp_pc&quot;, &quot;Diastolic_bp_pc&quot;)</code></pre>
-<div class="sourceCode" id="cb435"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb435-1"><a href="blood-pressure.html#cb435-1"></a><span class="kw">head</span>(full_bp_clean)</span></code></pre></div>
-<pre><code>## # A tibble: 6 × 14
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb249-1"><a href="blood-pressure.html#cb249-1" aria-hidden="true" tabindex="-1"></a>unknowns_less <span class="ot">&lt;-</span> unknowns <span class="sc">%&gt;%</span> </span>
+<span id="cb249-2"><a href="blood-pressure.html#cb249-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>term_description, <span class="sc">-</span>value, <span class="sc">-</span>bp_type, <span class="sc">-</span>code, <span class="sc">-</span>n) <span class="sc">%&gt;%</span></span>
+<span id="cb249-3"><a href="blood-pressure.html#cb249-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb249-4"><a href="blood-pressure.html#cb249-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb249-5"><a href="blood-pressure.html#cb249-5" aria-hidden="true" tabindex="-1"></a>bp_mult_less <span class="ot">&lt;-</span> bp_mult <span class="sc">%&gt;%</span> </span>
+<span id="cb249-6"><a href="blood-pressure.html#cb249-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">term_description_both =</span> term_description) <span class="sc">%&gt;%</span></span>
+<span id="cb249-7"><a href="blood-pressure.html#cb249-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">code_both =</span> code) <span class="sc">%&gt;%</span></span>
+<span id="cb249-8"><a href="blood-pressure.html#cb249-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(f.eid, event_dt, data_provider, terminology, Systolic_bp_pc, Diastolic_bp_pc, code_both, term_description_both) <span class="sc">%&gt;%</span></span>
+<span id="cb249-9"><a href="blood-pressure.html#cb249-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb249-10"><a href="blood-pressure.html#cb249-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb249-11"><a href="blood-pressure.html#cb249-11" aria-hidden="true" tabindex="-1"></a>full_bp_clean <span class="ot">&lt;-</span> <span class="fu">full_join</span>(unknowns_less, bp_single_wide) <span class="sc">%&gt;%</span></span>
+<span id="cb249-12"><a href="blood-pressure.html#cb249-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(bp_mult_less) <span class="sc">%&gt;%</span></span>
+<span id="cb249-13"><a href="blood-pressure.html#cb249-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Systolic_bp_pc <span class="sc">&gt;</span> Diastolic_bp_pc) <span class="sc">%&gt;%</span></span>
+<span id="cb249-14"><a href="blood-pressure.html#cb249-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Systolic_bp_pc <span class="sc">&gt;=</span> <span class="dv">45</span> <span class="sc">&amp;</span> Systolic_bp_pc <span class="sc">&lt;=</span> <span class="dv">300</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb249-15"><a href="blood-pressure.html#cb249-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Diastolic_bp_pc <span class="sc">&gt;=</span> <span class="dv">30</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb249-16"><a href="blood-pressure.html#cb249-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(f.eid, event_dt, Systolic_bp_pc, Diastolic_bp_pc, <span class="at">.keep_all=</span>T)</span></code></pre></div>
+<pre><code>## Joining, by = c(&quot;f.eid&quot;, &quot;data_provider&quot;, &quot;event_dt&quot;, &quot;terminology&quot;,
+## &quot;special_dt&quot;, &quot;terminology_note&quot;, &quot;Systolic_bp_pc&quot;, &quot;Diastolic_bp_pc&quot;,
+## &quot;code_systolic&quot;, &quot;code_diastolic&quot;, &quot;term_description_systolic&quot;,
+## &quot;term_description_diastolic&quot;)
+## Joining, by = c(&quot;f.eid&quot;, &quot;data_provider&quot;, &quot;event_dt&quot;, &quot;terminology&quot;,
+## &quot;Systolic_bp_pc&quot;, &quot;Diastolic_bp_pc&quot;)</code></pre>
+<div class="sourceCode" id="cb251"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb251-1"><a href="blood-pressure.html#cb251-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(full_bp_clean)</span></code></pre></div>
+<pre><code>## # A tibble: 6 x 14
 ## # Groups:   f.eid, event_dt [6]
 ##     f.eid data_provider event_dt   terminology special_dt terminology_note
 ##     &lt;int&gt;         &lt;int&gt; &lt;date&gt;     &lt;chr&gt;       &lt;lgl&gt;      &lt;chr&gt;           
@@ -390,13 +408,13 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 ## 4 1017110             2 2003-02-26 read2       FALSE      &lt;NA&gt;            
 ## 5 1017110             2 2003-06-04 read2       FALSE      &lt;NA&gt;            
 ## 6 1017110             2 2004-03-24 read2       FALSE      &lt;NA&gt;            
-## # … with 8 more variables: Systolic_bp_pc &lt;dbl&gt;, Diastolic_bp_pc &lt;dbl&gt;,
+## # ... with 8 more variables: Systolic_bp_pc &lt;dbl&gt;, Diastolic_bp_pc &lt;dbl&gt;,
 ## #   code_systolic &lt;chr&gt;, code_diastolic &lt;chr&gt;, term_description_systolic &lt;chr&gt;,
 ## #   term_description_diastolic &lt;chr&gt;, code_both &lt;chr&gt;,
 ## #   term_description_both &lt;chr&gt;</code></pre>
-<div class="sourceCode" id="cb437"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb437-1"><a href="blood-pressure.html#cb437-1"></a><span class="kw">ggplot</span>(<span class="dt">data=</span>full_bp_clean, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">log10</span>(Systolic_bp_pc))) <span class="op">+</span><span class="st"> </span><span class="kw">geom_density</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb253"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb253-1"><a href="blood-pressure.html#cb253-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>full_bp_clean, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(Systolic_bp_pc))) <span class="sc">+</span> <span class="fu">geom_density</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="11-phenotype_biomarker_trajectory_pcp_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
-<div class="sourceCode" id="cb438"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb438-1"><a href="blood-pressure.html#cb438-1"></a><span class="kw">ggplot</span>(<span class="dt">data=</span>full_bp_clean, <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">log10</span>(Diastolic_bp_pc))) <span class="op">+</span><span class="st"> </span><span class="kw">geom_density</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme_minimal</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb254"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb254-1"><a href="blood-pressure.html#cb254-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>full_bp_clean, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(Diastolic_bp_pc))) <span class="sc">+</span> <span class="fu">geom_density</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code></pre></div>
 <p><img src="11-phenotype_biomarker_trajectory_pcp_files/figure-html/unnamed-chunk-26-2.png" width="672" /></p>
 </div>
             </section>
