@@ -1,33 +1,15 @@
 # Create a master code dictionary for primary care data {#make-code-dictionary}
 
-To phenotype a clinical event using primary care data, we need to identify a set of codes that represent the outcome of interest. To identify these codes, we first curate a master code dictionary which contains all of the codes and descriptions associated with primary care data. The master dictionary is a combination of the following types of code dictionaries, which we pull together to generate a master dictionary.:
+To phenotype a clinical event using primary care data, we need to identify a set of codes that represents the outcome of interest. To identify these codes, we first curate a master code dictionary which contains all of the codes and descriptions associated with primary care data. The master dictionary is a combination of the following types of code dictionaries, which we pull together to generate a master dictionary.:
 
 - read v2
 - read v3
 - TPP
 
-The purpose of curating the master dictionary is so that we can subset the master dictionary and create a outcome-specific dictionary. For example, for phenotyping diabetes subjects, we would identify a certain set of codes that are known to indicate diabetes, and also search for a certain set of keywords in the descriptions of the codes since each code has multiple descriptions tied to it. Then, using diabetes-specific dictionary, we could identify subjects with diabetes from the PCP data. Curating outcome-specific dictionary is carried out in `make_outcome_specific_code_dictionary`.
-
-* Input and output files
-
-- Input (from `raw_data` folder): 
-  - `read_v2_V2.csv`
-  - `read_v3_V2.csv`
-  - `tpp_local.txt`
-  
-- Output:
-  - `full_dict.RDS`
-
-This step creates master code dictionary for identifying events represented in primary care data. The dictionary will be used in phenotyping diabetes, diabetes-related eye disease and diabetes-related kidney as well as control-exclusion events.\par
-
-We have three different types of codes for identifying events represented in primary care data:
-
-1. Read v2
-2. Read v3
-3. TPP
+The purpose of curating the master dictionary is so that we can subset the master dictionary and create a outcome-specific dictionary. For example, for phenotyping diabetes subjects, we would identify a certain set of codes that are known to indicate diabetes, and also search for a certain set of keywords in the descriptions of the codes since each code has multiple descriptions tied to it. Then, using diabetes-specific dictionary, we could identify subjects with diabetes from the PCP data. Curating outcome-specific dictionary is carried out in  \@ref(make-outcome-specific-code-dictionary).
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message = F, eval = T)
+knitr::opts_chunk$set(message = F, eval = F)
 ```
 
 ```{r}
