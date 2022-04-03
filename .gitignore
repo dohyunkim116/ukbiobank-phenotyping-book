@@ -9,3 +9,5 @@ raw_data/*
 .Rhistory
 .RData
 .Ruserdata
+functions
+flowchart_number_generation
