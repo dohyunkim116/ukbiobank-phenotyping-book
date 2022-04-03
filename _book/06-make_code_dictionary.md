@@ -1,30 +1,12 @@
 # Create a master code dictionary for primary care data {#make-code-dictionary}
 
-To phenotype a clinical event using primary care data, we need to identify a set of codes that represent the outcome of interest. To identify these codes, we first curate a master code dictionary which contains all of the codes and descriptions associated with primary care data. The master dictionary is a combination of the following types of code dictionaries, which we pull together to generate a master dictionary.:
+To phenotype a clinical event using primary care data, we need to identify a set of codes that represents the outcome of interest. To identify these codes, we first curate a master code dictionary which contains all of the codes and descriptions associated with primary care data. The master dictionary is a combination of the following types of code dictionaries, which we pull together to generate a master dictionary.:
 
 - read v2
 - read v3
 - TPP
 
-The purpose of curating the master dictionary is so that we can subset the master dictionary and create a outcome-specific dictionary. For example, for phenotyping diabetes subjects, we would identify a certain set of codes that are known to indicate diabetes, and also search for a certain set of keywords in the descriptions of the codes since each code has multiple descriptions tied to it. Then, using diabetes-specific dictionary, we could identify subjects with diabetes from the PCP data. Curating outcome-specific dictionary is carried out in `make_outcome_specific_code_dictionary`.
-
-* Input and output files
-
-- Input (from `raw_data` folder): 
-  - `read_v2_V2.csv`
-  - `read_v3_V2.csv`
-  - `tpp_local.txt`
-  
-- Output:
-  - `full_dict.RDS`
-
-This step creates master code dictionary for identifying events represented in primary care data. The dictionary will be used in phenotyping diabetes, diabetes-related eye disease and diabetes-related kidney as well as control-exclusion events.\par
-
-We have three different types of codes for identifying events represented in primary care data:
-
-1. Read v2
-2. Read v3
-3. TPP
+The purpose of curating the master dictionary is so that we can subset the master dictionary and create a outcome-specific dictionary. For example, for phenotyping diabetes subjects, we would identify a certain set of codes that are known to indicate diabetes, and also search for a certain set of keywords in the descriptions of the codes since each code has multiple descriptions tied to it. Then, using diabetes-specific dictionary, we could identify subjects with diabetes from the PCP data. Curating outcome-specific dictionary is carried out in  \@ref(make-outcome-specific-code-dictionary).
 
 
 
@@ -36,11 +18,11 @@ library(tidyverse)
 
 ## Read v2
 
-Import Read v2 code dictionary data:
+Import Read v2 code dictionary data.
 
 ```r
-read2_dict_drug <- fread("raw_data/read_v2_drugs.csv")
-read2_dict_nondrug <- fread("raw_data/read_v2_V2.csv")
+read2_dict_nondrug <- openxlsx::read.xlsx("raw_data/all_lkps_maps_v3.xlsx", sheet = "read_v2_lkp")
+read2_dict_drug <- openxlsx::read.xlsx("raw_data/all_lkps_maps_v3.xlsx", sheet = "read_v2_drugs_lkp")
 ```
 
 Combine drug and nondrug Read v2 dictionaries. Keep only read_code and term_description fields.
@@ -52,10 +34,10 @@ read2_dict <- full_join(read2_dict_drug,read2_dict_nondrug) %>%
 
 ## Read v3
 
-Import Read v3 code dictionary data. Read v3 code dictionary includes code dictionary for drugs. "read_v3_V2.csv" is missing some fields. So, import "read_v3.csv" instead.
+Import Read v3 code dictionary data
 
 ```r
-read3_dict <- fread("raw_data/read_v3_V2.csv")
+read3_dict <- openxlsx::read.xlsx("raw_data/all_lkps_maps_v3.xlsx", sheet = "read_ctv3_lkp")
 ```
 
 Note that Read v3 dictionary has identical codes that start with period and without, for example, .9m05 vs 9m05. In the UKB database, the one starting with '.' is never used. So, filter out codes that start with a lower case letter because these are the drug codes for Read v3 (CTV3) that match Read v2.
@@ -102,7 +84,7 @@ read2_dict$read_code[!(read2_dict$read_code %in% read3_dict$read_code)]
 ```
 
 ```
-## [1] "Contains information from NHS Digital, licenced under the current version of the Open Government Licence available at www.nationalarchives.gov.uk/doc/open-government-licence/open-government-licence.htm\"\""
+## [1] "Contains information from NHS Digital, licenced under the current version of the Open Government Licence available at www.nationalarchives.gov.uk/doc/open-government-licence/open-government-licence.htm\""
 ```
 
 ## TPP local codes
@@ -120,7 +102,7 @@ tpp_local <- fread("raw_data/tpp_local.txt")
 ## try quote="" to avoid this warning.
 ```
 
-TPP codes do not appear in Read v2
+TPP codes do not appear in read v2
 
 ```r
 tpp_local %>% filter(code %in% read2_dict$read_code)
@@ -130,16 +112,14 @@ tpp_local %>% filter(code %in% read2_dict$read_code)
 ## Empty data.table (0 rows and 2 cols): code,term_description
 ```
 
-A couple of TPP codes appears in Read v3:
+TPP codes do not appear in read v3 
 
 ```r
 tpp_local %>% filter(code %in% read3_dict$read_code)
 ```
 
 ```
-##    code                                term_description
-## 1:   -1 redacted - potentially sensitive or identifying
-## 2:   -2                      redacted - rare occupation
+## Empty data.table (0 rows and 2 cols): code,term_description
 ```
 
 ## Merge Read v2, Read v3 and TPP dictionaries
@@ -151,7 +131,7 @@ full_dict <-
   full_join(read2_dict %>% rename(code = read_code) %>% mutate(terminology="read2"),
             read3_dict %>% rename(code = read_code) %>% mutate(terminology="read3")) %>%
   full_join(tpp_local %>% mutate(terminology="read3", terminology_note = "TPP Local Code")) %>%
-  distinct() 
+  distinct()
 ```
 
 Save the full code dictionary for primary care events

@@ -63,25 +63,11 @@ Note that there are subjects with unknown administrative censored date (i.e., no
 demog %>% filter(is.na(date_admin_censored)) %>% select(f.eid) %>% nrow()
 ```
 
-```
-## [1] 61909
-```
-
 We will fill these values using the [data field 54](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=54) of UKB assessment center data. These fields include which city each participant went in for assessment or imaging, and can indicate where we would expect their inpatient record to originate. Load the data containing the field 54.  Patient eids are displayed as Inf for privacy reasons.
 
 ```r
 bd <- readRDS("generated_data/assessment_center_UKB.RDS")
 bd %>% head() %>% mutate(f.eid = Inf)
-```
-
-```
-##   f.eid f.54.0.0 f.54.1.0 f.54.2.0 f.54.3.0
-## 1   Inf    11005       NA       NA       NA
-## 2   Inf    11021       NA       NA       NA
-## 3   Inf    11020       NA       NA       NA
-## 4   Inf    11006       NA       NA       NA
-## 5   Inf    11011       NA       NA       NA
-## 6   Inf    11017       NA       NA       NA
 ```
 
 The field "f.54.0.0" contains codes indicating the city where the initial assessment was taken. We see that there is only one subject that is missing this value.
@@ -91,19 +77,10 @@ rmid <- bd %>% filter(is.na(f.54.0.0))
 rmid %>% mutate(f.eid = Inf)
 ```
 
-```
-##   f.eid f.54.0.0 f.54.1.0 f.54.2.0 f.54.3.0
-## 1   Inf       NA       NA       NA       NA
-```
-
 This subject does exist in demographic table but all of the fields are missing except for the participant's ID.
 
 ```r
 demog %>% right_join(rmid) %>% as_vector() %>% .[-1] %>% is.na %>% all
-```
-
-```
-## [1] TRUE
 ```
 
 Remove this subject from the demographic table

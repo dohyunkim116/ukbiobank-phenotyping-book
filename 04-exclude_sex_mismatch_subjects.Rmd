@@ -8,7 +8,7 @@ We exclude any subjects who have mismatch between self-reported sex and genetica
   - `all_ukb_events_tab.RDS`
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=T)
+knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
 ```{r, message = F}

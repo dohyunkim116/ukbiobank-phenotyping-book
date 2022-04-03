@@ -45,20 +45,20 @@ tail(full_dict)
 ```
 
 ```
-##     code                                      term_description terminology
-## 1: YX128                   Attending Diabetes satellite clinic       read3
-## 2: YX129                                  Consultant Urologist       read3
-## 3: YX131 Cytoscopy Expected Findings & Plan of Action if Found       read3
-## 4: YX132                    Normal Urethra, Prostate & Bladder       read3
-## 5: YX137                              Stroke/TIA annual review       read3
-## 6: ya299                   FH: Alpha 1 anti-trypsin deficiency       read3
-##    terminology_note
-## 1:   TPP Local Code
-## 2:   TPP Local Code
-## 3:   TPP Local Code
-## 4:   TPP Local Code
-## 5:   TPP Local Code
-## 6:   TPP Local Code
+##         code                                      term_description terminology
+## 549496 YX128                   Attending Diabetes satellite clinic       read3
+## 549497 YX129                                  Consultant Urologist       read3
+## 549498 YX131 Cytoscopy Expected Findings & Plan of Action if Found       read3
+## 549499 YX132                    Normal Urethra, Prostate & Bladder       read3
+## 549500 YX137                              Stroke/TIA annual review       read3
+## 549501 ya299                   FH: Alpha 1 anti-trypsin deficiency       read3
+##        terminology_note
+## 549496   TPP Local Code
+## 549497   TPP Local Code
+## 549498   TPP Local Code
+## 549499   TPP Local Code
+## 549500   TPP Local Code
+## 549501   TPP Local Code
 ```
 
 For the purpose of combining the dictionary with gp_clinical, remove terms with missing descriptions, additional descriptions for the same code, and identical codes+descriptions across terminology(read v2/CTV3)
@@ -75,13 +75,20 @@ tail(full_dict)
 ```
 
 ```
-##     code                                      term_description terminology_note
-## 1: YX128                   Attending Diabetes satellite clinic   TPP Local Code
-## 2: YX129                                  Consultant Urologist   TPP Local Code
-## 3: YX131 Cytoscopy Expected Findings & Plan of Action if Found   TPP Local Code
-## 4: YX132                    Normal Urethra, Prostate & Bladder   TPP Local Code
-## 5: YX137                              Stroke/TIA annual review   TPP Local Code
-## 6: ya299                   FH: Alpha 1 anti-trypsin deficiency   TPP Local Code
+##         code                                      term_description
+## 307923 YX128                   Attending Diabetes satellite clinic
+## 307924 YX129                                  Consultant Urologist
+## 307925 YX131 Cytoscopy Expected Findings & Plan of Action if Found
+## 307926 YX132                    Normal Urethra, Prostate & Bladder
+## 307927 YX137                              Stroke/TIA annual review
+## 307928 ya299                   FH: Alpha 1 anti-trypsin deficiency
+##        terminology_note
+## 307923   TPP Local Code
+## 307924   TPP Local Code
+## 307925   TPP Local Code
+## 307926   TPP Local Code
+## 307927   TPP Local Code
+## 307928   TPP Local Code
 ```
 
 Add the term descriptions to gp_clinical.
@@ -767,21 +774,21 @@ bp_single %>%
 ```
 
 ```
-## # A tibble: 33 x 5
+## # A tibble: 33 × 5
 ## # Groups:   code, term_description [33]
 ##    code  term_description                              bp_type           n  mean
 ##    <chr> <chr>                                         <chr>         <int> <dbl>
-##  1 246A. O/E - Diastolic BP reading                    Diastolic_b~ 3.13e6    80
-##  2 XaJ2F Sitting diastolic blood pressure              Diastolic_b~ 3.78e3    80
-##  3 XaKFw Average home diastolic blood pressure         Diastolic_b~ 3.54e3    79
-##  4 XaF4b Average 24 hour diastolic blood pressure      Diastolic_b~ 1.72e3    79
-##  5 XaF4a Average day interval diastolic blood pressure Diastolic_b~ 8.73e2    83
-##  6 246R. Sitting diastolic blood pressure              Diastolic_b~ 5.49e2    82
-##  7 XaJ2H Lying diastolic blood pressure                Diastolic_b~ 4.88e2    80
-##  8 246c. Average home diastolic blood pressure         Diastolic_b~ 1.08e2    82
-##  9 XaF4S Average diastolic blood pressure              Diastolic_b~ 8.5 e1    81
-## 10 246V. Average 24 hour diastolic blood pressure      Diastolic_b~ 1.1 e1    91
-## # ... with 23 more rows
+##  1 246A. O/E - Diastolic BP reading                    Diastolic_b… 3.13e6    80
+##  2 XaJ2F Sitting diastolic blood pressure              Diastolic_b… 3.78e3    80
+##  3 XaKFw Average home diastolic blood pressure         Diastolic_b… 3.54e3    79
+##  4 XaF4b Average 24 hour diastolic blood pressure      Diastolic_b… 1.72e3    79
+##  5 XaF4a Average day interval diastolic blood pressure Diastolic_b… 8.73e2    83
+##  6 246R. Sitting diastolic blood pressure              Diastolic_b… 5.49e2    82
+##  7 XaJ2H Lying diastolic blood pressure                Diastolic_b… 4.88e2    80
+##  8 246c. Average home diastolic blood pressure         Diastolic_b… 1.08e2    82
+##  9 XaF4S Average diastolic blood pressure              Diastolic_b… 8.5 e1    81
+## 10 246V. Average 24 hour diastolic blood pressure      Diastolic_b… 1.1 e1    91
+## # … with 23 more rows
 ```
 
 Look at the remaining codes to see if they are systolic or diastolic.  For many of these, the same code is given twice, each with a different value. Sometimes an record is a duplicate of a systolic or diastolic measurement. If there are two *unique* values given per ID/date, then we can assume they are systolic (higher) and diastolic (lower). Otherwise, discard that set of values. 
@@ -829,7 +836,7 @@ head(bp_single_wide)
 ```
 
 ```
-## # A tibble: 6 x 12
+## # A tibble: 6 × 12
 ## # Groups:   f.eid, event_dt [6]
 ##     f.eid data_provider event_dt   code_systolic terminology special_dt
 ##     <int>         <int> <date>     <chr>         <chr>       <lgl>     
@@ -839,7 +846,7 @@ head(bp_single_wide)
 ## 4 1000068             3 1999-01-07 2469.         read3       FALSE     
 ## 5 1000068             3 2001-07-20 2469.         read3       FALSE     
 ## 6 1000068             3 2001-11-21 2469.         read3       FALSE     
-## # ... with 6 more variables: term_description_systolic <chr>,
+## # … with 6 more variables: term_description_systolic <chr>,
 ## #   terminology_note <chr>, Systolic_bp_pc <dbl>, code_diastolic <chr>,
 ## #   term_description_diastolic <chr>, Diastolic_bp_pc <dbl>
 ```
@@ -866,12 +873,8 @@ full_bp_clean <- full_join(unknowns_less, bp_single_wide) %>%
 ```
 
 ```
-## Joining, by = c("f.eid", "data_provider", "event_dt", "terminology",
-## "special_dt", "terminology_note", "Systolic_bp_pc", "Diastolic_bp_pc",
-## "code_systolic", "code_diastolic", "term_description_systolic",
-## "term_description_diastolic")
-## Joining, by = c("f.eid", "data_provider", "event_dt", "terminology",
-## "Systolic_bp_pc", "Diastolic_bp_pc")
+## Joining, by = c("f.eid", "data_provider", "event_dt", "terminology", "special_dt", "terminology_note", "Systolic_bp_pc", "Diastolic_bp_pc", "code_systolic", "code_diastolic", "term_description_systolic", "term_description_diastolic")
+## Joining, by = c("f.eid", "data_provider", "event_dt", "terminology", "Systolic_bp_pc", "Diastolic_bp_pc")
 ```
 
 ```r
@@ -879,7 +882,7 @@ head(full_bp_clean)
 ```
 
 ```
-## # A tibble: 6 x 14
+## # A tibble: 6 × 14
 ## # Groups:   f.eid, event_dt [6]
 ##     f.eid data_provider event_dt   terminology special_dt terminology_note
 ##     <int>         <int> <date>     <chr>       <lgl>      <chr>           
@@ -889,7 +892,7 @@ head(full_bp_clean)
 ## 4 1017110             2 2003-02-26 read2       FALSE      <NA>            
 ## 5 1017110             2 2003-06-04 read2       FALSE      <NA>            
 ## 6 1017110             2 2004-03-24 read2       FALSE      <NA>            
-## # ... with 8 more variables: Systolic_bp_pc <dbl>, Diastolic_bp_pc <dbl>,
+## # … with 8 more variables: Systolic_bp_pc <dbl>, Diastolic_bp_pc <dbl>,
 ## #   code_systolic <chr>, code_diastolic <chr>, term_description_systolic <chr>,
 ## #   term_description_diastolic <chr>, code_both <chr>,
 ## #   term_description_both <chr>

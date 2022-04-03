@@ -618,7 +618,7 @@ dkd_control_exclusion_events %>% .$f.eid %>% unique %>% length()
 ```
 
 ```
-## [1] 53924
+## [1] 53782
 ```
 
 
@@ -653,7 +653,7 @@ dr_control_exclusion_events %>% .$f.eid %>% unique %>% length()
 ```
 
 ```
-## [1] 83278
+## [1] 83259
 ```
 
 

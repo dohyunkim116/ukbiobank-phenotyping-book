@@ -3,7 +3,7 @@
 We curate demographic information such as the date of birth, age at the study initiation and censored date which will be used in defining time-to-event outcome.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=T)
+knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
 ```{r, message = F}
