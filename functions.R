@@ -75,7 +75,7 @@ compute_egfr <- function(creat_blood,age,sex){
 # DM complication cases matching provided patterns
 get_phenotype_tab <- function(field_patterns = NULL,icd10_patterns_any = NULL, 
                               icd10_patterns_pd = NULL, icd10_patterns_sd = NULL,
-                              icd0_patterns_any = NULL, icd9_patterns_any = NULL,
+                              icd9_patterns_any = NULL,
                               opcs_patterns = NULL,
                               selfrep_patterns = NULL, selfrep_op_patterns = NULL, custom_field_patterns = NULL,
                               event_tab,firstoccur=T){
