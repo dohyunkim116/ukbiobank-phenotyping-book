@@ -1,4 +1,8 @@
 bookdown::gitbook:
-  split_by: "section"
+  split_by: "section+number"
   css: "style.css"
   #split_bib: no
+#bookdown::bs4_book:
+#  theme:
+#    primary: "#637238"
+    
