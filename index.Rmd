@@ -3,14 +3,8 @@ title: "UK Biobank Phenotyping"
 author: "Do Hyun Kim"
 date: "`r Sys.Date()`"
 site: "bookdown::bookdown_site"
-output: 
-  bookdown::gitbook:
-    split_by: "section"
-    split_bib: no
-    highlight: tango
 documentclass: book
-#bibliography: ["book.bib", "packages.bib"]
-#biblio-style: apalike
+fontsize: 12pt
 link-citations: yes
 ---
 
