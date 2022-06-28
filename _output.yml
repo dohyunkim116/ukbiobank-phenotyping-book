@@ -1,0 +1,4 @@
+bookdown::gitbook:
+  split_by: "section"
+  css: "style.css"
+  #split_bib: no
