@@ -19,6 +19,6 @@ This repository presents steps for generating time-to-diabetes-complication-even
 - Hemorrhagic Stroke
 - Stroke
 - Percutaneous Coronary Intervention (PCI)
-- Compositie cardiovascular disease (CVD)
+- Composite cardiovascular disease (CVD)
 - Diabetic Eye Disease or Diabetic Retinopathy (DR)
 - Chronic/Diabetic Kidney Disease (CKD/DKD)
