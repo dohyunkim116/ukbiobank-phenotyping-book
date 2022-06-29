@@ -10,10 +10,9 @@ merge_long <- function(code_field,date_field,code_tab,date_tab,type){
     rename(code=code_field,event_dt=date_field) %>% mutate(type = type)
 }
 
-# Given vector of dates "dates", returns vector of Boolean values indicating which
-# are "special", i.e. 
+# Given vector of dates "dates", returns vector of Boolean values indicating which are "special", i.e. 
 # "1900-01-01", "1901-01-01", and "2037-07-07" indicate missing values and
-# "1902-02-02" and "1903-03-03" indicate DOBs
+# "1902-02-02" and "1903-03-03" indicate DOBs.
 is_special_date <- function(dates){
   dates %in% as.Date(c("1900-01-01", "1901-01-01", "2037-07-07","1902-02-02", "1903-03-03"))
 }
@@ -183,6 +182,8 @@ phenotype_tte <- function(pre_phenotype_tte_tab){
            date_init,date_censored,event_dt_dm,event_dt_comp)
 }
 
+# Run pre_phenotype_tte() on arguments, then run phenotype_tte() on returned data frame.
+# Return relevant columns of data frame returned by phenotype_tte().
 phenotype_time_to_event <- function(dm_firstoccur,comp_firstoccur,demog,
                                     control_exclusion_ids=NULL,
                                     control_inclusion_ids=NULL){
@@ -191,3 +192,4 @@ phenotype_time_to_event <- function(dm_firstoccur,comp_firstoccur,demog,
                     control_exclusion_ids,control_inclusion_ids) %>%
     phenotype_tte() %>% select(f.eid,time_to_event,event,event_dt_dm,event_dt_comp)
 }
+
