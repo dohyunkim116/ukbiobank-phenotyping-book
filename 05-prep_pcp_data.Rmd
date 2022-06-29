@@ -1,6 +1,6 @@
 # Prepare UKB Primary Care Data {#prep_pcp_data}
 
-The priamry care data contain information about 500,000 patients on their visits to primary care physicians. A reason for a visit is recorded as a code. The date of visit associated with the code is also available. We achieve the following in this folder:
+The primary care data contain information about 500,000 patients on their visits to primary care physicians. A reason for a visit is recorded as a code. The date of visit associated with the code is also available. We achieve the following in this folder:
 
 1. Convert date field to date class
 2. Convert special dates to their mapping
