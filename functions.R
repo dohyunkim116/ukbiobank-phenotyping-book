@@ -114,6 +114,7 @@ get_phenotype_tab <- function(field_patterns = NULL,icd10_patterns_any = NULL,
   }
 }
 
+# Returns combination of data frame arguments usable as an argument for phenotype_tte()
 pre_phenotype_tte <- function(dm_firstoccur,comp_firstoccur,demog,
                               control_exclusion_ids=NULL,
                               control_inclusion_ids=NULL){
