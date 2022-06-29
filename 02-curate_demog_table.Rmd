@@ -14,12 +14,12 @@ library(lubridate)
 
 Demographic data contain a number of fields. We are only interested in several of them and want to further define a few more fields that will be used later in generating time-to-event data.\par
 
-Load formatted raw demographic data
+Load formatted raw demographic data.
 ```{r}
 demog <- readRDS("generated_data/demog_UKB.RDS")
 ```
 
-Define the date of birth and gender
+Define the date of birth and gender.
 ```{r}
 demog <- demog %>% 
   rename(YOB = f.34.0.0) %>%
@@ -28,7 +28,7 @@ demog <- demog %>%
   mutate(SEX = as.character(f.31.0.0))
 ```
 
-Define UKB study initiation date
+Define UKB study initiation date.
 ```{r}
 demog <- demog %>% rename(date_init = f.53.0.0, date_repeat = f.53.1.0)
 ```
@@ -76,7 +76,7 @@ This subject does exist in demographic table but all of the fields are missing e
 demog %>% right_join(rmid) %>% as_vector() %>% .[-1] %>% is.na %>% all
 ```
 
-Remove this subject from the demographic table
+Remove this subject from the demographic table.
 ```{r, message=F}
 demog <- demog %>% anti_join(rmid)
 ```
@@ -132,7 +132,7 @@ demog <- demog %>%
 attr(demog$date_admin_censored,"names") <- NULL
 ```
 
-Load reformatted raw ICD table
+Load reformatted raw ICD table.
 ```{r}
 ICD <- readRDS("generated_data/ICD_UKB.RDS")
 ```
@@ -157,7 +157,7 @@ demog <- demog %>%
   mutate(date_censored = pmin(date_admin_censored,date_lost_fu,date_death,na.rm = T))
 ```
 
-Select needed columns from demographic table
+Select needed columns from demographic table.
 ```{r}
 demog_sel <- demog %>% select(f.eid,DOB,SEX,
                               age_init,age_repeat,
@@ -165,7 +165,7 @@ demog_sel <- demog %>% select(f.eid,DOB,SEX,
                               date_censored)
 ```
 
-Save demographic table. Note that this table includes subjects with genetic and reported sex mismatch
+Save demographic table. Note that this table includes subjects with genetic and reported sex mismatch.
 ```{r}
 saveRDS(demog_sel,"generated_data/pre_demog_sel.RDS")
 ```

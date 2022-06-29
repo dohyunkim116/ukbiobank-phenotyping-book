@@ -22,7 +22,7 @@ source("raw_data/sampleQC_UKB_MOD.r")
 source("raw_data/labs_UKB_MOD.r")
 ```
 
-Save reformatted UKB assessment center data
+Save reformatted UKB assessment center data.
 ```{r}
 saveRDS(demog,"generated_data/demog_UKB.RDS")
 saveRDS(bd,"generated_data/assessment_center_UKB.RDS")
