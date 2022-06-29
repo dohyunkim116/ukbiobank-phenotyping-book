@@ -10,7 +10,9 @@ merge_long <- function(code_field,date_field,code_tab,date_tab,type){
     rename(code=code_field,event_dt=date_field) %>% mutate(type = type)
 }
 
-# is_special_dates
+# Given vector of dates "dates", returns vector of Boolean values indicating which are "special", i.e. 
+# "1900-01-01", "1901-01-01", and "2037-07-07" indicate missing values and
+# "1902-02-02" and "1903-03-03" indicate DOBs.
 is_special_date <- function(dates){
   dates %in% as.Date(c("1900-01-01", "1901-01-01", "2037-07-07","1902-02-02", "1903-03-03"))
 }
@@ -112,6 +114,7 @@ get_phenotype_tab <- function(field_patterns = NULL,icd10_patterns_any = NULL,
   }
 }
 
+# Returns combination of data frame arguments usable as an argument for phenotype_tte()
 pre_phenotype_tte <- function(dm_firstoccur,comp_firstoccur,demog,
                               control_exclusion_ids=NULL,
                               control_inclusion_ids=NULL){
@@ -158,13 +161,13 @@ pre_phenotype_tte <- function(dm_firstoccur,comp_firstoccur,demog,
   
   # indicator noting the date of first occurrence of DM is more than 6 months
   # after the study initiation date
-  tab <- tab %>% mutate(dm_post_init_gt_6mo = 
-                          (event_dt_dm > lubridate::add_with_rollback(date_init, months(6),roll_to_first = TRUE)))
-  
-  tab
+  tab %>% mutate(dm_post_init_gt_6mo = 
+                 (event_dt_dm > lubridate::add_with_rollback(date_init, months(6),roll_to_first = TRUE)))
 }
 
+# Filters data frame argument by row, adds "time_to_event" column, and returns relevant columns.
 phenotype_tte <- function(pre_phenotype_tte_tab){
+  # Filter out certain rows (which rows are we filtering for?)
   tte <- pre_phenotype_tte_tab %>%
     filter(event == 0 | (event == 1 & nonsense_case == 0 & prior_comp == 0 &  init_pre_dm == 0 & init_post_comp == 0)) %>%
     filter(event == 1 | (event == 0 & nonsense_ctrl == 0 & ctrl_exclude == 0 & fut_less_than_5yrs == 0 & 
@@ -179,6 +182,8 @@ phenotype_tte <- function(pre_phenotype_tte_tab){
            date_init,date_censored,event_dt_dm,event_dt_comp)
 }
 
+# Run pre_phenotype_tte() on arguments, then run phenotype_tte() on returned data frame.
+# Return relevant columns of data frame returned by phenotype_tte().
 phenotype_time_to_event <- function(dm_firstoccur,comp_firstoccur,demog,
                                     control_exclusion_ids=NULL,
                                     control_inclusion_ids=NULL){
@@ -187,3 +192,4 @@ phenotype_time_to_event <- function(dm_firstoccur,comp_firstoccur,demog,
                     control_exclusion_ids,control_inclusion_ids) %>%
     phenotype_tte() %>% select(f.eid,time_to_event,event,event_dt_dm,event_dt_comp)
 }
+
