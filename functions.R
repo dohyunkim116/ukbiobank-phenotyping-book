@@ -160,10 +160,8 @@ pre_phenotype_tte <- function(dm_firstoccur,comp_firstoccur,demog,
   
   # indicator noting the date of first occurrence of DM is more than 6 months
   # after the study initiation date
-  tab <- tab %>% mutate(dm_post_init_gt_6mo = 
-                          (event_dt_dm > lubridate::add_with_rollback(date_init, months(6),roll_to_first = TRUE)))
-  
-  tab
+  tab %>% mutate(dm_post_init_gt_6mo = 
+                 (event_dt_dm > lubridate::add_with_rollback(date_init, months(6),roll_to_first = TRUE)))
 }
 
 # Filters data frame argument by row, adds "time_to_event" column, and returns relevant columns.
