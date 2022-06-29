@@ -166,7 +166,7 @@ pre_phenotype_tte <- function(dm_firstoccur,comp_firstoccur,demog,
   tab
 }
 
-
+# Filters data frame argument by row, adds "time_to_event" column, and returns relevant columns.
 phenotype_tte <- function(pre_phenotype_tte_tab){
   tte <- pre_phenotype_tte_tab %>%
     filter(event == 0 | (event == 1 & nonsense_case == 0 & prior_comp == 0 &  init_pre_dm == 0 & init_post_comp == 0)) %>%
