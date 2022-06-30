@@ -34,7 +34,7 @@ The following table shows macrovascular complications and associated control exc
 |Hemorrhagic Stroke|cerebrovascular control exclusion events|
 |Stroke|cerebrovascular control exclusion events|
 |PCI|non-coronary revascularization procedure control exclusion events|
-|Composite CVD| control exclusion events associated with MI, Ischmic stroke, unstable angina and PCI|
+|Composite CVD| control exclusion events associated with MI, Ischemic stroke, unstable angina and PCI|
 
 The following table shows control exclusion event table files and where they were generated:
 
