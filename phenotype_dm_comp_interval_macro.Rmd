@@ -1,0 +1,19 @@
+# Generate time-to-event intervals for macrovascular diabetes complications {#tte-macro}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Setup (may be adding more libraries later)
+```{r}
+library(tidyverse)
+library(data.table)
+library(readr)
+source("functions.R")
+setwd("/Users/kellyjones/Downloads/ukbiobank-phenotyping-book")
+```
+Loading data (for now, rds format of dm_dates.txt but eventually will come from extraction earlier in pipeline)
+```{r}
+dm_IV <- readRDS("./generated_data/dm_dates.rds")
+
+```
+
