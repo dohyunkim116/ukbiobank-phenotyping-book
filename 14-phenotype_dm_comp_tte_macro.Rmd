@@ -47,7 +47,7 @@ The following table shows control exclusion event table files and where they wer
 Applying these exclusion criteria to initial time-to-event data gives us the final time-to-event data for macrovascular diabetic complications. 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, eval = T)
+knitr::opts_chunk$set(echo = TRUE, message = F, eval = F)
 ```
 
 ```{r}

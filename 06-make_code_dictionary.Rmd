@@ -9,7 +9,7 @@ To phenotype a clinical event using primary care data, we need to identify a set
 The purpose of curating the master dictionary is so that we can subset the master dictionary and create a outcome-specific dictionary. For example, for phenotyping diabetes subjects, we would identify a certain set of codes that are known to indicate diabetes, and also search for a certain set of keywords in the descriptions of the codes since each code has multiple descriptions tied to it. Then, using diabetes-specific dictionary, we could identify subjects with diabetes from the PCP data. Curating outcome-specific dictionary is carried out in  \@ref(make-outcome-specific-code-dictionary).
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message = F, eval = T)
+knitr::opts_chunk$set(message = F, eval = F)
 ```
 
 ```{r}

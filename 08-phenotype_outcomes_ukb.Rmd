@@ -62,7 +62,7 @@ Input and output files:
   - `other_revas_control_exclusion_events_ukb.RDS`
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message = F, eval = T)
+knitr::opts_chunk$set(message = F, eval = F)
 ```
 
 ```{r}

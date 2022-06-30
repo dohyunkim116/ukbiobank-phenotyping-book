@@ -28,7 +28,7 @@ Subject IDs that were represented in the primary care data (`gp_subject_ids.RDS`
   
 Applying these exclusion criteria to initial time-to-event data gives us the final time-to-event data for diabetic kidney disease. 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, eval = T)
+knitr::opts_chunk$set(echo = TRUE, message = F, eval = F)
 ```
 
 ```{r}

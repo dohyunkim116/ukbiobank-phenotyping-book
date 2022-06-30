@@ -1,7 +1,7 @@
 # Combine biomarker trajectory extracted from from UKB and PCP data {#traj-combine}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, eval = T)
+knitr::opts_chunk$set(echo = TRUE, message = F, eval = F)
 ```
 
 ```{r}

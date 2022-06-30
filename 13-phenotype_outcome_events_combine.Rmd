@@ -37,7 +37,7 @@ Input and output files:
   - `dkd_firstoccur.RDS`
   
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = T)
+knitr::opts_chunk$set(echo = TRUE, eval = F)
 ```
 
 ```{r,message=F}

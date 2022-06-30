@@ -3,7 +3,7 @@
 In this step, we curate biomarker trajectory data extracted from reformatted primary care table prepared in \@ref(prep_pcp_data).
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=T)
+knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
 Load necessary packages

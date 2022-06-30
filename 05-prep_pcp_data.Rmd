@@ -34,7 +34,7 @@ Input and output files:
 This step cleans primary care table gp_clinical on March 31, 2021.  Reformatted primary care table will be used for phenotyping diabetes, and diabetes complications outcomes.\par
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=T)
+knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
 ```{r, message=F}
