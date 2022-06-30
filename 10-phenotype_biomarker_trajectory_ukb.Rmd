@@ -1,7 +1,7 @@
 # Create biomarker trajectory data from UK biobank assessment center data{#traj-ukb}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=T)
+knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
 ```{r, message=F}
