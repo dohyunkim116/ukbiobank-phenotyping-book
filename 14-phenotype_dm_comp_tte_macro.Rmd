@@ -1,6 +1,6 @@
 # Generate time-to-event data for macrovascular diabetes complications {#tte-macro}
 
-Diabetes first occurrence event table (`dm_firstoccur.RDS`) was generated in `phenotype_outcome_events_combine` and the demographic data (`demog_selected.RDS`) was generated in `prep_ukb_assessment`.
+Diabetes first occurrence event table (`dm_firstoccur.RDS`) was generated in `phenotype_outcome_events_combine.Rmd` and the demographic data (`demog_selected.RDS`) was generated in `exclude_sex_mismatch_subjects.Rmd`.
 
 Here are the mascrovascular diabetic complications and their time-to-event datasets we are phenotyping:
 

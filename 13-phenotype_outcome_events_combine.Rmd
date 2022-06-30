@@ -49,7 +49,7 @@ The following outcomes require event tables originating from UKB assessment cent
 
 - Diabetes (DM)
 - Diabetic eye disease (DR)
-- Diabetic Kidney Disease (CKD)
+- Diabetic kidney disease (CKD)
 
 In particular, phenotyping CKD requires additional event table obtained from using biomarker data.
 
