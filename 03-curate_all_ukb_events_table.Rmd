@@ -344,7 +344,7 @@ event_tab$event_dt <- cleandates(event_tab$event_dt,event_tab$DOB)
 event_tab <- event_tab %>% select(-DOB) %>% filter(!is.na(event_dt))
 ```
 
-Save all UKB events table. Note that this table includes subjects whose genetic and reported sex do not match.
+Save the master event table. Note that this table includes subjects whose genetic and reported sex do not match.
 ```{r}
 saveRDS(event_tab,"generated_data/pre_all_ukb_events_tab.RDS")
 ```
