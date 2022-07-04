@@ -1,6 +1,6 @@
 # Curate a master UKB event table {#curate-master-ukb-events-table}
 
-This chapter gathers different types of fields available in the UKB assessment center data and generates a master event table. We also convert UKB defined special dates to normal dates. We take the following fields from the UKB assessment center data:
+This chapter gathers different types of fields available in the UKB assessment center data and generates a master event table. We also convert UKB defined special dates to normal dates. We take the following fields (details of which can be searched [here](https://biobank.ndph.ox.ac.uk/ukb/search.cgi)) from the UKB assessment center data:
 
 - first occurrence fields in `first_occur_UKB.RDS`
 
