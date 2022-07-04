@@ -2,8 +2,34 @@
 
 ## Input and output file summary
 
-6. make-code-dictionary.Rmd
+6. make_code_dictionary.Rmd
 
-  Input files: `read_v2_V2.csv`, `read_v3_V2.csv`,`tpp_local.txt`
+  - Input files (`raw_data` folder): `read_v2_V2.csv`, `read_v3_V2.csv`,`tpp_local.txt`
+  - Output files: `full_dict.RDS`
+  
+7. make_outcome_specific_code_dictionary.Rmd
 
-  Output files: `full_dict.RDS`
+- Input (`raw_data` folder): 
+
+  - `dm_code_lists` folder:
+    - `opensafely-diabetes-2020-04-15.csv`
+    - `opensafely-diabetes-exeter-group-2020-07-06.csv`
+    - `opensafely-type-1-diabetes-2020-06-29.csv`
+    - `opensafely-type-2-diabetes-2020-06-29.csv`
+    - `read_diabetes_caliber.txt`
+    - `read_diabetes_expanded_caliber.txt`
+    - `read_diabetescomplications_caliber.txt`
+  
+  - `kd_code_lists` folder:
+    - `opensafely-chronic-kidney-disease-2020-04-14.csv`
+    - `opensafely-dialysis-2020-07-16.csv`
+    - `opensafely-kidney-transplant-2020-07-15.csv`
+  
+- Output:
+
+  - `dm_dict.RDS`
+  - `dm_eye_disease_dict.RDS`
+  - `nondm_eye_disease_dict.RDS`
+  - `kidney_disease_case_dict.RDS`
+  - `kidney_disease_control_exclusion_dict.RDS`
+
