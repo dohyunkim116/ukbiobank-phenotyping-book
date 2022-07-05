@@ -34,7 +34,7 @@ The pattern searching is abstracted away in a function `get_phenotype_tab()` in 
 The UKB-defined field patterns match fields that are associated with first occurrence fields and algorithimically defined fields as defined by UKB study. The custom field pattern matches a custom field defined in chapter \@ref(curate-master-ukb-events-table). As a reminder, the only custom field we have defined is `dr_self` used in phenotyping diabetes related eye disease. The code patterns including ICD10, OPCS4, self-reported condition and self-reported operation match the codes that represent some clinical events. Thus, to phenotype an outcome, one should first identify the fields and codes associated with an outcome, define the patterns which are one of the inputs to `get_phenotype_tab()`. Internally, `get_phenotype_tab` function uses `grepl` function in `dplyr` package to filter the master event table.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message = F, eval = T)
+knitr::opts_chunk$set(message = F, eval = F)
 ```
 
 Load packages and functions.
