@@ -1,101 +1,65 @@
 # Phenotype outcomes using primary care data{#phenotype-outcomes-pcp}
 
-We acheive the following in this folder:
+In this chapter, we use outcome-specific dictionaries generated in chapter \@ref(make-outcome-specific-code-dictionary) and the primary care data prepared in chapter \@ref(prep-pcp-data) to generate the following outcomes and control exclusion events:
 
-- Generate __diabetes first occurrence__ and multiple event table (`phenotype_outcome_events_pcp.Rmd`)
-- Generate __advanced chronic disease/diabetic kidney disease__ first occurrence and multiple event tables (`phenotype_outcome_events_pcp.Rmd`)
-- Generate __diabetic eye disease__ first occurrence and multiple event tables (`phenotype_outcome_events_pcp.Rmd`)
-- Generate __kidney disease control exclusion__ event table (`phenotype_control_exclusion_events_pcp.Rmd`)
-- Generate __non-diabetic eye disease__ event table that will be used to exclude controls from generated time-to-event data later (`phenotype_control_exclusion_events_pcp.Rmd`)
+  - diabetes 
+  - diabetic kidney disease
+  - diabetic retinopathy
+  - kidney disease control exclusion events
+  - non-diabetic eye disease events
 
-We utilize outcome-specific dictionaries generated in `make_outcome_specific_code_dictionary` to subset a primary care data and to generate different event tables.
+The event tables are created by subsetting the primary care data with a corresponding outcome-specific dictionary.
 
-Input and output files:
-
-- Input:
-
-  - `entire_gp_clinical_30March2021_formatted.txt`
-  - `dm_dict.RDS`
-  - `dm_eye_disease_dict.RDS`
-  - `kidney_disease_case_dict.RDS`
-  - `nondm_eye_disease_dict.RDS`
-  - `kidney_disease_control_exclusion_dict.RDS`
-  
-- Output:
-
-  - `dm_pc.RDS`
-  - `dm_firstoccur_pc.RDS`
-  - `dr_pc.RDS`
-  - `dr_firstoccur_pc.RDS`
-  - `kidney_disease_case_pc.RDS`
-  - `kidney_disease_case_firstoccur_pc.RDS`
-  - `kidney_disease_control_exclusion_pc.RDS`
-  - `nondm_eye_disease_pc.RDS`
-
-## Phenotype outcome events using primary care data
+## Phenotype outcome events
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
+Load packages and `reference.R` which will be used in phenotyping diabetes (details in DM section below).
 ```{r, message=F}
 library(tidyverse)
 library(data.table)
 source("reference.R")
 ```
 
-Import primary care data
+Import primary care data.
 ```{r}
 pc <- fread("generated_data/entire_gp_clinical_30March2021_formatted.txt")
 ```
 
-Import the following outcome-specific dictionaries:
-
-- diabetes code dictionary
-- diabetic eye disease code dictionary
-- kidney disease code dictionary
-
+Import outcome-specific dictionaries.
 ```{r}
 dm_dict <- readRDS("generated_data/dm_dict.RDS")
 dr_dict <- readRDS("generated_data/dm_eye_disease_dict.RDS")
 kidney_disease_case_dict <- readRDS("generated_data/kidney_disease_case_dict.RDS")
 ```
 
-We phenotype the following outcome events in this R markdown:
-
-- Diabetes (DM)
-- Diabetic eye disease (DR)
-- Kidney disease
-
 ### DM
 
-We pick out the individuals with terms that we are confident that they had diabetes. These terms were selected with the help of a physician, and defined in `reference.R` as an object, `dm_descriptions`. If a subject had terms predating the certain diagnosis which are less certain, we assume that the earlier diagnosis was the better start date. 
-
-For example, suppose we have a subject with following diabetes events:
-
-- 2012: "Diabetic dietary review"
-- 2013: "Type II diabetes"
-
-This individual is considered diabetic (type 2) and the first date is 2012.  
-
-Whereas, the following subject is not included as diabetes patient because the codes are not strong enough to indicate diabetes:
-
-- 2012: "Diabetic dietary review"
-- 2013: "Diabetic dietary review"
-
-Filter PCP data for any DM indication
+Subset the primary care data to subjects with diabetes.
 ```{r}
 diabetics_any <- pc %>%
   select(f.eid, code, event_dt) %>%
   filter(code %in% unique(dm_dict$code)) %>% distinct()
 ```
 
-Get DM codes with clear DM indication
+Next, we select the terms in the DM-specific dictionary whose descriptions reflect more clear indications of DM. Defined as an object `dm_descriptions` in `reference.R`, the descriptions were selected with the help of an expert.
 ```{r}
 dm_codes_confident <-  dm_dict %>% filter(term_description %in% dm_descriptions) %>% .$code %>% unique
 ```
 
-Filter PCP data with any DM indication for clear DM indication. Note that `diabetics_simple` is the recurrent DM event table.
+We define this list of terms with clear DM indications to be able to more accurately identify the first diagnosis date diabetes. Specifically, if a subject had terms predating the certain diagnosis which are less certain, we assume that the earlier diagnosis was the better start date. For example, consider a hypothetical subject with following diabetes events:
+
+- 2012: "Diabetic dietary review"
+- 2013: "Type II diabetes"
+
+This individual will be considered type 2 diabetic patient with 2012 as the first date of DM diagnosis. Although the predating description "Diabetic dietary review" is a less certain of diagnosis, a subsequent diagnosis of "Type II diabetes" tells us this subject clearly has Type II diabetes. In contrast, the following subject would not be included as diabetes patient because the codes are not strong enough to indicate diabetes:
+
+- 2012: "Diabetic dietary review"
+- 2013: "Diabetic dietary review"
+
+Based on this procedure, we will generate first occurrence event table for diabetes. First, subset the event table with any indications of diabetes to events with clear indications of diabetes.
 ```{r}
 diabetics_simple <- 
   diabetics_any %>% 
@@ -106,7 +70,7 @@ diabetics_simple <-
   arrange(f.eid,event_dt)
 ```
 
-Select first occurrence diabetes event
+Generate first occurrence diabetes events.
 ```{r}
 dm_firstoccur_pc <- diabetics_simple %>%
   group_by(f.eid) %>% arrange(event_dt) %>% slice(1)
@@ -119,7 +83,7 @@ saveRDS(dm_firstoccur_pc,"generated_data/dm_firstoccur_pc.RDS")
 
 ### DR
 
-Phenotype recurrent diabetic eye disease event table
+Phenotype diabetic eye disease event table.
 ```{r}
 dr_pc <- pc %>% filter(code %in% dr_dict$code) %>% 
   select(f.eid,event_dt) %>% 
@@ -127,7 +91,7 @@ dr_pc <- pc %>% filter(code %in% dr_dict$code) %>%
   distinct() %>% arrange(f.eid,event_dt)
 ```
 
-Select first occurrence 
+Generate first occurrence diabetic eye disease event table.
 ```{r}
 dr_firstoccur_pc <- dr_pc %>% group_by(f.eid) %>% arrange(event_dt) %>% slice(1)
 ```
@@ -137,9 +101,9 @@ saveRDS(dr_pc,"generated_data/dr_pc.RDS")
 saveRDS(dr_firstoccur_pc,"generated_data/dr_firstoccur_pc.RDS")
 ```
 
-### CKD
+### DKD
 
-Phenotype recurrent (**chronic?**) kidney disease event tables
+Phenotype diabetic kidney disease event table.
 ```{r}
 kidney_disease_case_pc <- 
   pc %>% filter(code %in% kidney_disease_case_dict$code) %>% 
@@ -148,7 +112,7 @@ kidney_disease_case_pc <-
   distinct() %>% arrange(f.eid,event_dt)
 ```
 
-Select first occurrence 
+Generate first occurrence diabetic kidney disease event table.
 ```{r}
 kidney_disease_case_firstoccur_pc <- kidney_disease_case_pc %>% group_by(f.eid) %>% arrange(event_dt) %>% slice(1)
 ```
@@ -158,45 +122,36 @@ saveRDS(kidney_disease_case_pc,"generated_data/kidney_disease_case_pc.RDS")
 saveRDS(kidney_disease_case_firstoccur_pc,"generated_data/kidney_disease_case_firstoccur_pc.RDS")
 ```
 
-## Phenotype control exclusion events using primary care data
+## Phenotype control exclusion events
 
-Import the following outcome-specific dictionaries:
-
-- Non-diabetic eye disease dictionary
-- kidney disease control exclusion event code dictionary
-
+Import the outcome-specific dictionaries for control exclusion events.
 ```{r}
 nondm_eye_disease_dict <- readRDS("generated_data/nondm_eye_disease_dict.RDS")
 kidney_disease_control_exclusion_dict <- readRDS("generated_data/kidney_disease_control_exclusion_dict.RDS")
 ```
 
-We phenotype the following outcome events that will be used as control exclusion events in this R markdown:
-
-- Non-diabetic eye disease events
-- Kidney disease control exclusion events
-
 ### Non-diabetic eye disease events
 
-Phenotype non-DM eye disease to be used as control exclusion events
+Phenotype non-diabetic eye disease event table.
 ```{r}
 nondm_eye_disease_pc <- 
   pc %>% filter(code %in% nondm_eye_disease_dict$code) %>% select(f.eid,event_dt) %>% mutate(event_dt=as.Date(event_dt))
 ```
 
-```{r,include=F}
+```{r}
 saveRDS(nondm_eye_disease_pc,"generated_data/nondm_eye_disease_pc.RDS")
 ```
 
 ### Kidney disease control exclusion events
 
-Phenotype control exclusion kidney disease events
+Phenotype kidney disease control exclusion event table.
 ```{r}
 kidney_disease_control_exclusion_pc <- 
   pc %>% filter(code %in% kidney_disease_control_exclusion_dict$code) %>%
   mutate(event_dt = as.Date(event_dt))
 ```
 
-```{r,include=F}
+```{r}
 saveRDS(kidney_disease_control_exclusion_pc,"generated_data/kidney_disease_control_exclusion_pc.RDS")
 ```
 
