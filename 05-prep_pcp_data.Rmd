@@ -1,4 +1,4 @@
-# Prepare UKB Primary Care Data {#prep_pcp_data}
+# Prepare UKB Primary Care Data {#prep-pcp-data}
 
 The primary care data contain clinical information of approximately 500,000 patients on their visits to primary care physicians. A reason for a visit is recorded as a code. The date of visit associated with the code is also available. We accomplish the following in this chapter:
 
