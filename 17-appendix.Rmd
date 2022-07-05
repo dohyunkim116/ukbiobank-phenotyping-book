@@ -1,35 +1,70 @@
 # Appendix {#appendix}
 
-## Input and output file summary
+Input and output file summary
 
-6. make_code_dictionary.Rmd
+  6. `make_code_dictionary.Rmd`
 
-  - Input files (`raw_data` folder): `read_v2_V2.csv`, `read_v3_V2.csv`,`tpp_local.txt`
-  - Output files: `full_dict.RDS`
+    - Input files (`raw_data` folder): `read_v2_V2.csv`, `read_v3_V2.csv`,`tpp_local.txt`
+    
+    - Output files: `full_dict.RDS`
   
-7. make_outcome_specific_code_dictionary.Rmd
-
-- Input (`raw_data` folder): 
-
-  - `dm_code_lists` folder:
-    - `opensafely-diabetes-2020-04-15.csv`
-    - `opensafely-diabetes-exeter-group-2020-07-06.csv`
-    - `opensafely-type-1-diabetes-2020-06-29.csv`
-    - `opensafely-type-2-diabetes-2020-06-29.csv`
-    - `read_diabetes_caliber.txt`
-    - `read_diabetes_expanded_caliber.txt`
-    - `read_diabetescomplications_caliber.txt`
+  7. `make_outcome_specific_code_dictionary.Rmd`
   
-  - `kd_code_lists` folder:
-    - `opensafely-chronic-kidney-disease-2020-04-14.csv`
-    - `opensafely-dialysis-2020-07-16.csv`
-    - `opensafely-kidney-transplant-2020-07-15.csv`
+    - Input (`raw_data` folder): 
+    
+      - `dm_code_lists` folder:
+      
+        - `opensafely-diabetes-2020-04-15.csv`
+        - `opensafely-diabetes-exeter-group-2020-07-06.csv`
+        - `opensafely-type-1-diabetes-2020-06-29.csv`
+        - `opensafely-type-2-diabetes-2020-06-29.csv`
+        - `read_diabetes_caliber.txt`
+        - `read_diabetes_expanded_caliber.txt`
+        - `read_diabetescomplications_caliber.txt`
+        
+      - `kd_code_lists` folder:
+      
+        - `opensafely-chronic-kidney-disease-2020-04-14.csv`
+        - `opensafely-dialysis-2020-07-16.csv`
+        - `opensafely-kidney-transplant-2020-07-15.csv`
+        
+    - Output:
+    
+      - `dm_dict.RDS`
+      - `dm_eye_disease_dict.RDS`
+      - `nondm_eye_disease_dict.RDS`
+      - `kidney_disease_case_dict.RDS`
+      - `kidney_disease_control_exclusion_dict.RDS`
   
-- Output:
-
-  - `dm_dict.RDS`
-  - `dm_eye_disease_dict.RDS`
-  - `nondm_eye_disease_dict.RDS`
-  - `kidney_disease_case_dict.RDS`
-  - `kidney_disease_control_exclusion_dict.RDS`
+  8. `phenotype_outcomes_ukb.Rmd`
+  
+    - Input:
+    
+      - `all_ukb_events_tab.RDS`
+      
+    - Output:
+    
+      - `mi_ukb.RDS`
+      - `mi_firstoccur_ukb.RDS`
+      - `unstable_angina_ukb.RDS`
+      - `unstable_angina_firstoccur_ukb.RDS`
+      - `stroke_infarct_ukb.RDS`
+      - `stroke_infarct_firstoccur_ukb.RDS`
+      - `stroke_hem_ukb.RDS`
+      - `stroke_hem_firstoccur_ukb.RDS`
+      - `stroke_ukb.RDS`
+      - `stroke_firstoccur_ukb.RDS`
+      - `pci_ukb.RDS`
+      - `pci_firstoccur_ukb.RDS`
+      - `cvd_death_ukb.RDS`
+      - `cvd_ukb.RDS`
+      - `cvd_firstoccur_ukb.RDS`
+      - `dr_firstoccur_ukb.RDS`
+      - `dkd_ukb.RDS`
+      - `dkd_firstoccur_ukb.RDS`
+      - `dr_control_exclusion_events_ukb.RDS`
+      - `dkd_control_exclusion_events_ukb.RDS`
+      - `cardio_control_exclusion_events_ukb.RDS`
+      - `cerebro_control_exclusion_events_ukb.RDS`
+      - `other_revas_control_exclusion_events_ukb.RDS`
 
