@@ -16,8 +16,8 @@ library(tidyverse)
 
 Import Read v2 code dictionary data.
 ```{r}
-read2_dict_nondrug <- openxlsx::read.xlsx("raw_data/all_lkps_maps_v3.xlsx", sheet = "read_v2_lkp")
-read2_dict_drug <- openxlsx::read.xlsx("raw_data/all_lkps_maps_v3.xlsx", sheet = "read_v2_drugs_lkp")
+read2_dict_nondrug <- read.csv("raw_data/read_v2_V2.csv")
+read2_dict_drug <- read.csv("raw_data/read_v2_drugs.csv")
 ```
 
 Combine drug and nondrug Read v2 dictionaries. Keep only `read_code` and `term_description` fields.
@@ -28,7 +28,7 @@ read2_dict <- full_join(read2_dict_drug,read2_dict_nondrug) %>%
 
 Import Read v3 code dictionary data
 ```{r}
-read3_dict <- openxlsx::read.xlsx("raw_data/all_lkps_maps_v3.xlsx", sheet = "read_ctv3_lkp")
+read3_dict <- read.csv("raw_data/read_v3_V2.csv")
 ```
 
 Note that Read v3 dictionary has identical codes that start with period and without, for example, .9m05 vs 9m05. In the UKB database, the one starting with '.' is never used, so we filter out these codes.
