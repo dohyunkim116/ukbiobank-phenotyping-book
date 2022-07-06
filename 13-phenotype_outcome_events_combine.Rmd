@@ -4,7 +4,7 @@ In this chapter, we combine event tables generated in the previous chapters to g
 
 - diabetes event table and diabetes first occurrence event table
 - diabetic eye disease first occurrence event table
-- diabetic kidney disease and diabetic kidney disease first occurrence event table
+- diabetic first occurrence event table
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = F)
