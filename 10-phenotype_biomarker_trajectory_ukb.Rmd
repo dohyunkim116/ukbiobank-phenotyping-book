@@ -9,7 +9,7 @@ In this chapter, we create biomarker trajectory data using the UKB assessment ce
 - cholesterol
 - blood creatinine
 - cystatin C
-- blood glucose
+- blood glucose (random)
 - hba1c
 - HDL
 - LDL
