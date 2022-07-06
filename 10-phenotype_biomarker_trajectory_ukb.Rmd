@@ -20,7 +20,7 @@ In this chapter, we create biomarker trajectory data using the UKB assessment ce
 
 In addition, we phenotype patient's macroalbumuminuria or microalbuminuria status which will be used in phenotyping time-to-event data for diabetic kidney disease. 
 
-As we did in chapters \@ref(curate-master-ukb-events-table) and \@ref(prep-pcp-data), we exclude any subjects who have mismatch between self-reported sex and genetically determined sex. However, we also remove any measurements whose dates are coded as special dates. If biomarker measurements or their dates are missing, we exclude those measurements from the trajectory table as well.
+As we did in chapters \@ref(curate-master-ukb-events-table) and \@ref(prep-pcp-data), we exclude any subjects who have mismatch between self-reported sex and genetically determined sex. If biomarker measurements or their dates are missing, we exclude those measurements from the trajectory table as well.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval=F)
@@ -154,7 +154,6 @@ sex_mismatch_subject_ids <- readRDS("generated_data/sex_mismatch_subject_ids.RDS
 Filter out the following from the biomarker trajectory table and albuminuria event table:
 
 - any subjects with sex mismatch
-- any events with special dates
 - any unknown measurements
 - any measurements with unknown dates
 
