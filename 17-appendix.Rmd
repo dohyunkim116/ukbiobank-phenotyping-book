@@ -90,4 +90,24 @@ Input and output file summary
     - `nondm_eye_disease_pc.RDS`
     - `kidney_disease_control_exclusion_pc.RDS`
     
+  13. `phenotype_outcome_events_combine.Rmd`
+  
+  - Input:
+
+   - `dm_pc.RDS`
+   - `dm_ukb.RDS`
+   - `dr_pc.RDS`
+   - `dr_firstoccur_ukb.RDS`
+   - `kidney_disease_case_pc.RDS`
+   - `dkd_ukb.RDS`
+   - `macroabu_firstoccur.RDS`
+   - `prolonged_low_egfr_firstoccur.RDS`
+  
+- Output:
+
+  - `dm.RDS`
+  - `dm_firstoccur.RDS`
+  - `dr_firstoccur.RDS`
+  - `dkd_firstoccur.RDS`
+    
 
