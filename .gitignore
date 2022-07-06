@@ -5,6 +5,7 @@
 generated_data/*
 raw_data/*
 _book/*
+_bookdown_files/*
 .DS_Store
 .Rproj.user
 .Rhistory
