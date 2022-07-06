@@ -13,7 +13,7 @@ In this chapter, we curate a demographic table containing following information:
 The censored date is defined as the earliest date among administrative censoring date, date of last contact and date of death.
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=T)
+knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
 Load packages.
