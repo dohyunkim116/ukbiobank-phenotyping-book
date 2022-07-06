@@ -1,18 +1,34 @@
-# Curate biomarker trajectory data from primary care data {#traj-pcp}
+# Create biomarker trajectory data from primary care data {#traj-pcp}
 
-In this step, we curate biomarker trajectory data extracted from reformatted primary care table prepared in \@ref(prep_pcp_data).
+In this chapter, we create biomarker trajectory data using the primary care data. The biomarkers we phenotype are
+
+- urine albumin 
+- urine creatinine
+- blood creatinine
+- blood glucose (random)
+- fasting glucose
+- hba1c
+- HDL
+- LDL
+- triglycerides
+- systolic blood pressure (SBP)
+- diastolic blood pressure (DBP)
+- urine albumin to urine creatinine ratio (UACR)
+- BMI
+
+As we did in the previous chapter, we phenotype patient's macroalbumuminuria or microalbuminuria status, and exclude events whose measurements or their dates are missing. However, we do not apply sex mismatch filters since we have already filtered out those subjects in chapter \@ref(prep-pcp-data).
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
-Load necessary packages
+Load necessary packages.
 ```{r, message=F, warning=F}
 library(tidyverse)
 library(knitr)
 ```
 
-Load reformatted primary care table 
+Load reformatted primary care table.
 <!-- and remove events marked as special dates -->
 <!-- # gp_clinical <- gp_clinical[!gp_clinical$special_dt,] -->
 ```{r, message=F}
@@ -26,8 +42,7 @@ full_dict <- readRDS("generated_data/full_dict.RDS")
 tail(full_dict)
 ```
 
-For the purpose of combining the dictionary with gp_clinical, remove terms with missing descriptions, additional descriptions for the same code, and identical codes+descriptions across terminology(read v2/CTV3)
-
+For the purpose of combining the dictionary with gp_clinical, remove terms with missing descriptions, additional descriptions for the same code, and identical codes+descriptions across terminology(read v2/CTV3).
 ```{r, message=F, warning=F}
 full_dict <- full_dict %>%
   select(-terminology) %>%
@@ -37,13 +52,11 @@ full_dict <- full_dict %>%
 
 tail(full_dict)
 ```
-
 Add the term descriptions to gp_clinical.
 ```{r, message=F}
 gp_clinical <- gp_clinical %>%
   left_join(full_dict) 
 ```
-
 
 Define the clinical terms to extract from gp_clinical for each biomarker. Each biomarker gets a string to be used in a grepl pattern matching query, and as such different patterns should be separated by '|', brackets used to denote multiple possible patterns to match, and '^' to denote the beginning of the string.
 ```{r}
@@ -246,7 +259,6 @@ UACR %>% group_by(manual, term_description_uacr, term_description_ualb) %>%
 ggplot(data=UACR, aes(x=log10(UACR))) + geom_density() + theme_minimal()
 ```
 
-
 ## Blood/Serum creatinine
 This is needed to calculate eGFR. UK Biobank measures lie between 10.7 and 1499.3. We filter the allowable range to lie between 10 and 1500.
 ```{r, warning=F, message=F}
@@ -352,7 +364,6 @@ joined_bmi <- full_join(weight_pre, height_pre) %>%
 head(joined_bmi)
 ```
 
-
 Clean the combined data, filling in missing height values from previous/subsequent measurements or BMI. Filter out cases where the calculated and reported BMI differ by more than 1.5.
 ```{r, message=F, warning=F}
 cleaned_bmi <- joined_bmi %>%
@@ -404,7 +415,6 @@ bp_mult <- bp %>%
   mutate(Diastolic_bp_pc = pmin(value1, value2, value3, na.rm=T)) %>%
   filter(Systolic_bp_pc != 0 & Diastolic_bp_pc != 0)
 ```
-
 
 One value per record: filter out those with a value of 0. 
 ```{r, message=F, warning=F}
@@ -470,7 +480,7 @@ bp_single_wide <- full_join(systolic, diastolic)
 head(bp_single_wide)
 ```
 
-Combine each of the cleaned subsets and implement some common sense filters (45 < Systolic bp < 300, 30 < Diastolic bp < Systolic bp) 
+Combine each of the cleaned subsets and implement some common sense filters (45 < Systolic bp < 300, 30 < Diastolic bp < Systolic bp).
 ```{r, messsage=F, warning=F}
 unknowns_less <- unknowns %>% 
   select(-term_description, -value, -bp_type, -code, -n) %>%
@@ -553,6 +563,16 @@ blood_creat <- blood_creatinine %>%
   rename(measurement = blood_creatinine) %>%
   mutate(biomarker = "creat_blood")
 
+urine_creat <- ucreat %>% 
+  select(f.eid, ucreat_umol_L, event_dt) %>%
+  rename(measurement = ucreat_umol_L) %>%
+  mutate(biomarker = "creat_urine")
+
+urine_albumin <- ualb %>%
+  select(f.eid, ualb_mg_L, event_dt) %>%
+  rename(measurement = ualb_mg_L) %>%
+  mutate(biomarker = "albumin_urine")
+
 uacr <- UACR %>%
   select(f.eid,UACR,event_dt) %>%
   rename(measurement = UACR) %>%
@@ -562,10 +582,11 @@ uacr <- UACR %>%
 Combine all of biomarker trajectory datasets into a long format. 
 ```{r}
 biomarker_traj_tab_long <- bind_rows(list(sbp,dbp,cholesterol,hdl,ldl,trigly,
-                                          glu_fast,glu_rand,hba1c,bmi,blood_creat,uacr))
+                                          glu_fast,glu_rand,hba1c,bmi,blood_creat,
+                                          urine_creat,urine_albumin,uacr))
 ```
 
-Create macro/microalbuminuria event table
+Create macro/microalbuminuria event table.
 ```{r}
 albuminuria_event_tab <- 
   biomarker_traj_tab_long %>% 
@@ -577,10 +598,10 @@ albuminuria_event_tab <-
   select(f.eid,event,event_dt,type)
 ```
 
-Filter out from biomarker trajectory table and albuminuria event table:
+Filter out the following from the biomarker trajectory table and albuminuria event table:
 
-- any unknown date of event
-- any unknown measurements (only applies to biomarker trajectory table)
+- any unknown measurements
+- any measurements with unknown dates
 
 ```{r}
 biomarker_traj_tab_long <- biomarker_traj_tab_long[!is.na(biomarker_traj_tab_long$event_dt),]
@@ -589,7 +610,7 @@ biomarker_traj_tab_long <- biomarker_traj_tab_long[!is.na(biomarker_traj_tab_lon
 albuminuria_event_tab <- albuminuria_event_tab[!is.na(albuminuria_event_tab$event_dt),]
 ```
 
-Save the biomarker trajectory data and albuminuria event table extracted from the primary care data
+Save the biomarker trajectory data and albuminuria event table extracted from the primary care data.
 ```{r}
 saveRDS(biomarker_traj_tab_long,"generated_data/biomarker_trajectory_pcp.RDS")
 saveRDS(albuminuria_event_tab,"generated_data/albuminuria_event_tab_pcp.RDS")
