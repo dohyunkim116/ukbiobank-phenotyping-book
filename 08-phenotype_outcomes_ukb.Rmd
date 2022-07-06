@@ -2,6 +2,7 @@
 
 In this chapter, we use the master UKB event table created in chapter \@ref(curate-master-ukb-events-table) to generate different outcome event tables. We phenotype the following outcomes:
 
+  - Diabetes (DM)
   - Myocardial Infarction (MI)
   - Unstable Angina (UA)
   - Ischemic Stroke (IS)
