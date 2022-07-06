@@ -1,23 +1,46 @@
 # Create biomarker trajectory data from UK biobank assessment center data{#traj-ukb}
 
+In this chapter, we create biomarker trajectory data using the UKB assessment center data. The biomarkers we phenotype are
+
+- platelet
+- urine albumin 
+- urine creatinine
+- blood albumin
+- cholesterol
+- blood creatinine
+- cystatin C
+- blood glucose
+- hba1c
+- HDL
+- LDL
+- triglycerides
+- systolic blood pressure (SBP)
+- diastolic blood pressure (DBP)
+- urine albumin to urine creatinine ratio (UACR)
+
+In addition, we phenotype patient's macroalbumuminuria or microalbuminuria status which will be used in phenotyping time-to-event data for diabetic kidney disease. 
+
+As we did in chapters \@ref(curate-master-ukb-events-table) and \@ref(prep-pcp-data), we exclude any subjects who have mismatch between self-reported sex and genetically determined sex. However, we also remove any measurements whose dates are coded as special dates. If biomarker measurements or their dates are missing, we exclude those measurements from the trajectory table as well.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
+Load packages and functions.
 ```{r, message=F}
 library(tidyverse)
 library(lubridate)
 source("functions.R")
 ```
 
-Load reformatted UKB demographics and labs tables
+Load reformatted UKB demographics and labs tables.
 ```{r}
 demog_ukb <- readRDS("generated_data/demog_UKB.RDS")
 labs_ukb <- readRDS("generated_data/labs_UKB.RDS")
 demog_sel <- readRDS("generated_data/demog_selected.RDS")
 ```
 
-Define fieldID key
+Define dictionary that maps field ID's to biomarkers.
 ```{r}
 fieldID_key <- c(
   "30080" = "platelets",
@@ -39,7 +62,7 @@ fieldID_key <- c(
 )
 ```
 
-Create biomarker trajectory data for all biomarkers defined above
+Create biomarker trajectory data for all biomarkers defined above.
 ```{r}
 biomarker_traj_tab_long <- 
   full_join(labs_ukb,demog_ukb) %>% 
@@ -55,7 +78,7 @@ biomarker_traj_tab_long <-
   select(f.eid,measurement,event_dt,visit,biomarker)
 ```
 
-Compute urine albumin to urine creatinine ratio (UACR)
+Compute urine albumin to urine creatinine ratio (UACR).
 ```{r}
 uacr_traj <- biomarker_traj_tab_long %>% filter(biomarker %in% c("albumin_urine","creat_urine")) %>%
   pivot_wider(id_cols = c(f.eid,event_dt), names_from = c(biomarker,visit), values_from = measurement) %>%
@@ -68,13 +91,13 @@ uacr_traj <- biomarker_traj_tab_long %>% filter(biomarker %in% c("albumin_urine"
   mutate(biomarker = "uacr")
 ```
 
-Add UACR trajectory data to the `biomarker_traj_tab_long`
+Add UACR trajectory data to the `biomarker_traj_tab_long`.
 ```{r}
 biomarker_traj_tab_long <- bind_rows(biomarker_traj_tab_long,uacr_traj) %>% 
   filter(!is.na(event_dt),!is.na(measurement))
 ```
 
-Create macro/microalbuminuria event table
+Create macro/microalbuminuria event table.
 ```{r}
 albuminuria_event_tab <- 
   biomarker_traj_tab_long %>% 
@@ -86,9 +109,7 @@ albuminuria_event_tab <-
   select(f.eid,event,event_dt,type)
 ```
 
-Infer macro/microalbuminuria status:\par
-
-If a subject was missing urine albumin or urine creatinine levels, we cannot compute urine albumin to creatinine ratio (UACR). Urine albumin levels were assumed to be undetectable (NA values) if urine albumin levels were below 6.7. Subjects with known detection issue had missing urine albumin measurements. However, we can still rule out micro/macroalbuminuria using the urine creatinine levels by computing the upper bound of UACR.
+If a subject was missing urine albumin or urine creatinine levels, we cannot compute urine albumin to creatinine ratio (UACR). Urine albumin levels were assumed to be undetectable (`NA`s) if urine albumin levels were below $6.7$. Subjects with known detection issue had missing urine albumin measurements. However, we can still rule out micro/macroalbuminuria using the urine creatinine levels by computing the upper bound of UACR.
 
 To elaborate, suppose a subject's urine albumin level $a$ is below the detection level, i.e. $a < 6.7$. Then, $ACR = \frac{a}{c \times 10^{-3}} < \frac{6.7}{c\times 10^{-3}}$ where $c:=$ urine creatinine levels. Thus, $\frac{6.7}{c\times 10^{-3}}$ is an upper bound of ACR for the subject. Thus
 
@@ -124,18 +145,18 @@ Combine inferred albuminuria event table with `albuminuria_event_tab`
 albuminuria_event_tab <- bind_rows(albuminuria_event_tab,albuminuria_event_tab_inferred) %>% distinct()
 ```
 
-Load demographics table and subjects with sex mismatch
+Load demographics table and ID's of subjects with sex mismatch.
 ```{r}
 demog <- readRDS("generated_data/demog_selected.RDS")
 sex_mismatch_subject_ids <- readRDS("generated_data/sex_mismatch_subject_ids.RDS")
 ```
 
-Filter out from from biomarker trajectory table and albuminuria event table:
+Filter out the following from the biomarker trajectory table and albuminuria event table:
 
 - any subjects with sex mismatch
 - any events with special dates
-- any events with unknown date
-- any unknown measurements (only applies to biomarker trajectory table)
+- any unknown measurements
+- any measurements with unknown dates
 
 ```{r}
 biomarker_traj_tab_long <- biomarker_traj_tab_long[!(biomarker_traj_tab_long$f.eid %in% sex_mismatch_subject_ids),]
