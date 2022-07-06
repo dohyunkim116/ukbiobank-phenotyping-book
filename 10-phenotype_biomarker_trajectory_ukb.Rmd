@@ -6,8 +6,8 @@ In this chapter, we create biomarker trajectory data using the UKB assessment ce
 - urine albumin 
 - urine creatinine
 - blood albumin
-- cholesterol
 - blood creatinine
+- cholesterol
 - cystatin C
 - blood glucose (random)
 - hba1c
