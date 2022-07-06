@@ -1,28 +1,14 @@
 # Generate time-to-event data for macrovascular diabetes complications {#tte-macro}
 
-Diabetes first occurrence event table (`dm_firstoccur.RDS`) was generated in `phenotype_outcome_events_combine.Rmd` and the demographic data (`demog_selected.RDS`) was generated in `exclude_sex_mismatch_subjects.Rmd`.
-
-Here are the mascrovascular diabetic complications and their time-to-event datasets we are phenotyping:
+In this chapter, we phenotype the following macrovascular diabetes compliations:
 
 - Myocardial Infarction (MI)
-- Unstable Angina
-- Ischemic Stroke
-- Hemorrhagic Stroke
-- Stroke
+- Unstable Angina (UA)
+- Ischemic Stroke (IS)
+- Hemorrhagic Stroke (HS)
+- Stroke (ST)
 - PCI
 - Composite CVD
-
-The following table shows macrovascular complication event table files and where they were generated:
-
-|Macrovascular complication outcome|file|folder|
-|------------|---|---|
-| Myocardial Infarction (MI) | `mi_firstoccur_ukb.RDS`| `phenotype_events_ukb` |
-| Unstable Angina | `unstable_angina_ukb.RDS` | `phenotype_events_ukb` |
-| Ischemic Stroke | `stroke_infarct_firstoccur_ukb.RDS` | `phenotype_events_ukb` |
-| Hemorrhagic Stroke | `stroke_hem_firstoccur_ukb.RDS` | `phenotype_events_ukb` |
-| Stroke | `stroke_ukb.RDS` | `phenotype_events_ukb` |
-| PCI | `pci_firstoccur_ukb.RDS` | `phenotype_events_ukb` |
-| Composite CVD | `cvd_firstoccur_ukb.RDS` | `phenotype_events_ukb` |
 
 The following table shows macrovascular complications and associated control exclusion criteria:
 
@@ -36,27 +22,20 @@ The following table shows macrovascular complications and associated control exc
 |PCI|non-coronary revascularization procedure control exclusion events|
 |Composite CVD| control exclusion events associated with MI, Ischemic stroke, unstable angina and PCI|
 
-The following table shows control exclusion event table files and where they were generated:
-
-|Control exclusion outcome|file|folder|
-|------------|---|---|
-|cardiovascular control exclusion events|`cardio_control_exclusion_events_ukb.RDS`|`phenotype_events_ukb`|
-|cerebrovascular control exclusion events|`cerebro_control_exclusion_events_ukb.RDS`|`phenotype_events_ukb`|
-|non-coronary revascularization procedure control exclusion events|`other_revas_control_exclusion_events_ukb.RDS`|`phenotype_events_ukb`|
-
-Applying these exclusion criteria to initial time-to-event data gives us the final time-to-event data for macrovascular diabetic complications. 
+The event tables for all of the above control exclusion events were created in chapter \@ref(phenotype-outcomes-ukb). Applying these exclusion criteria to initial time-to-event data gives us the final time-to-event data for macrovascular diabetic complications. 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, eval = F)
+knitr::opts_chunk$set(echo = TRUE, eval = F)
 ```
 
-```{r}
+Load packages and functions.
+```{r, message=F}
 library(tidyverse)
 library(data.table)
 source("functions.R")
 ```
 
-Load phenotyped DM data.
+Load first occurrence DM data.
 ```{r}
 dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
 ```
@@ -66,7 +45,7 @@ Load demographic data.
 demog <- readRDS("generated_data/demog_selected.RDS")
 ```
 
-## MI
+__MI__
 
 Load MI first occurrence data phenotyped from UKB assessment data.
 ```{r}
@@ -93,7 +72,7 @@ mi_tte <- phenotype_time_to_event(dm_firstoccur, mi_firstoccur_ukb,
 saveRDS(mi_tte,"generated_data/mi_tte.RDS")
 ```
 
-## Unstable angina
+__Unstable angina__
 
 Load unstable angina first occurrence data phenotyped from UKB assessment data.
 ```{r}
@@ -110,7 +89,7 @@ unstable_angina_tte <- phenotype_time_to_event(dm_firstoccur,unstable_angina_fir
 saveRDS(unstable_angina_tte,"generated_data/unstable_angina_tte.RDS")
 ```
 
-## Ischemic stroke
+__Ischemic stroke__
 
 Load ischemic stroke first occurrence data phenotyped from UKB assessment data.
 ```{r}
@@ -137,8 +116,7 @@ ischemic_stroke_tte <- phenotype_time_to_event(dm_firstoccur,ischemic_stroke_fir
 saveRDS(ischemic_stroke_tte,"generated_data/ischemic_stroke_tte.RDS")
 ```
 
-
-## Hemorrhagic Stroke
+__Hemorrhagic Stroke__
 
 Load hemorrhagic stroke first occurrence data phenotyped from UKB assessment data.
 ```{r}
@@ -165,7 +143,7 @@ hem_stroke_tte <- phenotype_time_to_event(dm_firstoccur,hem_stroke_firstoccur_uk
 saveRDS(hem_stroke_tte,"generated_data/hem_stroke_tte.RDS")
 ```
 
-## Stroke
+__Stroke__
 
 Load stroke first occurrence data phenotyped from UKB assessment data.
 ```{r}
@@ -192,8 +170,7 @@ stroke_tte <- phenotype_time_to_event(dm_firstoccur,stroke_firstoccur_ukb,demog,
 saveRDS(stroke_tte,"generated_data/stroke_tte.RDS")
 ```
 
-
-## PCI
+__PCI__
 
 Load PCI first occurrence data phenotyped from UKB assessment data.
 ```{r}
@@ -220,8 +197,7 @@ pci_tte <- phenotype_time_to_event(dm_firstoccur,pci_firstoccur_ukb,demog,
 saveRDS(pci_tte,"generated_data/pci_tte.RDS")
 ```
 
-
-## Composite CVD (MI, Unstable Angina, Ischemic Stroke, PCI or CVD death)
+__Composite CVD (MI, Unstable Angina, Ischemic Stroke, PCI or CVD death)__
 
 Load composite CVD first occurrence data phenotyped from UKB assessment data.
 ```{r}
