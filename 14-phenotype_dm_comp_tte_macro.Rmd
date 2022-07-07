@@ -1,6 +1,6 @@
 # Generate time-to-event data for macrovascular diabetes complications {#tte-macro}
 
-In this chapter, we phenotype the following macrovascular diabetes compliations:
+In this chapter, we phenotype right-censored time-to-event data for the following macrovascular diabetes compliations:
 
 - Myocardial Infarction (MI)
 - Unstable Angina (UA)
@@ -10,10 +10,27 @@ In this chapter, we phenotype the following macrovascular diabetes compliations:
 - PCI
 - Composite CVD
 
-The following table shows macrovascular complications and associated control exclusion criteria:
+A time-to-event data requires an index date (time-zero point) and the event date of an outcome. In our case, we can define index date to be the first diagnosis date of diabetes or UKB study initiation date. For right-censored data, we define the index date as UKB study initiation date (a landmark study design). In later chapters, we create interval-censored data by setting the index date as the first diabetes diagnosis date. 
+
+We now introduce a phenotyping procedure for right-censored data. For each complication outcome, we create an initial time-to-event data by combining the first occurrence diabetes event table, the first occurrence outcome event table and demographic table. As we merge these data to produce the initial time-to-event data, the cases and controls occur. The case is defined as a subject who has a complication event before the censoring date (defined in chapter \@ref(curate-demog-table)). Otherwise, a subject is defined as control.
+
+Next, we refine the initial time-to-event data by applying the following exclusion criteria for cases and controls:
+
+- case
+  - has some event represented in a control exclusion event table(s) (see the table below)
+  - has a complication event after the censoring date
+  - has a prior complication event identified before a first evidence of diabetes
+  - has an initiation date that is not between the first evidence of diabetes and the date of complication event
+
+- control
+  - has a first evidence of diabetes after the censoring date
+  - has less than 5 years of follow-up time since the first evidence of diabetes before censoring date
+  - has a first evidence of diabets 6 months after the study initiation date
+
+The following table shows macrovascular complications and associated control exclusion event table(s):
 
 |Macrovascular complication|Control exclusion outcome|
-|------------|---|
+|:------------|:---|
 |Myocardial Infarction|cardiovascular control exclusion events|
 |Unstable Angina||
 |Ischemic Stroke|cerebrovascular control exclusion events|
@@ -22,7 +39,7 @@ The following table shows macrovascular complications and associated control exc
 |PCI|non-coronary revascularization procedure control exclusion events|
 |Composite CVD| control exclusion events associated with MI, Ischemic stroke, unstable angina and PCI|
 
-The event tables for all of the above control exclusion events were created in chapter \@ref(phenotype-outcomes-ukb). Applying these exclusion criteria to initial time-to-event data gives us the final time-to-event data for macrovascular diabetic complications. 
+The event tables for all of the above control exclusion events were created in chapter \@ref(phenotype-outcomes-ukb). The phenotyping procedure for time-to-event data is encapsulated in a function `phenotype_time_to_event()` defined in `functions.R`.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = F)
