@@ -3,8 +3,8 @@
 In this chapter, we phenotype right-censored time-to-event data for diabetic eye disease. An initial time-to-event data are created, and consequent cases and controls are identified following the identical procedure described in chapter \@ref(tte-macro). The initial time-to-event data are refined by applying the following exclusion criteria: 
 
   - case
-    - has some event represented in diabetic eye disease control exclusion event table (generated in \@ref(phenotype-outcomes-ukb))
-    - has some event represented in non-diabetic eye disease event table (generated in \@ref(phenotype-outcomes-pcp))
+    - has some event represented in diabetic eye disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-ukb))
+    - has some event represented in non-diabetic eye disease event table (generated in chapter \@ref(phenotype-outcomes-pcp))
     - has a complication event after the censoring date
     - has a prior complication event identified before a first evidence of diabetes
     - has an initiation date that is not between the first evidence of diabetes and the date of complication event
