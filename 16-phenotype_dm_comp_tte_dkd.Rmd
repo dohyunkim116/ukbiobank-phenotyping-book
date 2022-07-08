@@ -3,16 +3,16 @@
 In this chapter, we phenotype right-censored time-to-event data for diabetic kidney disease. An initial time-to-event data are created, and consequent cases and controls are identified following the identical procedure described in chapter \@ref(tte-macro). The initial time-to-event data are refined by applying the following exclusion criteria: 
 
   - case
-    - has some event represented in diabetic kidney disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-ukb))
-    - has some event represented in kidney disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-pcp))
-    - has been found to have microalbuminuria at least once
-    - has been found to have eGFR level less than 60
     - has a complication event after the censoring date
     - has a prior complication event identified before a first evidence of diabetes
     - has an initiation date that is not between the first evidence of diabetes and the date of complication event
     - has less than 5 years of follow-up time since the first evidence of diabetes before a kidney disease event
   
   - control
+     - has some event represented in diabetic kidney disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-ukb))
+    - has some event represented in kidney disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-pcp))
+    - has been found to have microalbuminuria at least once
+    - has been found to have eGFR level less than 60
     - has a first evidence of diabetes after the censoring date
     - has less than 5 years of follow-up time since the first evidence of diabetes before censoring date
     - has a first evidence of diabetes 6 months after the study initiation date

@@ -17,12 +17,12 @@ We now introduce a phenotyping procedure for right-censored data. For each compl
 Next, we refine the initial time-to-event data by applying the following exclusion criteria for cases and controls:
 
 - case
-  - has some event represented in a control exclusion event table(s) (all generated in chapter \@ref(phenotype-outcomes-ukb); also see the table below)
   - has a complication event after the censoring date
   - has a prior complication event identified before a first evidence of diabetes
   - has an initiation date that is not between the first evidence of diabetes and the date of complication event
 
 - control
+  - has some event represented in a control exclusion event table(s) (all generated in chapter \@ref(phenotype-outcomes-ukb); also see the table below)
   - has a first evidence of diabetes after the censoring date
   - has less than 5 years of follow-up time since the first evidence of diabetes before censoring date
   - has a first evidence of diabets 6 months after the study initiation date
