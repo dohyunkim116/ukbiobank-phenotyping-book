@@ -12,12 +12,12 @@ In this chapter, we phenotype right-censored time-to-event data for diabetic kid
      - has some event represented in diabetic kidney disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-ukb))
     - has some event represented in kidney disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-pcp))
     - has been found to have microalbuminuria at least once
+    - does not have eGFR measurements available
     - has been found to have eGFR level less than 60
     - has a first evidence of diabetes after the censoring date
     - has less than 5 years of follow-up time since the first evidence of diabetes before censoring date
     - has a first evidence of diabetes 6 months after the study initiation date
     - is not represented in the primary care data
-    - does not have eGFR measurements available
     
 We identify subjects who have had microalbuminuria at least once using miicroalbuminuria first occurrence event table generated in chapter \@ref(traj-combine). Subjects with eGFR level less than 60 are identified using eGFR trajectory data created in chapter \@ref(traj-combine).
 
