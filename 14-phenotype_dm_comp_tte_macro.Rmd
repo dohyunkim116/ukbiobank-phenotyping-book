@@ -10,7 +10,7 @@ In this chapter, we phenotype right-censored time-to-event data for the followin
 - PCI
 - Composite CVD
 
-A time-to-event data requires an index date (time-zero point) and the event date of an outcome. In our case, we can define index date to be the first diagnosis date of diabetes or UKB study initiation date. For right-censored data, we define the index date as UKB study initiation date (a landmark study design). In later chapters, we create interval-censored data by setting the index date as the first diabetes diagnosis date. 
+To compute time-to-event, we require an index date (time-zero point) and event date of an outcome. In our case, we can define index date to be the first diagnosis date of diabetes or UKB study initiation date. For right-censored data, we define the index date as UKB study initiation date. In later chapters, we create interval-censored data by setting the index date as the first diabetes diagnosis date. 
 
 We now introduce a phenotyping procedure for right-censored data. For each complication outcome, we create an initial time-to-event data by combining the first occurrence diabetes event table, the first occurrence outcome event table and demographic table. As we merge these data to produce the initial time-to-event data, the cases and controls occur. The case is defined as a subject who has a complication event before the censoring date (defined in chapter \@ref(curate-demog-table)). Otherwise, a subject is defined as control.
 
