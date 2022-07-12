@@ -1,0 +1,139 @@
+#Generate interval-censored time-to-event data for CVD
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=F)
+```
+
+```{r}
+library(tidyverse)
+library(data.table)
+library(lubridate)
+```
+
+##Determining whether dates of DM diagnosis are known or unknown
+
+Load all_ukb_events_tab to find patients with self-reported diagnosis dates
+```{r}
+all_ukb_events_tab <- readRDS("generated_data/all_ukb_events_tab.RDS")
+known_date_selfrep <- all_ukb_events_tab %>% filter(type == "selfrep" & key %in% c('1220', '1222', '1223')) %>% select(f.eid, event_dt)
+```
+
+Load data on first dm diagnosis and gp visits
+```{r}
+dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
+entire_gp_clinical <- fread("generated_data/entire_gp_clinical_30March2021_formatted.txt", select = c('f.eid', 'event_dt'))
+```
+
+Determine which patients have gp visits for two years before first dm diagnosis
+```{r}
+known_date_gp <- entire_gp_clinical %>% mutate(yr = year(event_dt)) 
+known_date_gp <- known_date_gp %>% distinct(f.eid, yr)
+known_date_gp <- merge(known_date_gp, dm_firstoccur, by='f.eid') %>% filter(year(event_dt)-1==yr | year(event_dt)-2==yr)
+known_date_gp <- known_date_gp %>% subset(duplicated(f.eid)) %>% distinct(f.eid, event_dt)
+```
+
+Categorize patients according to whether or not dates are known and save the results in dm_date_known.RDS
+```{r}
+#We see all firstoccur dates are earlier so we keep these and do not use the later, self-reported dates
+firstoccur_selfrep <- merge(dm_firstoccur, known_date_selfrep, by='f.eid')
+
+dm_date_known <- dm_firstoccur %>% mutate(known = ifelse(f.eid %in% known_date_selfrep$f.eid | f.eid %in% known_date_gp$f.eid,1,0))
+```
+
+Recategorize known dm dates as unknown if the first DR diagnosis was in the same year because it is unlikely that the patient truly had DM for less than a year before being diagnosed with DR
+```{r}
+#Define margin variable which is the minimum amount of time needed between dm and dr diagnoses to allow that dm is still known
+#currently 1 (which translates to 1 year)
+ but may be changed
+margin <- 1
+
+dr_firstoccur <-  readRDS("generated_data/dr_firstoccur.RDS")
+dr_firstoccur <- dr_firstoccur %>% select('f.eid', 'event_dt')
+dm_date_known <- dm_date_known %>% merge(dr_firstoccur, by='f.eid', all.x=T,suffix = c('_dm', '_dr')) %>% mutate(known = ifelse(decimal_date(event_dt_dr)-decimal_date(event_dt_dm)>=margin | is.na(event_dt_dr),known,0))
+table(dm_date_known$known, useNA='always')
+```
+
+Save the results
+```{r}
+saveRDS(dm_date_known, "generated_data/dm_date_known.RDS")
+```
+
+##Creating interval censored data
+
+Load diagnosis dates for DM with flag indicating whether or not they are known, dates of first occurence of cvd, and demographic information 
+```{r}
+dm_date_known <- readRDS("generated_data/dm_date_known.RDS")
+cvd_firstoccur <- readRDS("generated_data/cvd_firstoccur_ukb.RDS")
+demog <- readRDS("generated_data/demog_selected.RDS")
+dim(cvd_firstoccur)
+```
+
+Load exclusion events tables
+```{r}
+cardio <- readRDS("generated_data/cardio_control_exclusion_events_ukb.RDS")
+cerebro <- readRDS("generated_data/cerebro_control_exclusion_events_ukb.RDS")
+other_revas <- readRDS("generated_data/other_revas_control_exclusion_events_ukb.RDS")
+```
+
+Combine all control exclusion events
+```{r}
+ctrl_exclusion_events <- list(cardio, cerebro, other_revas) %>% bind_rows()
+```
+
+Create list of f.eid's to be excluded
+```{r}
+ctrl_exclusion_ids_cvd <- ctrl_exclusion_events %>% select('f.eid') %>% unique
+```
+
+Define intervals for time-to-event 
+```{r}
+#Combine dm diagnosis and cvd diagnosis dates
+tab <- dm_date_known %>% left_join(cvd_firstoccur, by='f.eid', suffix = c('_dm', '_comp'))
+
+#Mark whether or not each patient had a cvd event
+tab <- tab %>% mutate(event = ifelse(is.na(event_dt_comp), 0, 1))
+
+#Mark whether or not each patient had a cvd event prior to their dm diagnosis
+tab <- tab %>% mutate(prior_comp = (event_dt_dm > event_dt_comp))
+
+#Combine demographic data with dm and cvd dates so we have access to patient's DOB and censoring date
+tab <- tab %>% left_join(demog %>% select('f.eid', 'DOB', 'date_censored'), by='f.eid')
+
+#Mark nonsense cases where the cvd event happened after censoring
+tab <- tab %>% mutate(nonsense_case = (event_dt_comp > date_censored))
+
+#Mark as nonsense controls patients who had a dm diagnosis after the censoring date
+tab <- tab %>% mutate(nonsense_ctrl = (event_dt_dm > date_censored))
+
+#Find patients whose follow-up time after dm was less than five years
+#These patients are excluded to allow a greater likelihood that remaining patients have diabetes-related cvd
+tab <- tab %>% mutate(fut_less_than_5yrs = ((lubridate::decimal_date(date_censored) - lubridate::decimal_date(event_dt_dm) < 5)))
+
+#Determine if patients are on the list to be excluded based on control exclusion events
+tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids_cvd$f.eid)
+
+#Filter out patients to be excluded from analysis
+#Cases may be excluded for having a prior cvd event or being a nonsense case
+#Controls may be excluded for being a nonsense control, being on the list of patients to exclude based on control exclusion events, or having a follow-up time less than 5 years
+tab <- tab %>% filter(event == 0 | (event == 1 & nonsense_case == 0 & prior_comp == 0)) %>% filter(event == 1 | (event == 0 & nonsense_ctrl == 0 & ctrl_exclude == 0 & fut_less_than_5yrs == 0))
+
+#Compute lower and upper bounds on time-to-event intervals
+#Lower bound is time from dm diagnosis to cvd if cvd occurs or censoring date if cvd does not occur
+#Upper bound is the same as the lower bound if dm diagnosis is known
+#Upper bound is time from DOB to cvd if cvd occurs and censoring date if cvd does not occur
+tab <- tab %>% mutate(lower = ifelse(event, decimal_date(event_dt_comp)-decimal_date(event_dt_dm), 
+                                            decimal_date(date_censored)-decimal_date(event_dt_dm)))
+tab <- tab %>% mutate(upper = ifelse(known, lower, ifelse(event, decimal_date(event_dt_comp)-decimal_date(DOB), decimal_date(date_censored)-decimal_date(DOB))))
+
+#Select f.eid, whether or not dm is known, whether or not cvd occured, and the lower and upper bounds on time-to-event 
+cvd_interval <- tab %>% select('f.eid', 'known','event', 'lower', 'upper')
+```
+Save the resulting intervals
+```{r}
+saveRDS(cvd_interval, "generated_data/cvd_interval.RDS")
+```
+
+
+
+
