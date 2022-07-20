@@ -106,7 +106,7 @@ tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids_cvd$f.eid)
 tab <- tab %>% mutate(ctrl_include = f.eid %in% ctrl_inclusion_ids)
 
 #Filter out patients based on criteria defined above
-tab <- tab %>% filter(event == 0 | (event == 1 & nonsense_case == 0 & prior_comp == 0 & known_dm==1)) %>% filter(event == 1 | (event == 0 & nonsense_ctrl == 0 & ctrl_exclude == 0 & ctrl_include == 1 & fut_less_than_5yrs == 0))
+tab <- tab %>% filter(event == 0 | (event == 1 & nonsense_case == 0 & prior_comp == 0 & known_dm==1)) %>% filter(event == 1 | (event == 0 & nonsense_ctrl == 0 & ctrl_exclude == 0 & ctrl_include == 1 & fut_less_than_5yrs == 0 & known_dm==1))
 
 #Create an upper bound for time-to-event from DM diagnosis to DKD diagnosis for cases and from DM diagnosis to censoring date for controls
 tab <- tab %>% mutate(upper = ifelse(event, decimal_date(event_dt_comp)-decimal_date(event_dt_dm), decimal_date(date_censored)-decimal_date(event_dt_dm)))
@@ -133,7 +133,10 @@ egfr_date <- egfr_date %>% rename('f.eid'='Group.1', 'event_dt_egfr'='x')
 tab <- tab %>% left_join(egfr_date, by='f.eid')
 
 #Create lower bound for time-to-event. If DKD date is known, the lower and upper bound are equal. If DKD date is unknown but an egfr >90 exists between DM diagnosis and DKD diagnosis then the lower bound is from DM to egfr. If no egfr is present in this period, the lower bound is 0. 
-tab <- tab %>% mutate(lower = ifelse(known_comp, upper, ifelse(is.na(event_dt_egfr),0, decimal_date(event_dt_comp)-decimal_date(event_dt_egfr))))
+tab <- tab %>% mutate(lower = ifelse(is.na(known_comp) | known_comp, upper, ifelse(is.na(event_dt_egfr),0, decimal_date(event_dt_comp)-decimal_date(event_dt_egfr))))
+
+#Remove subjects with lower bounds less than 5 years to create a greater likelihood that the complication is diabetes related
+tab <- tab %>% filter(lower>5 | is.na(lower))
 
 #Select only necessary information (i.e. f.eid, whether or not the event occured, whether or not the date was known, and the upper and lower bounds on time-to-event)
 dkd_interval <- tab %>% select('f.eid', 'known' = 'known_comp','event', 'lower', 'upper')
