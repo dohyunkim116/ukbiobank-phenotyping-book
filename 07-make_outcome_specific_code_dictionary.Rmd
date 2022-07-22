@@ -22,13 +22,9 @@ We generate the following outcome-specific dictionaries:
 - kidney disease case dictionary
 - non-diabetic eye disease dictionary
 - kidney disease control exclusion event dictionary
-  
-## Prepare diabetes code dictionary
-
-### Define keywords
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message = F, eval = F)
+knitr::opts_chunk$set(message = F, eval = T)
 ```
 
 Load packages.
@@ -38,16 +34,24 @@ library(data.table)
 library(readxl)
 ```
 
-Define global exclusion keywords. Codes that relate to the absence of a condition, screening for a condition, normal result for a condition, family history of a condition, various administrative statuses, and more, are not wanted. We exclude them from all of the following searches.
+Import the master dictionary.
+```{r}
+full_dict <- readRDS("generated_data/full_dict.RDS")
+```  
+
+We define global exclusion keywords which we use to exclude certain codes from any of the outcome-specific dictionaries. These codes are related to the absence of a condition, screening for a condition, normal result for a condition, family history of a condition, various administrative statuses and more, and are not wanted when we are trying to capture the codes that are specific to certain outcomes.
 ```{r}
 global_exclusion_keyword_patterns <- " normal| absent|inspection|examination|evaluation|referral|^no |^O/E- no |^O/E - no |excluded|not seen|seen by|not examined|did not attend|assessable|offered|^trauma| trauma|malnutrition|screening for|^FH|family history|interpret|under care|refused|unsuitable|at risk|resolved|disease screening|not indicated|letter|excepted|exception|fear of|education|sharing consent|tumour|pregnancy|gestational|diabetic child|complication of care|steriod-induced|lymphoma|cytomegalovirus|rubella|blastoma|histoplasm|toxoplasm|neoplasm|herpes|tubercul|pediculus| observation$|injury|streptococcal"
 ```
+  
+## Prepare diabetes code dictionary
+
+### Define keywords
 
 Define diabetes specific exclusion keywords.
 ```{r}
 dm_specific_exclusion_keyword_patterns <- "|serum|antibody|remission|relative|association member|high risk of diabetes|suspected diabetes|non-diabetes|breath test|questionnaire|risk score|category score|risk calculator|inhibitor function|C-peptide level|factor binding protein 3|stress test|Insulin tolerance test|Urine screening test|X-ray|NHS Diabetes Prevention|Provision of diabetes clinical summary|diabetes mellitus screen|leaflet given|declined|C1-esterase|pituitary|helicobacter|ineligible|invite|invitation|insulinoma|steroid|secondary diabetes|pre-diabet|prediabet|insipid|provision of written information|not required|national audit|diabetes screen|renal diabetes|non-diabet|^diabetic nurse$|^Diabetic liaison nurse$|jamaica|secondary pancreatic diabetes|driving|neonatal|Addison|PABA test|growth factor|Plasma insulin level|key contact|eligibiliby|CHA2DS2|Professional judgement|Diabetes mellitus: no|non diabetic|information prescription|mother has|preg.|bronzed|Diabetes dietitian|Urine Ketone Test|deleted|refuse|gastropathy|pneumon|Frequency of hypoglycaem|^insulin level$|drug-induced|drug induced|hyperglyceridaemia"
 ```
-
 
 Define diabetes exclusion keywords.
 ```{r}
@@ -101,11 +105,6 @@ dm_inclusion_code_patterns <- paste(c("^66A","^C10","^F420"),collapse = '|')
 
 ### Create diabetes code dictionary
 
-Import full dictionary.
-```{r}
-full_dict <- readRDS("generated_data/full_dict.RDS")
-```
-
 Create diabetes code dictionary.
 ```{r}
 dm_dict <- full_dict %>% 
@@ -117,7 +116,6 @@ dm_dict <- full_dict %>%
          !grepl(dm_exclusion_code_patterns, code))
 ```
 
-
 We want to filter outcome-specific dictionaries to only those codes that actually occur in the primary care data, to expedite review of the terms that we include.
 First, read in the distinct terms in PC data. 
 ```{r}
@@ -125,6 +123,7 @@ terms_actual <- fread("generated_data/entire_gp_clinical_30March2021_formatted.t
                       select = "code") %>%
   distinct()
 ```
+
 Now, filter the DM dictionary to terms that exist in the PC data. 
 ```{r}
 dm_dict_actual <- dm_dict %>% 
@@ -134,7 +133,6 @@ dm_dict_review <- dm_dict_actual %>%
   distinct(code, term_description) %>% 
   distinct(code, .keep_all = T) 
 ```
-
 
 Now, map the Read v2 terms in the dictionary to CTV3, and vice versa, to make sure we capture equivalent terms. The term mappings are provided by UKB in Resource 592. 
 ```{r}
@@ -184,8 +182,6 @@ dm_dict_final <- rbind(dm_dict_actual,
                  
 ```
 
-
-
 Save diabetes code dictionary.
 ```{r,include=T}
 saveRDS(dm_dict_final,"generated_data/dm_dict.RDS")
@@ -204,12 +200,6 @@ inclusion_keyword_patterns <-
 Define inclusion keywords for case.
 ```{r}
 inclusion_keyword_patterns_case <- "diabetic|diabetes|diabet retinopathy"
-```
-
-Define global exclusion keywords.
-```{r}
-global_exclusion_keyword_patterns <- 
-  " normal| absent|inspection|examination|evaluation|referral|^no |^O/E- no |^O/E - no |excluded|not seen|seen by|not examined|did not attend|assessable|offered|^trauma| trauma|malnutrition|screening for|^FH|family history|interpret|under care|refused|unsuitable|at risk|resolved|disease screening|not indicated|letter|excepted|exception|fear of|education|sharing consent|tumour|pregnancy|gestational|diabetic child|complication of care|steriod-induced|lymphoma|cytomegalovirus|rubella|blastoma|histoplasm|toxoplasm|neoplasm|herpes|tubercul|pediculus| observation$|injury|streptococcal"
 ```
 
 Define exclusion keywords.
@@ -248,11 +238,6 @@ exclusion_code_patterns <- c("^hg1|^hh51|^j24|^kaA|^m[5-7]")
 
 ### Create diabetic eye disease code dictionary
 
-Import full dictionary.
-```{r}
-full_dict <- readRDS("generated_data/full_dict.RDS")
-```
-
 Create eye disease code dictionary.
 ```{r}
 eye_disease_dict <- full_dict %>% 
@@ -278,7 +263,6 @@ dm_eye_disease_dict <-
   filter(grepl(inclusion_keyword_patterns_case, term_description, ignore.case=T) & 
            !grepl(exclusion_keyword_patterns_case, term_description, ignore.case=T))
 ```
-
 
 Review unique terms.
 ```{r}
@@ -365,11 +349,6 @@ inclusion_keyword_patterns_case <- "stage 3|stage 4|stage 5|end stage|chronic re
 inclusion_keywords_case <- c("Nephrotic syndrome")
 ```
 
-Define global exclusion keywords.
-```{r}
-global_exclusion_keyword_patterns <- " normal| absent|inspection|examination|evaluation|referral|^no |^O/E- no |^O/E - no |excluded|not seen|seen by|not examined|did not attend|assessable|offered|^trauma| trauma|malnutrition|screening for|^FH|family history|interpret|under care|refused|unsuitable|at risk|resolved|disease screening|not indicated|letter|excepted|exception|fear of|education|sharing consent|tumour|pregnancy|gestational|diabetic child|complication of care|steriod-induced|lymphoma|cytomegalovirus|rubella|blastoma|histoplasm|toxoplasm|neoplasm|herpes|tubercul|pediculus| observation$|injury|streptococcal"
-```
-
 Define exclusion keywords.
 ```{r}
 exclusion_keyword_patterns <- "nephritic factor|antibody|disease screening|rate testing|predicted stage|acute|induced by|metals|cadmium|lead|mercury|toxic|abortion|pregnancy|gestational|delivery|calculated by|^glomerular filtration rate$|nephropathy screen|invite|incipient|rate using|laboratory study|monitoring administration|Glomerular function test|benign|haemolytic|B12 deficiency|pyonephrosis|analgesic|Exercise|Adrenal|test strip|proteinuria negative|test urine sample"
@@ -388,11 +367,6 @@ inclusion_codes <- ckd_codelist$code
 ```
 
 ### Create diabetic kidney disease code dictionary
-
-Import full dictionary.
-```{r}
-full_dict <- readRDS("generated_data/full_dict.RDS")
-```
 
 Create kidney disease dictionary.
 ```{r}
@@ -415,7 +389,6 @@ kidney_disease_case_dict <- kidney_disease_actual %>%
   filter(grepl(inclusion_keyword_patterns_case,term_description,ignore.case = T)|
            term_description %in% inclusion_keywords_case)
 ```
-
 
 Review terms.
 ```{r}
@@ -446,7 +419,6 @@ kidney_disease_control_exclusion_dict <-
   kidney_disease_actual %>% filter(!(code %in% kidney_disease_case_dict$code))
 ```
 
-
 Review terms.
 ```{r}
 kidney_disease_control_exclusion_review <-
@@ -454,7 +426,6 @@ kidney_disease_control_exclusion_review <-
   distinct(code, term_description) %>%
   distinct(code, .keep_all =T)
 ```
-
 
 See if there are any additional mapped terms.
 ```{r}
@@ -471,7 +442,6 @@ kidney_disease_control_exclusion_terms_map <- left_join(kidney_disease_control_e
   distinct()  
 kidney_disease_control_exclusion_terms_map
 ```
-
 Combine the new terms with the original kidney disease control exclusion dictionary. 
 ```{r}
 kidney_disease_control_exclusion_dict_final <- rbind(kidney_disease_control_exclusion_dict,
@@ -487,8 +457,4 @@ Save kidney disease case dictionary and kidney disease control exclusion code di
 saveRDS(kidney_disease_case_dict,"generated_data/kidney_disease_case_dict.RDS")
 saveRDS(kidney_disease_control_exclusion_dict_final,"generated_data/kidney_disease_control_exclusion_dict.RDS")
 ```
-
-
-
-
 
