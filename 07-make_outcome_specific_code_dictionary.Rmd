@@ -24,7 +24,7 @@ We generate the following outcome-specific dictionaries:
 - kidney disease control exclusion event dictionary
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message = F, eval = T)
+knitr::opts_chunk$set(message = F, eval = F)
 ```
 
 Load packages.
@@ -39,7 +39,7 @@ Import the master dictionary.
 full_dict <- readRDS("generated_data/full_dict.RDS")
 ```  
 
-We define global exclusion keywords which we use to exclude certain codes from any of the outcome-specific dictionaries. These codes are related to the absence of a condition, screening for a condition, normal result for a condition, family history of a condition, various administrative statuses and more, and are not wanted when we are trying to capture the codes that are specific to certain outcomes.
+We first define the global exclusion keywords which we will be used to exclude certain codes from all of the outcome-specific dictionaries. These codes are related to the absence of a condition, screening for a condition, normal result for a condition, family history of a condition, various administrative statuses and more, and are not wanted when we capture the codes that are specific to certain outcomes.
 ```{r}
 global_exclusion_keyword_patterns <- " normal| absent|inspection|examination|evaluation|referral|^no |^O/E- no |^O/E - no |excluded|not seen|seen by|not examined|did not attend|assessable|offered|^trauma| trauma|malnutrition|screening for|^FH|family history|interpret|under care|refused|unsuitable|at risk|resolved|disease screening|not indicated|letter|excepted|exception|fear of|education|sharing consent|tumour|pregnancy|gestational|diabetic child|complication of care|steriod-induced|lymphoma|cytomegalovirus|rubella|blastoma|histoplasm|toxoplasm|neoplasm|herpes|tubercul|pediculus| observation$|injury|streptococcal"
 ```
