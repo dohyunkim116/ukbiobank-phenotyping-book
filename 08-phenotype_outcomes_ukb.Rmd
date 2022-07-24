@@ -54,15 +54,26 @@ event_tab <- readRDS("generated_data/all_ukb_events_tab.RDS")
 
 ### DM
 
-Define patterns to search.
+Outcome fields:
+
+- `f.130706.0.0`: the date of first occurrence of Type 1 diabetes
+- `f.130708.0.0`: the date of first occurrence of Type 2 diabetes
+- `f.130714.0.0`: the date of first occurrence of diabetes of unspecified type
+
 ```{r}
 dm_field_patterns <- "130706|130708|130714"
 ```
-
+  
 Get DM event table and first occurrence DM event table.
 ```{r}
 dm_ukb <- get_phenotype_tab(field_patterns = dm_field_patterns,event_tab = event_tab,firstoccur = F)
 dm_firstoccur_ukb <- get_phenotype_tab(field_patterns = dm_field_patterns,event_tab = event_tab,firstoccur = T)
+```
+
+Categorize diabetes event to either Type1, Type2 or Uncertain in a new field `dm_type`.
+```{r}
+dm_ukb <- dm_ukb %>% mutate(dm_type = ifelse(grepl("130706", key), "Type1", 
+                                             ifelse(grepl("130708", key), "Type2","Uncertain")))
 ```
 
 ```{r}

@@ -37,11 +37,24 @@ kidney_disease_case_dict <- readRDS("generated_data/kidney_disease_case_dict.RDS
 
 ### DM
 
-Subset the primary care data to subjects with diabetes.
+Define T1D and T2D keywords.
+```{r}
+type2_kw <- "type 2|type II|adult onset|non[ -]insulin[ -]dep|NIDD|maturity onset diabetes mellitus$"
+type1_kw <- "type 1|type I[ $-]|juvenile|insulin-dependant|insulin dependent"
+```
+
+Add diabetes types to DM dictionary.
+```{r}
+dm_dict <- dm_dict %>%
+  mutate(dm_type = ifelse(grepl(type2_kw,term_description, ignore.case=T), "Type2", ifelse(grepl(type1_kw, term_description, ignore.case=T), "Type1", "Uncertain")))
+```
+
+Subset the primary care data to subjects with diabetes and identify which type of diabetes each event is associated with
 ```{r}
 diabetics_any <- pc %>%
   select(f.eid, code, event_dt) %>%
-  filter(code %in% unique(dm_dict$code)) %>% distinct()
+  filter(code %in% unique(dm_dict$code)) %>% distinct() %>%
+  left_join(dm_dict %>% select(code,dm_type), by = "code")
 ```
 
 Next, we select the terms in the DM-specific dictionary whose descriptions reflect more clear indications of DM. Defined as an object `dm_descriptions` in `reference.R`, the descriptions were selected with the help of an expert.
@@ -66,14 +79,17 @@ diabetics_simple <-
   group_by(f.eid) %>% 
   filter(any(code %in% dm_codes_confident)) %>%
   mutate(event_dt = as.Date(event_dt)) %>%
-  select(f.eid,event_dt) %>% distinct() %>% 
-  arrange(f.eid,event_dt)
+  arrange(f.eid,event_dt) %>%
+  distinct()
 ```
 
 Generate first occurrence diabetes events.
 ```{r}
 dm_firstoccur_pc <- diabetics_simple %>%
-  group_by(f.eid) %>% arrange(event_dt) %>% slice(1)
+  group_by(f.eid) %>% 
+  arrange(event_dt) %>% 
+  slice(1) %>%
+  select(f.eid, event_dt)
 ```
 
 ```{r}
