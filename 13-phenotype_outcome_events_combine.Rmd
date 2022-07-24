@@ -14,6 +14,7 @@ Load packages.
 ```{r,message=F}
 library(tidyverse)
 library(data.table)
+source("functions.R")
 ```
 
 __DM__
@@ -28,12 +29,29 @@ dm_pc <- readRDS("generated_data/dm_pc.RDS")
 dm_ukb <- readRDS("generated_data/dm_ukb.RDS")
 ```
 
-Create DM multiple and first occurrence event tables.
+Create diabetes event table and diabetes first occurrence event table. The `categorize_dm_types()` function categorizes events into different diabetes types. The function also resolves any conflict in types of diabetes for each subject with more than one recorded diabetes types.
 ```{r}
-dm <- dm_pc %>% full_join(dm_ukb) %>% distinct() %>% arrange(f.eid,event_dt)
+dm <- full_join(dm_ukb %>% select(f.eid, event_dt, dm_type), dm_pc %>% select(f.eid, event_dt, dm_type)) %>% 
+  distinct() %>% 
+  group_by(f.eid) %>%
+  mutate(dm_type = categorize_dm_types(dm_type)) %>%
+  ungroup()
+
 dm_firstoccur <- dm %>% group_by(f.eid) %>% arrange(event_dt) %>% slice(1) %>% ungroup()
 ```
 
+Import ID's of subjects represented in the primary care data.
+```{r}
+gp_subject_ids <- readRDS("generated_data/gp_subject_ids.RDS")
+```
+
+Show a contingency table of diabetes types and availability of the primary care data for the diabetes cohort.
+```{r}
+dm_firstoccur %>% mutate(in_gp = f.eid %in% gp_subject_ids) %>% 
+  select(dm_type, in_gp) %>% 
+  table() %>%
+  addmargins()
+```
 ```{r}
 saveRDS(dm,"generated_data/dm.RDS")
 saveRDS(dm_firstoccur,"generated_data/dm_firstoccur.RDS")
