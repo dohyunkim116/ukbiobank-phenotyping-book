@@ -65,6 +65,34 @@ compute_egfr <- function(creat_blood,age,sex){
   egfr * ifelse(sex=="female", 1.018, 1)
 }
 
+categorize_dm_types <- function(x){
+  x <- unique(x)
+  if(length(x) == 1){
+    if( x == "Uncertain") {
+      "Uncertain"
+    }
+    else {
+      x
+    }
+  }
+  else if(length(x) == 2){
+    if(("Type1" %in% x) && ("Type2" %in% x)){
+      "Uncertain"
+    }
+    else {
+      if("Type1" %in% x){
+        "Type1"
+      }
+      else {
+        "Type2"
+      }
+    }
+  }
+  else {
+    "Uncertain"
+  }
+}
+
 # Input:
 # field_patterns
 # icd10_patterns
