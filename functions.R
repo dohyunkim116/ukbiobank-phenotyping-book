@@ -110,7 +110,7 @@ get_phenotype_tab <- function(field_patterns = NULL,icd10_patterns_any = NULL,
     return(tab %>% group_by(f.eid) %>% arrange(event_dt) %>% slice(1) %>% ungroup())
   }
   else {
-    return(tab %>% select(f.eid,event_dt) %>% distinct() %>% arrange(f.eid,event_dt))
+    return(tab %>% distinct() %>% arrange(f.eid,event_dt))
   }
 }
 
