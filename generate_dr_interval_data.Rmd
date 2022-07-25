@@ -10,6 +10,7 @@ Load libraries
 ```{r}
 library(tidyverse)
 library(lubridate)
+library(data.table)
 ```
 Load DR first occurence data and entire GP clinical data
 ```{r}
@@ -57,12 +58,12 @@ ctrl_exclusion_ids <- dr_control_exclusion_events$f.eid %>% unique
 
 Load primary care data set
 ```{r}
-gp_subejct_ids <- readRDS("generated_data/gp_subject_ids.RDS")
+gp_subject_ids <- readRDS("generated_data/gp_subject_ids.RDS")
 ```
 
 Define control inclusion subject IDs
 ```{r}
-ctrl_inclusion_ids <- gp_subejct_ids %>% unique
+ctrl_inclusion_ids <- gp_subject_ids %>% unique
 ```
 Define upper and lower bounds for time-to-event with DR diagnosis 
 ```{r}
@@ -85,10 +86,10 @@ tab <- tab %>% mutate(nonsense_ctrl = (event_dt_dm > date_censored))
 tab <- tab %>% mutate(nonsense_case = (event_dt_comp > date_censored))
 
 #Mark controls which were censored less than 5 years after diagnosis of DM
-tab <- tab %>% mutate(fut_less_than_5yrs = ((lubridate::decimal_date(date_censored) - lubridate::decimal_date(event_dt_dm) < 5)))
+tab <- tab %>% mutate(fut_less_than_5yrs = (lubridate::decimal_date(date_censored) - lubridate::decimal_date(event_dt_dm) < 5))
 
 #Mark whether or not controls should be excludeed based on previously defined control exclusion evnets
-tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids_cvd$f.eid)
+tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids)
 
 #Mark whether or not patients are included in primary care data
 tab <- tab %>% mutate(ctrl_include = f.eid %in% ctrl_inclusion_ids)
@@ -104,6 +105,6 @@ dr_interval <- tab %>% select('f.eid', 'known'='known_comp','event', 'lower', 'u
 ```
 Save the DR time-to-event intervals
 ```{r}
-saveRDS(dr_interval, 'generated_data/dr_interval.RDS')
+saveRDS(dr_interval, 'generated_data/dr_tte_interval.RDS')
 ```
 

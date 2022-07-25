@@ -31,7 +31,7 @@ dkd_date_known <- dkd_firstoccur %>% mutate(known = ifelse(f.eid %in% known_date
 ```
 Save table containing dr_date_known
 ```{r}
-saveRDS(dr_date_known, "generated_data/dr_date_known.RDS")
+saveRDS(dkd_date_known, "generated_data/dr_date_known.RDS")
 ```
 ##Define intervals 
 
@@ -100,7 +100,7 @@ tab <- tab %>% mutate(nonsense_case = (event_dt_comp > date_censored))
 tab <- tab %>% mutate(fut_less_than_5yrs = ((lubridate::decimal_date(date_censored) - lubridate::decimal_date(event_dt_dm) < 5)))
 
 #Mark whether or not controls should be excludeed based on previously defined control exclusion evnets
-tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids_cvd$f.eid)
+tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids)
 
 #Mark whether or not patients are included in primary care data
 tab <- tab %>% mutate(ctrl_include = f.eid %in% ctrl_inclusion_ids)
@@ -110,9 +110,6 @@ tab <- tab %>% filter(event == 0 | (event == 1 & nonsense_case == 0 & prior_comp
 
 #Create an upper bound for time-to-event from DM diagnosis to DKD diagnosis for cases and from DM diagnosis to censoring date for controls
 tab <- tab %>% mutate(upper = ifelse(event, decimal_date(event_dt_comp)-decimal_date(event_dt_dm), decimal_date(date_censored)-decimal_date(event_dt_dm)))
-
-#Remove subjects with a time-to-event upper bound less than 5 years
-tab <- tab %>% filter(upper>5)
 
 #Filter egfr measurements greater than 90 (indicating kidney health)
 egfr_gt90 <- egfr_traj %>% select('f.eid', 'measurement', 'event_dt') %>% filter('mearsurement'>90)
@@ -133,17 +130,17 @@ egfr_date <- egfr_date %>% rename('f.eid'='Group.1', 'event_dt_egfr'='x')
 tab <- tab %>% left_join(egfr_date, by='f.eid')
 
 #Create lower bound for time-to-event. If DKD date is known, the lower and upper bound are equal. If DKD date is unknown but an egfr >90 exists between DM diagnosis and DKD diagnosis then the lower bound is from DM to egfr. If no egfr is present in this period, the lower bound is 0. 
-tab <- tab %>% mutate(lower = ifelse(is.na(known_comp) | known_comp, upper, ifelse(is.na(event_dt_egfr),0, decimal_date(event_dt_comp)-decimal_date(event_dt_egfr))))
+tab <- tab %>% mutate(lower = ifelse(is.na(known_comp) | known_comp, upper, ifelse(is.na(event_dt_egfr),0, decimal_date(event_dt_egfr)-decimal_date(event_dt_dm))))
 
 #Remove subjects with lower bounds less than 5 years to create a greater likelihood that the complication is diabetes related
-tab <- tab %>% filter(lower>5 | is.na(lower))
+tab <- tab %>% filter(lower>5)
 
 #Select only necessary information (i.e. f.eid, whether or not the event occured, whether or not the date was known, and the upper and lower bounds on time-to-event)
 dkd_interval <- tab %>% select('f.eid', 'known' = 'known_comp','event', 'lower', 'upper')
 ```
 Save the DKD time-to-event intervals
 ```{r}
-saveRDS(dr_interval, 'generated_data/dr_interval.RDS')
+saveRDS(dkd_interval, 'generated_data/dr_tte_interval.RDS')
 ```
 
 

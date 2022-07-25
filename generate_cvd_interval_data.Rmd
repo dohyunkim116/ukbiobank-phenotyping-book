@@ -49,8 +49,11 @@ margin <- 1
 
 dr_firstoccur <-  readRDS("generated_data/dr_firstoccur.RDS")
 dr_firstoccur <- dr_firstoccur %>% select('f.eid', 'event_dt')
-dm_date_known <- dm_date_known %>% merge(dr_firstoccur, by='f.eid', all.x=T,suffix = c('_dm', '_dr')) %>% mutate(known = ifelse(decimal_date(event_dt_dr)-decimal_date(event_dt_dm)>=margin | is.na(event_dt_dr),known,0)) 
-dm_date_known <- dm_date_known %>% select('f.eid', 'event_dt_dm', 'known') %>% rename('event_dt'='event_dt_dm')
+dm_date_known <- dm_date_known %>% 
+  merge(dr_firstoccur, by='f.eid', all.x=T,suffix = c('_dm', '_dr')) %>% 
+mutate(new_known = ifelse(known == 0, 0,
+ifelse(decimal_date(event_dt_dr) - decimal_date(event_dt_dm) >= margin | is.na(event_dt_dr), known, 0)))
+dm_date_known <- dm_date_known %>% select('f.eid', 'event_dt_dm', 'known'='new_known') %>% rename('event_dt'='event_dt_dm')
 ```
 
 Save the results
@@ -125,12 +128,12 @@ tab <- tab %>% mutate(lower = ifelse(event, decimal_date(event_dt_comp)-decimal_
                                             decimal_date(date_censored)-decimal_date(event_dt_dm)))
 tab <- tab %>% mutate(upper = ifelse(known, lower, ifelse(event, decimal_date(event_dt_comp)-decimal_date(DOB), decimal_date(date_censored)-decimal_date(DOB))))
 
-#Select f.eid, whether or not dm is known, whether or not cvd occured, and the lower and upper bounds on time-to-event 
+#Select f.eid, whether or not dm is known, whether or not cvd occurred, and the lower and upper bounds on time-to-event 
 cvd_interval <- tab %>% select('f.eid', 'known','event', 'lower', 'upper')
 ```
 Save the resulting intervals
 ```{r}
-saveRDS(cvd_interval, "generated_data/cvd_interval.RDS")
+saveRDS(cvd_tte_interval, "generated_data/cvd_interval.RDS")
 ```
 
 
