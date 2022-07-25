@@ -132,8 +132,8 @@ tab <- tab %>% left_join(egfr_date, by='f.eid')
 #Create lower bound for time-to-event. If DKD date is known, the lower and upper bound are equal. If DKD date is unknown but an egfr >90 exists between DM diagnosis and DKD diagnosis then the lower bound is from DM to egfr. If no egfr is present in this period, the lower bound is 0. 
 tab <- tab %>% mutate(lower = ifelse(is.na(known_comp) | known_comp, upper, ifelse(is.na(event_dt_egfr),0, decimal_date(event_dt_egfr)-decimal_date(event_dt_dm))))
 
-#Remove subjects with lower bounds less than 5 years to create a greater likelihood that the complication is diabetes related
-tab <- tab %>% filter(lower>5)
+#Filter cases with a lower bound less than 5 years. Setting the cases to only have bounds above 5 years increases the likelihood that cases are diabetes-related
+tab <- tab %>% filter(event & lower>5)
 
 #Select only necessary information (i.e. f.eid, whether or not the event occured, whether or not the date was known, and the upper and lower bounds on time-to-event)
 dkd_interval <- tab %>% select('f.eid', 'known' = 'known_comp','event', 'lower', 'upper')
