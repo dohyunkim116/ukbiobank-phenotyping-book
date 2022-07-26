@@ -133,7 +133,7 @@ tab <- tab %>% left_join(egfr_date, by='f.eid')
 tab <- tab %>% mutate(lower = ifelse(is.na(known_comp) | known_comp, upper, ifelse(is.na(event_dt_egfr),0, decimal_date(event_dt_egfr)-decimal_date(event_dt_dm))))
 
 #Filter cases with a lower bound less than 5 years. Setting the cases to only have bounds above 5 years increases the likelihood that cases are diabetes-related
-tab <- tab %>% filter(event & lower>5)
+tab <- tab %>% filter(event == 1 & lower > 5 | event == 0)
 
 #Select only necessary information (i.e. f.eid, whether or not the event occured, whether or not the date was known, and the upper and lower bounds on time-to-event)
 dkd_interval <- tab %>% select('f.eid', 'known' = 'known_comp','event', 'lower', 'upper')
