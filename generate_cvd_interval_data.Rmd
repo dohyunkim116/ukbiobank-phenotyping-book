@@ -9,6 +9,7 @@ knitr::opts_chunk$set(echo = TRUE, eval=F)
 library(tidyverse)
 library(data.table)
 library(lubridate)
+source("functions.R")
 ```
 
 ##Determining whether dates of DM diagnosis are known or unknown
@@ -89,51 +90,13 @@ ctrl_exclusion_ids_cvd <- ctrl_exclusion_events %>% select('f.eid') %>% unique
 
 Define intervals for time-to-event 
 ```{r}
-#Combine dm diagnosis and cvd diagnosis dates
-tab <- dm_date_known %>% left_join(cvd_firstoccur, by='f.eid', suffix = c('_dm', '_comp'))
-
-#Mark whether or not each patient had a cvd event
-tab <- tab %>% mutate(event = ifelse(is.na(event_dt_comp), 0, 1))
-
-#Mark whether or not each patient had a cvd event prior to their dm diagnosis
-tab <- tab %>% mutate(prior_comp = (event_dt_dm > event_dt_comp))
-
-
-#Combine demographic data with dm and cvd dates so we have access to patient's DOB and censoring date
-tab <- tab %>% left_join(demog %>% select('f.eid', 'DOB', 'date_censored'), by='f.eid')
-
-#Mark nonsense cases where the cvd event happened after censoring
-tab <- tab %>% mutate(nonsense_case = (event_dt_comp > date_censored))
-
-#Mark as nonsense controls patients who had a dm diagnosis after the censoring date
-tab <- tab %>% mutate(nonsense_ctrl = (event_dt_dm > date_censored))
-
-#Find patients whose follow-up time after dm was less than five years
-tab <- tab %>% mutate(fut_less_than_5yrs = ((lubridate::decimal_date(date_censored) - lubridate::decimal_date(event_dt_dm) < 5)))
-
-#Determine if patients are on the list to be excluded based on control exclusion events
-tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids_cvd$f.eid)
-
-#Filter out patients to be excluded from analysis
-#Cases may be excluded for having a prior cvd event or being a nonsense case
-#Controls may be excluded for being a nonsense control, being on the list of patients to exclude based on control exclusion events, or having a follow-up time less than 5 years
-tab <- tab %>% filter(event == 0 | (event == 1 & nonsense_case==0 & prior_comp==0)) %>%
-filter(event == 1 | (event == 0 & nonsense_ctrl == 0 & ctrl_exclude == 0 & fut_less_than_5yrs == 0))
-
-#Compute lower and upper bounds on time-to-event intervals
-#Lower bound is time from dm diagnosis to cvd if cvd occurs or censoring date if cvd does not occur
-#Upper bound is the same as the lower bound if dm diagnosis is known
-#Upper bound is time from DOB to cvd if cvd occurs and censoring date if cvd does not occur
-tab <- tab %>% mutate(lower = ifelse(event, decimal_date(event_dt_comp)-decimal_date(event_dt_dm), 
-                                            decimal_date(date_censored)-decimal_date(event_dt_dm)))
-tab <- tab %>% mutate(upper = ifelse(known, lower, ifelse(event, decimal_date(event_dt_comp)-decimal_date(DOB), decimal_date(date_censored)-decimal_date(DOB))))
-
-#Select f.eid, whether or not dm is known, whether or not cvd occurred, and the lower and upper bounds on time-to-event 
-cvd_interval <- tab %>% select('f.eid', 'known','event', 'lower', 'upper')
+#Run the phenotype_time_to_event_interval function on the dm dates, the cvd dates, the demographic information, the control inclusion ids, the DOB as the alternative diabetes diagnosis date, without filtering out subjects with lower bounds less than 5 years. 
+cvd_interval_result <- phenotype_time_to_event_interval(dm_date_known, cvd_firstoccur, demog, ctrl_exclusion_ids_cvd$f.eid, dm_alternative = demog %>% select(f.eid, DOB) %>% rename('event_dt'='DOB'))
 ```
+
 Save the resulting intervals
 ```{r}
-saveRDS(cvd_tte_interval, "generated_data/cvd_interval.RDS")
+saveRDS(cvd_interval_result, "generated_data/cvd_interval.RDS")
 ```
 
 

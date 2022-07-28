@@ -11,6 +11,7 @@ Load libraries
 library(tidyverse)
 library(lubridate)
 library(data.table)
+source("functions.R")
 ```
 Load DR first occurence data and entire GP clinical data
 ```{r}
@@ -67,44 +68,11 @@ ctrl_inclusion_ids <- gp_subject_ids %>% unique
 ```
 Define upper and lower bounds for time-to-event with DR diagnosis 
 ```{r}
-#Combine DM and DR diagnosis dates and whether or not they are known
-tab <- dm_date_known %>% left_join(dr_date_known, by='f.eid', suffix = c('_dm', '_comp'))
-
-#Mark whether or not DR occured
-tab <- tab %>% mutate(event = ifelse(is.na(event_dt_comp), 0, 1))
-
-#Mark cases where a complication exsts before DM diagnosis
-tab <- tab %>% mutate(prior_comp = (event_dt_dm > event_dt_comp))
-
-#Incorporate demographic data to access censoring dates
-tab <- tab %>% left_join(demog %>% select('f.eid', 'date_censored'), by='f.eid')
-
-#Mark controls which are not usable because the DM diagnosis was after the censoring date
-tab <- tab %>% mutate(nonsense_ctrl = (event_dt_dm > date_censored))
-
-#Mark cases which are not usable because the DR diagnosis was after the censoring date
-tab <- tab %>% mutate(nonsense_case = (event_dt_comp > date_censored))
-
-#Mark controls which were censored less than 5 years after diagnosis of DM
-tab <- tab %>% mutate(fut_less_than_5yrs = (lubridate::decimal_date(date_censored) - lubridate::decimal_date(event_dt_dm) < 5))
-
-#Mark whether or not controls should be excludeed based on previously defined control exclusion evnets
-tab <- tab %>% mutate(ctrl_exclude = f.eid %in% ctrl_exclusion_ids)
-
-#Mark whether or not patients are included in primary care data
-tab <- tab %>% mutate(ctrl_include = f.eid %in% ctrl_inclusion_ids)
-
-#Filter out patients based on criteria defined above
-tab <- tab %>% filter(event == 0 | (event == 1 & nonsense_case == 0 & prior_comp == 0 & known_dm==1)) %>% filter(event == 1 | (event == 0 & nonsense_ctrl == 0 & ctrl_exclude == 0 & ctrl_include & fut_less_than_5yrs == 0 & known_dm==1))
-
-#Create upper and lower bounds. Upper bounds will be the same regardless of whether or not the diagnosis date is known. Lower bounds will be 0 for unknown diagnoses and equal to upper bounds for known diagnoses
-tab <- tab %>% mutate(upper = ifelse(event, decimal_date(event_dt_comp)-decimal_date(event_dt_dm),decimal_date(date_censored)-decimal_date(event_dt_dm)), lower = ifelse(known_comp | !event, upper,0))
-
-#Select only necessary information (i.e. f.eid, whether or not the event occured, whether or not the date was known, and the upper and lower bounds on time-to-event)
-dr_interval <- tab %>% select('f.eid', 'known'='known_comp','event', 'lower', 'upper')
+#Use the phenotype_time_to_event_interval function to generate the upper and lower bounds by passing in dm dates with known flags, dr dates with known flags, demographic information, control exclusion and inclusion ids, and a 0 for comp_alternative which indicates that a 0 will be used for the lower bound on unknown intervals. 
+dr_interval_result <- phenotype_time_to_event_interval(dm_date_known, dr_date_known, demog, ctrl_exclusion_ids, ctrl_inclusion_ids, comp_alternative=0)
 ```
 Save the DR time-to-event intervals
 ```{r}
-saveRDS(dr_interval, 'generated_data/dr_tte_interval.RDS')
+saveRDS(dr_interval_result, 'generated_data/dr_tte_interval.RDS')
 ```
 

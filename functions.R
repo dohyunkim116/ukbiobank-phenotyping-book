@@ -164,7 +164,50 @@ pre_phenotype_tte <- function(dm_firstoccur,comp_firstoccur,demog,
   tab %>% mutate(dm_post_init_gt_6mo = 
                  (event_dt_dm > lubridate::add_with_rollback(date_init, months(6),roll_to_first = TRUE)))
 }
+#Return a dataframe with subjects marked with different criteria by which they can be filtered
+pre_phenotype_tte_interval <- function(dm_date_known, comp_date_known, demog,
+                                       control_exclusion_ids=NULL,
+                                       control_inclusion_ids=NULL){
+  #Merge dm and comp dates and known flags
+  tab <- dm_date_known %>% left_join(comp_date_known, by='f.eid', suffix=c('_dm','_comp'))
+  
+  #Fix ncolumn names if known flags are not given for complication dates
+  if(!is.null(tab$known)){
+    tab <- tab %>% rename('known_dm' = 'known')
+  }
+  
+  #Mark controls as 0 and cases as 1
+  tab <- tab %>% mutate(event = ifelse(is.na(event_dt_comp),0,1))
+  
+  #Mark cases where complication occured before dm diagnosis
+  tab <- tab %>% mutate(prior_comp = (event_dt_dm > event_dt_comp))
+  
+  #Merge with demographic data to access censoring dates
+  tab <- tab %>% left_join(demog %>% select(f.eid,date_censored), by='f.eid')
+  
+  #Mark nonsense cases where censoring happened before complication
+  tab <- tab %>% mutate(nonsense_case = (event_dt_comp>date_censored))
 
+  #Mark nonsense controls where dm diagnosis happened after censoring date
+  tab <- tab %>% mutate(nonsense_ctrl = (event_dt_dm>date_censored))
+  
+  ##Mark controls where follow-up time is less than 5 years
+  tab <- tab %>% mutate(fut_less_than_5yrs = (decimal_date(date_censored)-decimal_date(event_dt_dm)<5))
+  
+  #If exclusion ids are given, mark controls to be excluded
+  if(!is.null(control_exclusion_ids)){
+    tab <- tab %>% mutate(ctrl_exclude = (f.eid %in% control_exclusion_ids))
+  }else{
+    tab <- tab %>% mutate(ctrl_exclude = 0)
+  }
+  
+  #If inclusion ids are given, mark controls to be included
+  if(!is.null(control_inclusion_ids)){
+    tab <- tab %>% mutate(ctrl_include = (f.eid %in% control_inclusion_ids))
+  }else{
+    tab <- tab %>% mutate(ctrl_include = 1)
+  }
+}
 # Filters data frame argument by row, adds "time_to_event" column, and returns relevant columns.
 phenotype_tte <- function(pre_phenotype_tte_tab){
   # Filter out certain rows (which rows are we filtering for?)
@@ -181,7 +224,60 @@ phenotype_tte <- function(pre_phenotype_tte_tab){
            ctrl_exclude, fut_less_than_5yrs, ctrl_include, dm_post_init_gt_6mo, nonsense_case, nonsense_ctrl,
            date_init,date_censored,event_dt_dm,event_dt_comp)
 }
-
+#Filter out subjects based on criteria from pre_phenotype_tte_interval
+#Define lower and upper bounds on time from dm diagnosis to complication
+phenotype_tte_interval <- function(tab, dm_alternative, 
+                                   comp_alternative,
+                                   filter_cases_lt5yrs){
+  
+  #Filter out subjects based on pre_phenotype_tte_interval criteria
+  tab <- tab %>% 
+    filter(event==0 | event==1 & nonsense_case==0 & prior_comp==0) %>%
+    filter(event==1 | event==0 & nonsense_ctrl==0 & fut_less_than_5yrs==0 &
+             ctrl_exclude==0 & ctrl_include==1)
+  
+  #Set the lower bound for all subjects from dm date to censored date for controls and 
+  #from dm date to comp date for cases
+  tab <- tab %>% mutate(lower = ifelse(event, 
+                                       decimal_date(event_dt_comp)-decimal_date(event_dt_dm),
+                                       decimal_date(date_censored)-decimal_date(event_dt_dm)))
+                                                      
+  #Set all upper bounds equal to all lower bounds
+  tab <- tab %>% mutate(upper = lower)
+  
+  #If an alternative dm date has been given, reset upper bounds to be from this 
+  #alternative to complication or censoring date for unknown dm subjects
+  if(!is.null(dm_alternative)){
+    tab <- tab %>% left_join(dm_alternative, by='f.eid', all.x=T) %>%
+      rename('event_dt_dm_alt' = 'event_dt')
+    tab <- tab %>% mutate(upper = ifelse(known_dm, upper, 
+                                          ifelse(event, decimal_date(event_dt_comp)-decimal_date(event_dt_dm_alt),
+                                                 decimal_date(date_censored)-decimal_date(event_dt_dm_alt))))
+  }else if(!is.null(comp_alternative)){
+    #If an alternative complication date is given, reset lower bounds to be from dm date
+    #to this new complication date for cases with unknown complication date
+    #Filter out subjects with unknown dm date
+    tab <- tab %>% filter(known_dm==1)
+    if(length(comp_alternative)==1){
+      #If comp alternative is 0, set lower bounds of unknown comp date cases to 0
+      tab <- tab %>% mutate(lower = ifelse(!event | known_comp, lower, 0))
+    }else{
+      tab <- tab %>% left_join(comp_alternative, by='f.eid')
+      tab <- tab %>% rename('event_dt_comp_alt' = 'event_dt')
+      tab <- tab %>% mutate(lower = ifelse(!event | known_comp, upper,
+                                           ifelse(is.na(event_dt_comp_alt),0,decimal_date(event_dt_comp_alt)-decimal_date(event_dt_dm))))
+    }
+  }else{
+    #If no alternative dates are provided we assume we want right censored data
+    #Filter out all subjects where dm or comp date is unknown
+    tab <- tab %>% filter(known_dm==1 & (is.na(known_comp)|known_comp==1))
+  }
+  #Optionally filter out cases with lower bounds less than 5 years
+  if(filter_cases_lt5yrs){
+    tab <- tab %>% filter(!event | lower>=5)
+  }
+  return(tab)
+}
 # Run pre_phenotype_tte() on arguments, then run phenotype_tte() on returned data frame.
 # Return relevant columns of data frame returned by phenotype_tte().
 phenotype_time_to_event <- function(dm_firstoccur,comp_firstoccur,demog,
@@ -192,4 +288,22 @@ phenotype_time_to_event <- function(dm_firstoccur,comp_firstoccur,demog,
                     control_exclusion_ids,control_inclusion_ids) %>%
     phenotype_tte() %>% select(f.eid,time_to_event,event,event_dt_dm,event_dt_comp)
 }
-
+#Run pre_phenotype_tte_interval on arguments
+#Then run phenotype_tte_interval on returned dataframe and the dm and comp diagnosis date alternatives
+phenotype_time_to_event_interval <- function(dm_date_known, comp_date_known, demog,
+                                             control_exclusion_ids=NULL, 
+                                             control_inclusion_ids=NULL, 
+                                             dm_alternative=NULL,
+                                             comp_alternative=NULL,
+                                             filter_cases_lt5yrs=0){
+  tte_interval <- pre_phenotype_tte_interval(dm_date_known, comp_date_known,demog,
+                             control_exclusion_ids, 
+                             control_inclusion_ids) %>% 
+    phenotype_tte_interval(dm_alternative, comp_alternative, filter_cases_lt5yrs)
+  if(is.null(tte_interval$known_comp)){
+    tte_interval <- tte_interval %>% select(f.eid,event,known_dm,lower,upper)
+  }else{
+    tte_interval <- tte_interval %>% select(f.eid,event,known_comp,lower,upper)
+  }
+  return(tte_interval)
+}
