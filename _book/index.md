@@ -1,0 +1,31 @@
+--- 
+title: "Phenotyping time-to-event traits in UK Biobank"
+author: "Do Hyun Kim, Aubrey Jensen, Hua Zhou, and Jin Zhou"
+date: "2023-01-15"
+site: "bookdown::bookdown_site"
+url: 'https\://dohyunkim116.github.io/ukbiobank-phenotyping-book/'
+github-repo: "dohyunkim116/ukbiobank-phenotyping-book"
+documentclass: book
+bibliography: references.bib
+fontsize: 12pt
+link-citations: yes
+---
+
+# Preface {-}
+
+This book presents steps for phenotyping survival outcomes using data from UK Biobank (UKB) study [@sudlow-ukb]. The following are the outcomes we phenotyped:
+
+- Diabetes
+- Myocardial Infarction
+- Unstable Angina
+- Ischemic Stroke
+- Hemorrhagic Stroke
+- Stroke
+- Percutaneous Coronary Intervention (PCI)
+- Composite cardiovascular disease (CVD)
+- Diabetic Eye Disease or Diabetic Retinopathy (DR)
+- Chronic/Diabetic Kidney Disease (CKD/DKD)
+
+We will refer UKB assessment center data as "UKB data" and the associated primary care data as "UKB primary care data." These two sources of data will be prepared separately and then combined to create event tables for various outcomes. These tables will then be used to phenotype survival traits.
+
+

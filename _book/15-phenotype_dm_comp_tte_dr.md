@@ -1,0 +1,92 @@
+# Generate time-to-event data for diabetic eye disease {#tte-dr}
+
+In this chapter, we phenotype right-censored time-to-event data for diabetic eye disease. An initial time-to-event data are created, and consequent cases and controls are identified following the identical procedure described in chapter \@ref(tte-macro). The initial time-to-event data are refined by applying the following exclusion criteria: 
+
+  - case
+    - has a complication event after the censoring date
+    - has a prior complication event identified before a first evidence of diabetes
+    - has an initiation date that is not between the first evidence of diabetes and the date of complication event
+  
+  - control
+     - has some event represented in diabetic eye disease control exclusion event table (generated in chapter \@ref(phenotype-outcomes-ukb))
+    - has some event represented in non-diabetic eye disease event table (generated in chapter \@ref(phenotype-outcomes-pcp))
+    - has a first evidence of diabetes after the censoring date
+    - has less than 5 years of follow-up time since the first evidence of diabetes before censoring date
+    - has a first evidence of diabetes 6 months after the study initiation date
+    - is not represented in the primary care data
+
+
+
+Load packages and functions.
+
+```r
+library(tidyverse)
+library(data.table)
+source("functions.R")
+```
+
+Load the following datasets:
+
+- diabetes first occurrence data
+- selected demographic data
+- first occurrence DR event table
+
+
+```r
+dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
+demog <- readRDS("generated_data/demog_selected.RDS")
+dr_firstoccur <- readRDS("generated_data/dr_firstoccur.RDS")
+```
+
+Load the following control exclusion event tables:
+
+- DR control exclusion event table from UKB assessment center data
+- non-diabeetic eye disease control exclusion event table from the primary care data
+
+
+```r
+dr_control_exclusion_events_ukb <- readRDS("generated_data/dr_control_exclusion_events_ukb.RDS")
+nondm_eye_disease <- readRDS("generated_data/nondm_eye_disease_pc.RDS")
+```
+
+Merge control exclusion event tables.
+
+```r
+dr_control_exclusion_events <- full_join(dr_control_exclusion_events_ukb,nondm_eye_disease,by=c("f.eid","event_dt"))
+```
+
+Define control exclusion subject ID's.
+
+```r
+ctrl_exclusion_ids <- dr_control_exclusion_events$f.eid %>% unique
+```
+
+The controls should be represented in the primary care data.
+
+```r
+gp_subejct_ids <- readRDS("generated_data/gp_subject_ids.RDS")
+```
+
+Define control inclusion subject ID's.
+
+```r
+ctrl_inclusion_ids <- gp_subejct_ids %>% unique
+```
+
+Phenotype time-to-event table for diabetic eye disease.
+
+```r
+dr_tte <- phenotype_time_to_event(dm_firstoccur,dr_firstoccur,demog,
+                                  control_exclusion_ids = ctrl_exclusion_ids,
+                                  control_inclusion_ids = ctrl_inclusion_ids)
+```
+
+
+```r
+saveRDS(dr_tte,"generated_data/dr_tte.RDS")
+```
+
+
+
+
+
