@@ -1,0 +1,203 @@
+# Curate demographic table {#curate-demog-table}
+
+In this chapter, we curate a demographic table containing following information:
+
+  * the date of birth
+  * gender
+  * age at UKB study initial assessment
+  * age at UKB study repeat assessment
+  * date of UKB study initial assessment
+  * date of UKB study repeat assessment
+  * censored date
+            
+The censored date is defined as the earliest date among administrative censoring date, date of last contact and date of death.
+
+
+
+Load packages.
+
+```r
+library(tidyverse)
+library(lubridate)
+```
+
+Load formatted raw demographic data.
+
+```r
+demog <- readRDS("generated_data/demog_UKB.RDS")
+```
+
+Define the date of birth and gender.
+
+```r
+demog <- demog %>% 
+  rename(YOB = f.34.0.0) %>%
+  rename(MOB = f.52.0.0) %>%
+  mutate(DOB = lubridate::make_date(YOB, MOB)) %>%
+  mutate(SEX = as.character(f.31.0.0))
+```
+
+Define UKB study initiation date.
+
+```r
+demog <- demog %>% rename(date_init = f.53.0.0, date_repeat = f.53.1.0)
+```
+
+We will define administrative censoring date (study end date) based on [inpatient record origin](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=40022). These dates are updated periodically. The most recent censoring dates can be found [here](https://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=Data_providers_and_dates#:~:text=Censoring%20dates&text=The%20censoring%20date%20is%20the,day%20of%20the%20previous%20month.) in the "Showcase censoring date" field of the table under the "Hospital inpatient data" section. The below censoring dates were based on the page accessed on Feb 22 2022:
+
+* Patient Episode Database for Wales (PEDW): Feb 28 2018
+* Scottish Morbidity Record (SMR): Jul 31 2021
+* Hospital Episode Statistics for England (HES): Sep 30 2021
+
+PEDW, SMR and HES are hospital admission keys (fields `f.40022.0.0`, `f.40022.0.1` and `f.40022.0.2` in `demog`) which map to certain administrative censoring dates.
+
+Define a dictionary which maps hospital admission keys to administrative censoring dates.
+
+```r
+censor_dates <- c(PEDW = as.Date("2018-02-28"),
+                   SMR = as.Date("2021-07-31"),
+                   HES = as.Date("2021-09-30"))
+```
+
+We take the administrative censoring date as the minimum of these three mapped dates for each subject.
+
+```r
+demog <- 
+  demog %>% 
+  mutate(date_admin_censored = as.Date(pmin(censor_dates[f.40022.0.0], censor_dates[f.40022.0.1],censor_dates[f.40022.0.2],na.rm=T)))
+```
+
+Note that there are subjects with unknown administrative censored date (i.e., no inpatient record). 
+
+```r
+demog %>% filter(is.na(date_admin_censored)) %>% select(f.eid) %>% nrow()
+```
+
+For these subjects with missing hospital admission keys, we identify subject's administrative censoring date using [data field 54](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=54) of UKB assessment center data. These fields include which city each participant went in for assessment or imaging, and can indicate where we would expect the origins of their inpatient records. 
+
+Define a mapping from country to administrative censoring date.
+
+```r
+country_to_censor_date_mapping <- 
+  c(wal = as.Date("2018-02-28"),
+    scot = as.Date("2021-07-31"),
+    eng = as.Date("2021-09-30"))
+```
+
+Load the data containing the field 54. Note, subject ID's are displayed as `Inf` for privacy reasons.
+
+```r
+bd <- readRDS("generated_data/assessment_center_UKB.RDS")
+bd %>% head() %>% mutate(f.eid = Inf)
+```
+
+The field `f.54.0.0` contains codes indicating the city where the initial assessment was taken. We see that there is only one subject that is missing this value.
+
+```r
+rmid <- bd %>% filter(is.na(f.54.0.0)) 
+rmid %>% mutate(f.eid = Inf)
+```
+This subject does exist in the demographic table, but all of the fields are missing except for the participant's ID.
+
+```r
+demog %>% right_join(rmid) %>% as_vector() %>% .[-1] %>% is.na %>% all
+```
+
+Remove this subject from the demographic table.
+
+```r
+demog <- demog %>% anti_join(rmid)
+```
+
+Now, we will use the values in the field `f.54.0.0` to find out which city and in turn which country a participant went in for initial assessment. First, load the [mapping file](https://biobank.ndph.ox.ac.uk/showcase/coding.cgi?id=10) from city code to city name.
+
+```r
+code_to_city_mapping <- read_tsv("raw_data/f.54.0.0_coding.tsv")
+```
+
+Second, define the mapping from city name to country name.
+
+```r
+city_to_country_map <- 
+  c(Glasgow = "scot",
+  Edinburgh = "scot",
+  Newcastle = "eng",
+  Middlesborough = "eng",
+  Leeds = "eng",
+  Sheffield = "eng",
+  Bury = "eng",
+  Liverpool = "eng",
+  Manchester = "eng",
+  "Stockport (pilot)" = "eng",
+  Stoke = "eng",
+  Nottingham = "eng",
+  Birmingham = "eng",
+  Oxford = "eng",
+  Reading = "eng",
+  Hounslow = "eng",
+  "Central London" = "eng",
+  Croydon = "eng",
+  Bristol = "eng",
+  Wrexham = "wal",
+  Swansea = "wal",
+  Cardiff = "wal",
+  Barts = "eng") # hosptial in england
+```
+
+
+
+Finally, using defined mappings, we fill in missing administrative censoring dates.
+
+```r
+demog <- demog %>% 
+  left_join(bd %>% select(f.eid,`f.54.0.0`)) %>%
+  rename(coding = `f.54.0.0`) %>%
+  left_join(code_to_city_mapping, by = "coding") %>% 
+  mutate(country = city_to_country_map[meaning]) %>% 
+  mutate(date_admin_censored = if_else(!is.na(date_admin_censored),date_admin_censored,
+                                      country_to_censor_date_mapping[country]))
+attr(demog$date_admin_censored,"names") <- NULL
+```
+
+Next, we Load reformatted raw ICD table which contains subject's date of death.
+
+```r
+ICD <- readRDS("generated_data/ICD_UKB.RDS")
+```
+
+Define:
+
+- date of death
+- date of lost-to-follow-up
+- age at study initiation date
+- age at second-visit date
+- date censored
+
+
+```r
+date_death_tab <- ICD %>% select(f.eid, f.40000.0.0) %>% arrange(f.eid) %>% data.frame()
+demog <- demog %>% left_join(date_death_tab, by = "f.eid") %>%
+  rename(date_death = "f.40000.0.0") %>%
+  rename(date_lost_fu = "f.191.0.0")
+
+demog <- demog %>% 
+  mutate(age_init = decimal_date(date_init) - decimal_date(DOB), 
+         age_repeat = decimal_date(date_repeat) - decimal_date(DOB)) %>% 
+  mutate(date_censored = pmin(date_admin_censored,date_lost_fu,date_death,na.rm = T))
+```
+
+Select specific columns from demographic table.
+
+```r
+demog_sel <- demog %>% select(f.eid,DOB,SEX,
+                              age_init,age_repeat,
+                              date_init,date_repeat,
+                              date_censored)
+```
+
+Save demographic table. Note that this table includes subjects whose genetic and reported sex do not match.
+
+```r
+saveRDS(demog_sel,"generated_data/pre_demog_sel.RDS")
+```
+

@@ -1,0 +1,350 @@
+# Curate a master UKB event table {#curate-master-ukb-events-table}
+
+This chapter gathers different types of fields available in the UKB assessment center data and generates a master event table. We also convert UKB defined special dates to normal dates. We take the following fields (details of which can be searched [here](https://biobank.ndph.ox.ac.uk/ukb/search.cgi)) from the UKB assessment center data:
+
+- first occurrence fields in `first_occur_UKB.RDS`
+
+- algorithmically defined outcome fields in `demog_UKB.RDS`:
+
+  - `f.42000.0.0`
+  - `f.42008.0.0`
+  - `f.42010.0.0`
+  - `f.42012.0.0`
+  - `f.42006.0.0`
+  - `f.42026.0.0`
+  
+- ICD10 code fields and their date fields in `ICD_UKB.RDS`:
+
+  - starts with `f.41270` (ICD10 code)
+  - starts with `f.41280` (ICD10 code event date)
+  - starts with `f.40001` (ICD10 code primary death)
+  - starts with `f.40002` (ICD10 code secondary death)
+  - starts with `f.40000` (ICD10 code death date)
+  
+- OPCS4 code fields in `OPCS_procedures_UKB.RDS`:
+
+  - starts with `f.41272` (OPCS4 code)
+  - starts with `f.41282` (OPCS4 code event date)
+
+- self-reported condition field in `demog_UKB.RDS`:
+
+  - starts with `f.20002` (self-reported condition code)
+  - starts with `f.20008` (self-reported condition code event date)
+  
+- self-reported operation field in `demog_UKB.RDS`:
+
+  - starts with `f.20004` (self-reported operation code)
+  - starts with `f.20010` (self-reported operation code event date)
+  
+In addition to these pre-defined fields, we define a custom field called `dr_self` which is a combination of the following fields:
+
+  - `f.5901.0.0`
+  - `f.5901.1.0`
+  - `f.5901.2.0`
+  - `f.5901.3.0`
+
+These fields record age at which diabetic eye disease was diagnosed at four different time points. Using this information and the date of birth of a subject, we define the first occurrence event date for this customized outcome `dr_self`. Custom fields can be defined by users by combining multiple pre-defined fields. However, `dr_self` is the only custom outcome we define using the UKB assessment center data and included in the master event table.
+
+When converting special dates to "normal" dates, we use the following mapping defined by UKB study:
+
+- First occurrence, algorithimically defined outcome and OPC4 code event date fields
+
+|Special date|Map|
+|:------------|:---|
+|1900-01-01|Missing|
+|1901-01-01|Missing|
+|2037-07-07|Missing||
+|1902-02-02|DOB of a subject|
+|1903-03-03|DOB of a subject|
+
+- Self-reported condition and self-reported operation code event date fields:
+
+|Special date|Map|
+|:------------|:---|
+|decimal date < 1900|Missing|
+
+The conversion is carried out by the `cleandates()` function defined in `functions.R`.
+
+
+
+Load packages.
+
+```r
+library(tidyverse)
+library(data.table)
+library(lubridate)
+source("functions.R")
+```
+
+Load reformatted raw UKB assessment data for generating a master UKB event table.
+
+```r
+firstoccurs <- readRDS("generated_data/first_occur_UKB.RDS")
+ICD <- readRDS("generated_data/ICD_UKB.RDS")
+procs <- readRDS("generated_data/OPCS_procedures_UKB.RDS")
+demog <- readRDS("generated_data/demog_UKB.RDS")
+```
+
+Define the date of birth and gender
+
+```r
+demog <- demog %>% 
+  rename(YOB = f.34.0.0) %>%
+  rename(MOB = f.52.0.0) %>%
+  mutate(DOB = lubridate::make_date(YOB, MOB)) %>%
+  mutate(SEX = as.character(f.31.0.0))
+```
+
+
+
+## First occurrence event table and algorithmically defined outcome table
+
+Convert first occurrence data into a long format.
+
+```r
+firstoccurs_long <- firstoccurs %>% 
+  pivot_longer(-f.eid, names_to = "field", values_to = "event_dt", values_drop_na = T)
+```
+
+
+
+Obtain algorithmically defined outcomes from demographic dataset.
+
+```r
+algo_outcome_fields <- paste0("f.",c("42000", "42008", "42010","42012","42006", "42026"),".0.0")
+
+algo_outcome_table_wide <- demog %>% select(f.eid,all_of(algo_outcome_fields))
+algo_outcome_table_long <- algo_outcome_table_wide %>%  
+  pivot_longer(-f.eid,names_to = "field",values_to = "event_dt", values_drop_na = T)
+```
+
+Merge algorithmically defined outcome fields in the demographic data with first occurrence data to produce outcome fields table.
+
+```r
+outcome_fields_table_long <- bind_rows(firstoccurs_long,algo_outcome_table_long)
+```
+
+## Custom defined outcome for DR
+
+Define customized outcome for diabetes-related eye disease using demographic dataset. We use `5901` family of fields which include:
+
+- `f.5901.0.0`
+- `f.5901.1.0`
+- `f.5901.2.0`
+- `f.5901.3.0`
+
+These fields record age at which DR was diagnosed at four different time points. Here are the steps for defining the first occurrence event data for this outcome:
+
+1. Negative values that indicate incidence but unknown date of the event is converted to a numeric value `999`.
+2. `dr_self = 1` if the event happened, or `0` otherwise.
+3. `age_dr_self`: we take the youngest age at which a person was identified as having DR, and individuals with unknown date of this event is coded as `NA`.
+4. If age is greater than `998`, then we are uncertain of when the outcome was actually identified, so they are converted back to `NA`.
+5. `dr_self` is set to `NA` for individuals who were identified to have an outcome but with missing age when the outcome was identified.
+6. To obtain the date of a DR event, we add DOB (decimal date) and age at which the outcome was identified.
+
+
+```r
+custom_outcome_fields_table_wide <- demog %>%
+  mutate(f.5901.0.0 = replace(f.5901.0.0, which(f.5901.0.0 < 0), 999)) %>% 
+  mutate(f.5901.1.0 = replace(f.5901.1.0, which(f.5901.1.0 < 0), 999)) %>% 
+  mutate(f.5901.2.0 = replace(f.5901.2.0, which(f.5901.2.0 < 0), 999)) %>% 
+  mutate(f.5901.3.0 = replace(f.5901.3.0, which(f.5901.3.0 < 0), 999)) %>% 
+  mutate(dr_self = as.numeric(!is.na(f.5901.0.0) | !is.na(f.5901.1.0) | !is.na(f.5901.2.0) | !is.na(f.5901.3.0))) %>%
+  mutate(age_dr_self = pmin(f.5901.0.0, f.5901.1.0, f.5901.2.0, f.5901.3.0, na.rm=T)) %>%
+  mutate(age_dr_self = replace(age_dr_self, which(age_dr_self > 998), NA)) %>%
+  mutate(dr_self = replace(dr_self, which(is.na(age_dr_self) & dr_self==1), NA)) %>%
+  mutate(date_dr_self = as.Date(date_decimal(decimal_date(DOB) + age_dr_self))) %>% 
+  select(f.eid,date_dr_self)
+
+custom_outcome_fields_table_long <- 
+  custom_outcome_fields_table_wide %>% 
+  pivot_longer(-f.eid, names_to = "field", values_to = "event_dt", values_drop_na = T)
+
+custom_outcome_fields_table_long <-
+  custom_outcome_fields_table_long %>% 
+  mutate(field = ifelse(field == "date_dr_self", "dr_self", field))
+```
+
+## ICD 9 & 10
+
+Obtain relevant fields.
+
+```r
+ICD9_codes <- ICD %>% select(f.eid,starts_with('f.41271')) %>% arrange(f.eid) %>% data.frame()
+ICD9_dates <- ICD %>% select(f.eid,starts_with('f.41281.')) %>% arrange(f.eid) %>% data.frame()
+
+ICD10_codes <- ICD %>% select(f.eid,starts_with('f.41270')) %>% arrange(f.eid) %>% data.frame()
+ICD10_dates <- ICD %>% select(f.eid,starts_with('f.41280.')) %>% arrange(f.eid) %>% data.frame() 
+
+ICD10_codes_primary_death <- ICD %>% select(f.eid,starts_with('f.40001')) %>% arrange(f.eid) %>% data.frame()
+ICD10_codes_secondary_death <- ICD %>% select(f.eid,starts_with('f.40002')) %>% arrange(f.eid) %>% data.frame()
+ICD10_death_date <- ICD %>% select(f.eid, f.40000.0.0) %>% arrange(f.eid) %>% data.frame()
+```
+
+
+
+Merge ICD10 primary death and death date tables into a long format.
+
+```r
+ICD10_codes_primary_death_long <-
+  left_join(ICD10_codes_primary_death %>% pivot_longer(cols=-f.eid),ICD10_death_date,by="f.eid") %>% 
+  select(-name) %>% rename(code=value,event_dt=`f.40000.0.0`) %>% mutate(type="ICD10_death_primary") %>% distinct()
+```
+
+Merge ICD10 secondary death and death date tables into a long format.
+
+```r
+ICD10_codes_secondary_death_long <-
+  left_join(ICD10_codes_secondary_death %>% pivot_longer(cols=-f.eid),ICD10_death_date,by="f.eid") %>% 
+  select(-name) %>% rename(code=value,event_dt=`f.40000.0.0`) %>% mutate(type="ICD10_death_secondary") %>% distinct()
+```
+
+Merge ICD10 codes and their event dates tables into a long format.
+
+```r
+ICD10_codes_long <- merge_long("f.41270","f.41280",ICD10_codes,ICD10_dates,"ICD10") %>% distinct()
+```
+
+Merge ICD9 codes and their event dates tables into a long format.
+
+```r
+ICD9_codes <- ICD9_codes %>% mutate_at(vars(f.41271.0.0:f.41271.0.46), as.character)
+ICD9_codes_long <- merge_long("f.41271","f.41281",ICD9_codes,ICD9_dates,"ICD9") %>% distinct()
+```
+
+Merge all of the ICD event tables with dates, and then remove observations with no codes (`code == NA`). 
+
+```r
+ICD_codes_full <- do.call(rbind,list(ICD10_codes_long,ICD9_codes_long,ICD10_codes_primary_death_long,ICD10_codes_secondary_death_long)) %>% filter(!is.na(code))
+```
+
+## OPCS4
+
+OPCS4 event table is procedure codes from hospital admission data. Obtain relevant fields.
+
+```r
+OPCS4 <- procs %>% 
+  select(c(f.eid, starts_with('f.41272.'))) %>% 
+  mutate_if(is.factor, as.character)  %>% 
+  arrange(f.eid) %>% 
+  data.frame()
+
+OPCS4dates <- procs %>% 
+  select(c(f.eid, starts_with('f.41282.'))) %>% 
+  arrange(f.eid) %>% 
+  data.frame()
+
+OPCS4_codes_long <- 
+  merge_long("f.41272","f.41282",OPCS4,OPCS4dates,"OPCS4") %>% distinct() %>% filter(!is.na(code))
+```
+
+## Self-reported conditions
+
+Obatin relevant fields.
+
+```r
+selfrep_codes <- demog %>%
+  select(c(f.eid, starts_with("f.20002."))) %>%
+  arrange(f.eid) %>% 
+  data.frame() # can't be data.table
+
+selfrep_dates <- demog %>%
+  select(c(f.eid, starts_with("f.20008."))) %>%
+  data.frame() %>% 
+  mutate_all(funs(replace(., .<1900, NA))) %>%
+  mutate_at(vars(starts_with("f.20008.")), .funs = list(~ lubridate::date_decimal(.))) %>%
+  mutate_at(vars(starts_with("f.20008.")), .funs = list(~ as.Date(.))) %>%
+  arrange(f.eid)
+
+selfrep_codes_long <- merge_long("f.20002","f.20008",selfrep_codes,selfrep_dates,"selfrep") %>% 
+  distinct() %>% filter(!is.na(code))
+```
+
+
+## Self-reported operations
+
+Obatin relevant fields.
+
+```r
+selfrep_op_codes <- demog %>%
+  select(c(f.eid, starts_with("f.20004."))) %>%
+  arrange(f.eid) %>% 
+  data.frame()
+
+selfrep_op_dates <- demog %>%
+  select(c(f.eid, starts_with("f.20010."))) %>%
+  data.frame() %>%
+  mutate_all(funs(replace(., .<1900, NA))) %>%
+  mutate_at(vars(starts_with("f.20010.")), .funs = list(~ lubridate::date_decimal(.))) %>%
+  mutate_at(vars(starts_with("f.20010.")), .funs = list(~ as.Date(.))) %>%
+  arrange(f.eid) 
+
+selfrep_op_codes_long <- merge_long("f.20004","f.20010",selfrep_op_codes,selfrep_op_dates,"selfrep_op") %>% 
+  distinct() %>% filter(!is.na(code))
+```
+
+
+
+## Standardize and merge event tables
+
+The following event tables are merged to produce a master event table:
+
+- Outcome field event table (combination of first occurrence event data and algorithmically defined event data from demographic table)
+- ICD10 code event table
+- OPCS4 code event table
+- Self-reported condition code event table
+- Self-reported operation code event table
+- Custom defined event table for DR
+
+
+```r
+# Standardize
+outcome_fields_table_long <- 
+  outcome_fields_table_long %>% mutate(type = "outcome_fields") %>% rename(key=field)
+
+ICD_codes_full <- 
+  ICD_codes_full %>% mutate(code=as.character(code)) %>% rename(key=code)
+
+OPCS4_codes_long <- 
+  OPCS4_codes_long %>% rename(key=code)
+
+selfrep_codes_long <- 
+  selfrep_codes_long %>% mutate(code=as.character(code)) %>% rename(key=code)
+
+selfrep_op_codes_long <- 
+  selfrep_op_codes_long %>% mutate(code=as.character(code)) %>% rename(key=code)
+
+custom_outcome_fields_table_long <-
+  custom_outcome_fields_table_long %>% mutate(type = "custom_fields") %>% rename(key = field)
+
+event_tab <- bind_rows(list(outcome_fields_table_long,ICD_codes_full,
+                            OPCS4_codes_long,selfrep_codes_long,selfrep_op_codes_long,
+                            custom_outcome_fields_table_long))
+```
+
+Filter out events where the date of event is missing.
+
+```r
+event_tab <- event_tab %>% filter(!is.na(event_dt))
+```
+
+## Convert UKB special dates into "normal" dates
+
+Convert special dates to normal dates and then filter out any event with an unknown event date. Note that special dates in self-reported and self-reported operation and custom defined outcome table have already been converted in the above. We convert special dates present in the following event table types: `outcome_fields`, `ICD10`, `ICD10_death_primary`, `ICD10_death_secondary` and `OPCS4`. 
+
+```r
+demog_dob <- demog %>% select(f.eid, DOB)
+event_tab <- event_tab %>% left_join(demog_dob, by = "f.eid")
+event_tab$event_dt <- cleandates(event_tab$event_dt,event_tab$DOB)
+event_tab <- event_tab %>% select(-DOB) %>% filter(!is.na(event_dt))
+```
+
+Save the master event table. Note that this table includes subjects whose genetic and reported sex do not match.
+
+```r
+saveRDS(event_tab,"generated_data/pre_all_ukb_events_tab.RDS")
+```
+
+
+
+

@@ -1,0 +1,117 @@
+# Prepare UKB Primary Care Data {#prep-pcp-data}
+
+The primary care data contain clinical information of approximately 500,000 patients on their visits to primary care physicians. A reason for a visit is recorded as a code. The date of visit associated with the code is also available. We accomplish the following in this chapter:
+
+1. Convert special dates to their mapping
+2. Generate subject ID file (used later for excluding control subjects when phenotyping DR and CKD)
+3. Exclude subjects with sex mismatch (although the number of unique subjects remain the same after applying sex mismatch filtering)
+
+We use the following mapping which is identical to the one we used for preparing the master event table in chapter \@ref(curate-master-ukb-events-table):
+
+|Special date|Map|
+|:------------|:---|
+|1900-01-01|Missing|
+|1901-01-01|Missing|
+|2037-07-07|Missing||
+|1902-02-02|DOB of a subject|
+|1903-03-03|DOB of a subject|
+
+The primary care data is `entire_gp_clinical_30March2021_formatted.txt` in `raw_data` folder. The data can be downloaded by approved researchers from the UKB Record Repository if you have requested field `42040`.
+
+
+
+Load packages and a file containing functions.
+
+```r
+library(data.table)
+library(tidyverse)
+source("functions.R")
+```
+
+Import primary care data.
+
+```r
+gp_clinical <- fread("raw_data/entire_gp_clinical_30March2021.txt")
+```
+
+Fix the date format so that other scripts can use it more easily.
+
+```r
+gp_clinical$event_dt <- as.Date(gp_clinical$event_dt, tryFormats = "%d/%m/%Y")
+```
+
+Create code and terminology fields in place of read_2 and read_3 fields.
+
+```r
+gp_clinical <- gp_clinical %>% mutate(code = ifelse(read_2 != "", read_2, read_3)) %>%
+  mutate(terminology = ifelse(read_2 != "", "read2", "read3")) %>%
+  select(-read_2, -read_3) %>%
+  distinct()
+```
+
+Rename fid (subject id) field.
+
+```r
+gp_clinical <- gp_clinical %>% rename(f.eid = eid)
+```
+
+Load demographic data.
+
+```r
+demog <- readRDS("generated_data/demog_selected.RDS")
+```
+
+Add a field indicating whether the date of event is special.
+
+```r
+gp_clinical$special_dt <- is_special_date(gp_clinical$event_dt)
+```
+
+Convert the special dates.
+
+```r
+demog_dob <- demog %>% select(f.eid, DOB)
+gp_clinical <- gp_clinical %>% left_join(demog_dob, by = "f.eid")
+gp_clinical$event_dt <- cleandates(gp_clinical$event_dt,gp_clinical$DOB)
+gp_clinical <- gp_clinical %>% select(-DOB)
+```
+
+Save subject IDs represented in the primary care data.
+
+```r
+gp_subject_ids <- gp_clinical$f.eid %>% unique()
+saveRDS(gp_subject_ids,"generated_data/gp_subject_ids.RDS")
+```
+
+Remove any events with missing dates.
+
+```r
+gp_clinical <- gp_clinical %>% filter(!is.na(event_dt))
+```
+
+Filter out subjects with sex mismatch.
+
+```r
+sex_mismatch_subject_ids <- readRDS("generated_data/sex_mismatch_subject_ids.RDS")
+gp_clinical <- gp_clinical %>% filter(!(f.eid %in% sex_mismatch_subject_ids))
+```
+
+Save the primary care data.
+
+```r
+fwrite(gp_clinical, "generated_data/entire_gp_clinical_30March2021_formatted.txt", sep="\t", row.names=F, quote=T)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

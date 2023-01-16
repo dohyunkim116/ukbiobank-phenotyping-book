@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>11.4 Triglycerides | UK Biobank Phenotyping</title>
+  <meta name="description" content="11.4 Triglycerides | UK Biobank Phenotyping" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="11.4 Triglycerides | UK Biobank Phenotyping" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="11.4 Triglycerides | UK Biobank Phenotyping" />
+  
+  
+  
+
+<meta name="author" content="Do Hyun Kim" />
+
+
+<meta name="date" content="2023-01-15" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="11.3-ldl.html"/>
+<link rel="next" href="11.5-fasting-glucose.html"/>
+<script src="libs/header-attrs-2.10/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="index.html#generating-time-to-event-data-using-uk-biobank-data" id="toc-generating-time-to-event-data-using-uk-biobank-data">Generating time-to-event data using UK biobank data</a></li>
+<li><a href="1-reformat-raw-data.html#reformat-raw-data" id="toc-reformat-raw-data"><span class="toc-section-number">1</span> Clean raw UKB assesment center data</a></li>
+<li><a href="2-curate-demog-table.html#curate-demog-table" id="toc-curate-demog-table"><span class="toc-section-number">2</span> Curate demographic table</a></li>
+<li><a href="3-curate-master-ukb-events-table.html#curate-master-ukb-events-table" id="toc-curate-master-ukb-events-table"><span class="toc-section-number">3</span> Curate a master UKB event table</a>
+<ul>
+<li><a href="3.1-first-occurrence-event-table-and-algorithmically-defined-outcome-table.html#first-occurrence-event-table-and-algorithmically-defined-outcome-table" id="toc-first-occurrence-event-table-and-algorithmically-defined-outcome-table"><span class="toc-section-number">3.1</span> First occurrence event table and algorithmically defined outcome table</a></li>
+<li><a href="3.2-custom-defined-outcome-for-dr.html#custom-defined-outcome-for-dr" id="toc-custom-defined-outcome-for-dr"><span class="toc-section-number">3.2</span> Custom defined outcome for DR</a></li>
+<li><a href="3.3-icd-9-10.html#icd-9-10" id="toc-icd-9-10"><span class="toc-section-number">3.3</span> ICD 9 &amp; 10</a></li>
+<li><a href="3.4-opcs4.html#opcs4" id="toc-opcs4"><span class="toc-section-number">3.4</span> OPCS4</a></li>
+<li><a href="3.5-self-reported-conditions.html#self-reported-conditions" id="toc-self-reported-conditions"><span class="toc-section-number">3.5</span> Self-reported conditions</a></li>
+<li><a href="3.6-self-reported-operations.html#self-reported-operations" id="toc-self-reported-operations"><span class="toc-section-number">3.6</span> Self-reported operations</a></li>
+<li><a href="3.7-standardize-and-merge-event-tables.html#standardize-and-merge-event-tables" id="toc-standardize-and-merge-event-tables"><span class="toc-section-number">3.7</span> Standardize and merge event tables</a></li>
+<li><a href="3.8-convert-ukb-special-dates-into-normal-dates.html#convert-ukb-special-dates-into-normal-dates" id="toc-convert-ukb-special-dates-into-normal-dates"><span class="toc-section-number">3.8</span> Convert UKB special dates into “normal” dates</a></li>
+</ul></li>
+<li><a href="4-exclude-sex-mismatch-subjects.html#exclude-sex-mismatch-subjects" id="toc-exclude-sex-mismatch-subjects"><span class="toc-section-number">4</span> Filter out subjects with sex mismatch</a></li>
+<li><a href="5-prep-pcp-data.html#prep-pcp-data" id="toc-prep-pcp-data"><span class="toc-section-number">5</span> Prepare UKB Primary Care Data</a></li>
+<li><a href="6-make-code-dictionary.html#make-code-dictionary" id="toc-make-code-dictionary"><span class="toc-section-number">6</span> Create a master code dictionary for primary care data</a></li>
+<li><a href="7-make-outcome-specific-code-dictionary.html#make-outcome-specific-code-dictionary" id="toc-make-outcome-specific-code-dictionary"><span class="toc-section-number">7</span> Make outcome-specific code dictionary</a>
+<ul>
+<li><a href="7.1-prepare-diabetes-code-dictionary.html#prepare-diabetes-code-dictionary" id="toc-prepare-diabetes-code-dictionary"><span class="toc-section-number">7.1</span> Prepare diabetes code dictionary</a>
+<ul>
+<li><a href="7.1-prepare-diabetes-code-dictionary.html#define-keywords" id="toc-define-keywords"><span class="toc-section-number">7.1.1</span> Define keywords</a></li>
+<li><a href="7.1-prepare-diabetes-code-dictionary.html#define-codes" id="toc-define-codes"><span class="toc-section-number">7.1.2</span> Define codes</a></li>
+<li><a href="7.1-prepare-diabetes-code-dictionary.html#create-diabetes-code-dictionary" id="toc-create-diabetes-code-dictionary"><span class="toc-section-number">7.1.3</span> Create diabetes code dictionary</a></li>
+</ul></li>
+<li><a href="7.2-prepare-diabetic-eye-disease-code-dictionary.html#prepare-diabetic-eye-disease-code-dictionary" id="toc-prepare-diabetic-eye-disease-code-dictionary"><span class="toc-section-number">7.2</span> Prepare diabetic eye disease code dictionary</a>
+<ul>
+<li><a href="7.2-prepare-diabetic-eye-disease-code-dictionary.html#define-keywords-1" id="toc-define-keywords-1"><span class="toc-section-number">7.2.1</span> Define keywords</a></li>
+<li><a href="7.2-prepare-diabetic-eye-disease-code-dictionary.html#define-codes-1" id="toc-define-codes-1"><span class="toc-section-number">7.2.2</span> Define codes</a></li>
+<li><a href="7.2-prepare-diabetic-eye-disease-code-dictionary.html#create-diabetic-eye-disease-code-dictionary" id="toc-create-diabetic-eye-disease-code-dictionary"><span class="toc-section-number">7.2.3</span> Create diabetic eye disease code dictionary</a></li>
+</ul></li>
+<li><a href="7.3-prepare-diabetic-kidney-disease-code-dictionary.html#prepare-diabetic-kidney-disease-code-dictionary" id="toc-prepare-diabetic-kidney-disease-code-dictionary"><span class="toc-section-number">7.3</span> Prepare diabetic kidney disease code dictionary</a>
+<ul>
+<li><a href="7.3-prepare-diabetic-kidney-disease-code-dictionary.html#define-keywords-2" id="toc-define-keywords-2"><span class="toc-section-number">7.3.1</span> Define Keywords</a></li>
+<li><a href="7.3-prepare-diabetic-kidney-disease-code-dictionary.html#define-codes-2" id="toc-define-codes-2"><span class="toc-section-number">7.3.2</span> Define codes</a></li>
+<li><a href="7.3-prepare-diabetic-kidney-disease-code-dictionary.html#create-diabetic-kidney-disease-code-dictionary" id="toc-create-diabetic-kidney-disease-code-dictionary"><span class="toc-section-number">7.3.3</span> Create diabetic kidney disease code dictionary</a></li>
+</ul></li>
+</ul></li>
+<li><a href="8-phenotype-outcomes-ukb.html#phenotype-outcomes-ukb" id="toc-phenotype-outcomes-ukb"><span class="toc-section-number">8</span> Phenotype outcome and control exclusion events using UKB assessment center data</a>
+<ul>
+<li><a href="8.1-phenotype-outcomes.html#phenotype-outcomes" id="toc-phenotype-outcomes"><span class="toc-section-number">8.1</span> Phenotype outcomes</a>
+<ul>
+<li><a href="8.1-phenotype-outcomes.html#dm" id="toc-dm"><span class="toc-section-number">8.1.1</span> DM</a></li>
+<li><a href="8.1-phenotype-outcomes.html#mi" id="toc-mi"><span class="toc-section-number">8.1.2</span> MI</a></li>
+<li><a href="8.1-phenotype-outcomes.html#unstable-angina" id="toc-unstable-angina"><span class="toc-section-number">8.1.3</span> Unstable Angina</a></li>
+<li><a href="8.1-phenotype-outcomes.html#ischemic-stroke" id="toc-ischemic-stroke"><span class="toc-section-number">8.1.4</span> Ischemic Stroke</a></li>
+<li><a href="8.1-phenotype-outcomes.html#hemorrhagic-stroke" id="toc-hemorrhagic-stroke"><span class="toc-section-number">8.1.5</span> Hemorrhagic Stroke</a></li>
+<li><a href="8.1-phenotype-outcomes.html#stroke" id="toc-stroke"><span class="toc-section-number">8.1.6</span> Stroke</a></li>
+<li><a href="8.1-phenotype-outcomes.html#pci" id="toc-pci"><span class="toc-section-number">8.1.7</span> PCI</a></li>
+<li><a href="8.1-phenotype-outcomes.html#cvd-death" id="toc-cvd-death"><span class="toc-section-number">8.1.8</span> CVD death</a></li>
+<li><a href="8.1-phenotype-outcomes.html#composite-cvd" id="toc-composite-cvd"><span class="toc-section-number">8.1.9</span> Composite CVD</a></li>
+<li><a href="8.1-phenotype-outcomes.html#dr" id="toc-dr"><span class="toc-section-number">8.1.10</span> DR</a></li>
+<li><a href="8.1-phenotype-outcomes.html#dkd" id="toc-dkd"><span class="toc-section-number">8.1.11</span> DKD</a></li>
+</ul></li>
+<li><a href="8.2-phenotype-control-exclusion-events.html#phenotype-control-exclusion-events" id="toc-phenotype-control-exclusion-events"><span class="toc-section-number">8.2</span> Phenotype control exclusion events</a>
+<ul>
+<li><a href="8.2-phenotype-control-exclusion-events.html#cardiovascular-control-exclusion-events" id="toc-cardiovascular-control-exclusion-events"><span class="toc-section-number">8.2.1</span> Cardiovascular control exclusion events</a></li>
+<li><a href="8.2-phenotype-control-exclusion-events.html#cerebrovascular-control-exclusion-events" id="toc-cerebrovascular-control-exclusion-events"><span class="toc-section-number">8.2.2</span> Cerebrovascular control exclusion events</a></li>
+<li><a href="8.2-phenotype-control-exclusion-events.html#non-coronary-revascularization-procedure-control-exclusion-events" id="toc-non-coronary-revascularization-procedure-control-exclusion-events"><span class="toc-section-number">8.2.3</span> Non-coronary revascularization procedure control exclusion events</a></li>
+<li><a href="8.2-phenotype-control-exclusion-events.html#renal-disease-control-exclusion-events" id="toc-renal-disease-control-exclusion-events"><span class="toc-section-number">8.2.4</span> Renal disease control exclusion events</a></li>
+<li><a href="8.2-phenotype-control-exclusion-events.html#eye-disease-control-exclusion-events" id="toc-eye-disease-control-exclusion-events"><span class="toc-section-number">8.2.5</span> Eye disease control exclusion events</a></li>
+</ul></li>
+</ul></li>
+<li><a href="9-phenotype-outcomes-pcp.html#phenotype-outcomes-pcp" id="toc-phenotype-outcomes-pcp"><span class="toc-section-number">9</span> Phenotype outcomes using primary care data</a>
+<ul>
+<li><a href="9.1-phenotype-outcome-events.html#phenotype-outcome-events" id="toc-phenotype-outcome-events"><span class="toc-section-number">9.1</span> Phenotype outcome events</a>
+<ul>
+<li><a href="9.1-phenotype-outcome-events.html#dm-1" id="toc-dm-1"><span class="toc-section-number">9.1.1</span> DM</a></li>
+<li><a href="9.1-phenotype-outcome-events.html#dr-1" id="toc-dr-1"><span class="toc-section-number">9.1.2</span> DR</a></li>
+<li><a href="9.1-phenotype-outcome-events.html#dkd-1" id="toc-dkd-1"><span class="toc-section-number">9.1.3</span> DKD</a></li>
+</ul></li>
+<li><a href="9.2-phenotype-control-exclusion-events-1.html#phenotype-control-exclusion-events-1" id="toc-phenotype-control-exclusion-events-1"><span class="toc-section-number">9.2</span> Phenotype control exclusion events</a>
+<ul>
+<li><a href="9.2-phenotype-control-exclusion-events-1.html#non-diabetic-eye-disease-events" id="toc-non-diabetic-eye-disease-events"><span class="toc-section-number">9.2.1</span> Non-diabetic eye disease events</a></li>
+<li><a href="9.2-phenotype-control-exclusion-events-1.html#kidney-disease-control-exclusion-events" id="toc-kidney-disease-control-exclusion-events"><span class="toc-section-number">9.2.2</span> Kidney disease control exclusion events</a></li>
+</ul></li>
+</ul></li>
+<li><a href="10-traj-ukb.html#traj-ukb" id="toc-traj-ukb"><span class="toc-section-number">10</span> Create biomarker trajectory data from UK biobank assessment center data</a></li>
+<li><a href="11-traj-pcp.html#traj-pcp" id="toc-traj-pcp"><span class="toc-section-number">11</span> Create biomarker trajectory data from primary care data</a>
+<ul>
+<li><a href="11.1-total-cholesterol.html#total-cholesterol" id="toc-total-cholesterol"><span class="toc-section-number">11.1</span> Total cholesterol</a></li>
+<li><a href="11.2-hdl.html#hdl" id="toc-hdl"><span class="toc-section-number">11.2</span> HDL</a></li>
+<li><a href="11.3-ldl.html#ldl" id="toc-ldl"><span class="toc-section-number">11.3</span> LDL</a></li>
+<li><a href="11.4-triglycerides.html#triglycerides" id="toc-triglycerides"><span class="toc-section-number">11.4</span> Triglycerides</a></li>
+<li><a href="11.5-fasting-glucose.html#fasting-glucose" id="toc-fasting-glucose"><span class="toc-section-number">11.5</span> Fasting Glucose</a></li>
+<li><a href="11.6-random-glucose.html#random-glucose" id="toc-random-glucose"><span class="toc-section-number">11.6</span> Random glucose</a></li>
+<li><a href="11.7-urine-albumin.html#urine-albumin" id="toc-urine-albumin"><span class="toc-section-number">11.7</span> Urine Albumin</a></li>
+<li><a href="11.8-urine-creatinine.html#urine-creatinine" id="toc-urine-creatinine"><span class="toc-section-number">11.8</span> Urine creatinine</a></li>
+<li><a href="11.9-urine-acr-albumincreatinine-ratio.html#urine-acr-albumincreatinine-ratio" id="toc-urine-acr-albumincreatinine-ratio"><span class="toc-section-number">11.9</span> Urine ACR (Albumin:Creatinine Ratio)</a></li>
+<li><a href="11.10-bloodserum-creatinine.html#bloodserum-creatinine" id="toc-bloodserum-creatinine"><span class="toc-section-number">11.10</span> Blood/Serum creatinine</a></li>
+<li><a href="11.11-hba1c.html#hba1c" id="toc-hba1c"><span class="toc-section-number">11.11</span> HbA1c</a></li>
+<li><a href="11.12-bmi.html#bmi" id="toc-bmi"><span class="toc-section-number">11.12</span> BMI</a></li>
+<li><a href="11.13-blood-pressure.html#blood-pressure" id="toc-blood-pressure"><span class="toc-section-number">11.13</span> Blood Pressure</a></li>
+<li><a href="11.14-reformat-and-trim-trajectory-table-for-each-biomarker.html#reformat-and-trim-trajectory-table-for-each-biomarker" id="toc-reformat-and-trim-trajectory-table-for-each-biomarker"><span class="toc-section-number">11.14</span> Reformat and trim trajectory table for each biomarker</a></li>
+</ul></li>
+<li><a href="12-traj-combine.html#traj-combine" id="toc-traj-combine"><span class="toc-section-number">12</span> Combine biomarker trajectory extracted from from UKB and PCP data</a></li>
+<li><a href="13-phenotype-outcome-combine.html#phenotype-outcome-combine" id="toc-phenotype-outcome-combine"><span class="toc-section-number">13</span> Phenotype outcomes using combination of tables</a></li>
+<li><a href="14-tte-macro.html#tte-macro" id="toc-tte-macro"><span class="toc-section-number">14</span> Generate time-to-event data for macrovascular diabetes complications</a></li>
+<li><a href="15-tte-dr.html#tte-dr" id="toc-tte-dr"><span class="toc-section-number">15</span> Generate time-to-event data for diabetic eye disease</a></li>
+<li><a href="16-tte-dkd.html#tte-dkd" id="toc-tte-dkd"><span class="toc-section-number">16</span> Generate time-to-event data for diabetes related kidney disease</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">UK Biobank Phenotyping</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="triglycerides" class="section level2" number="11.4">
+<h2><span class="header-section-number">11.4</span> Triglycerides</h2>
+<p>UK Biobank measurements range from 0.231 to 11.278 mmol/L. We filter the allowable range to be under 30, but not 0.</p>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="11.4-triglycerides.html#cb212-1" aria-hidden="true" tabindex="-1"></a>triglycerides <span class="ot">&lt;-</span> gp_clinical <span class="sc">%&gt;%</span></span>
+<span id="cb212-2"><a href="11.4-triglycerides.html#cb212-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(triglyc_codes, code)) <span class="sc">%&gt;%</span></span>
+<span id="cb212-3"><a href="11.4-triglycerides.html#cb212-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">triglyc =</span> <span class="fu">coalesce</span>(<span class="fu">as.numeric</span>(value1), <span class="fu">as.numeric</span>(value2), <span class="fu">as.numeric</span>(value3))) <span class="sc">%&gt;%</span></span>
+<span id="cb212-4"><a href="11.4-triglycerides.html#cb212-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(triglyc <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> triglyc <span class="sc">&lt;</span> <span class="dv">30</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb212-5"><a href="11.4-triglycerides.html#cb212-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(value3 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;g&quot;</span>, <span class="st">&quot;g/l&quot;</span>, <span class="st">&quot;MEA099&quot;</span>, <span class="st">&quot;MEA156&quot;</span>)))</span>
+<span id="cb212-6"><a href="11.4-triglycerides.html#cb212-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb212-7"><a href="11.4-triglycerides.html#cb212-7" aria-hidden="true" tabindex="-1"></a>triglycerides <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(code, term_description) <span class="sc">%&gt;%</span> </span>
+<span id="cb212-8"><a href="11.4-triglycerides.html#cb212-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">mean=</span> <span class="fu">mean</span>(triglyc, <span class="at">na.rm=</span>T)) <span class="sc">%&gt;%</span> </span>
+<span id="cb212-9"><a href="11.4-triglycerides.html#cb212-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n)) <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span>
+<span id="cb212-10"><a href="11.4-triglycerides.html#cb212-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb212-11"><a href="11.4-triglycerides.html#cb212-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>triglycerides, <span class="fu">aes</span>(<span class="at">x=</span><span class="fu">log10</span>(triglyc))) <span class="sc">+</span> <span class="fu">geom_density</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code></pre></div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="11.3-ldl.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="11.5-fasting-glucose.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

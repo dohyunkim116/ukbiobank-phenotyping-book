@@ -1,0 +1,193 @@
+# Create biomarker trajectory data from UK biobank assessment center data{#traj-ukb}
+
+In this chapter, we create biomarker trajectory data using the UKB assessment center data. The biomarkers we phenotype are
+
+- platelet
+- urine albumin 
+- urine creatinine
+- blood albumin
+- blood creatinine
+- cholesterol
+- cystatin C
+- blood glucose (random)
+- hba1c
+- HDL
+- LDL
+- triglycerides
+- systolic blood pressure (SBP)
+- diastolic blood pressure (DBP)
+- urine albumin to urine creatinine ratio (UACR)
+
+In addition, we phenotype patient's macroalbumuminuria or microalbuminuria status which will be used in phenotyping time-to-event data for diabetic kidney disease. 
+
+As we did in chapters \@ref(curate-master-ukb-events-table) and \@ref(prep-pcp-data), we exclude any subjects who have mismatch between self-reported sex and genetically determined sex. If biomarker measurements or their dates are missing, we exclude those measurements from the trajectory table as well.
+
+
+
+Load packages and functions.
+
+```r
+library(tidyverse)
+library(lubridate)
+source("functions.R")
+```
+
+Load reformatted UKB demographics and labs tables.
+
+```r
+demog_ukb <- readRDS("generated_data/demog_UKB.RDS")
+labs_ukb <- readRDS("generated_data/labs_UKB.RDS")
+demog_sel <- readRDS("generated_data/demog_selected.RDS")
+```
+
+Define dictionary that maps field ID's to biomarkers.
+
+```r
+fieldID_key <- c(
+  "30080" = "platelets",
+  "30500" = "albumin_urine",
+  "30510" = "creat_urine",
+  "30600" = "albumin_blood",
+  "30690" = "chol",
+  "30700" = "creat_blood",
+  "30720" = "cystatin_c",
+  "30740" = "glucose_rand", #"Blood glucose"
+  "30750" = "hba1c",
+  "30760" = "hdl",
+  "30780" = "ldl",
+  "30870" = "trig",
+  "4080" =  "sbp",
+  "93" = "sbp",
+  "4079" = "dbp",
+  "94" = "dbp"
+)
+```
+
+Create biomarker trajectory data for all biomarkers defined above.
+
+```r
+biomarker_traj_tab_long <- 
+  full_join(labs_ukb,demog_ukb) %>% 
+  select(f.eid,matches(paste0(paste(paste0('f.',names(fieldID_key)),collapse = '|')))) %>%
+  pivot_longer(cols = -f.eid, names_to = "fields", values_to = "measurement") %>%
+  filter(!is.na(measurement)) %>%
+  separate(fields, c('f',"biomarker_field_id", "visit", "array"), sep = "\\.") %>%
+  mutate(biomarker = fieldID_key[biomarker_field_id]) %>% 
+  left_join(demog_sel %>% select(f.eid,date_init,date_repeat)) %>%
+  mutate(event_dt = as.Date(ifelse(visit == '0', date_init, 
+                                   ifelse(visit=='1', date_repeat, NA)), 
+                            origin=origin)) %>%
+  select(f.eid,measurement,event_dt,visit,biomarker)
+```
+
+Compute urine albumin to urine creatinine ratio (UACR).
+
+```r
+uacr_traj <- biomarker_traj_tab_long %>% filter(biomarker %in% c("albumin_urine","creat_urine")) %>%
+  pivot_wider(id_cols = c(f.eid,event_dt), names_from = c(biomarker,visit), values_from = measurement) %>%
+  mutate(uacr0 = albumin_urine_0/(creat_urine_0*10^-3), uacr1 = albumin_urine_1/(creat_urine_1*10^-3)) %>%
+  select(f.eid,event_dt,uacr0,uacr1) %>%
+  pivot_longer(cols = c(uacr0,uacr1), names_to = "visit", values_to = "measurement") %>%
+  mutate(visit = ifelse(visit == "uacr0",'0','1')) %>%
+  select(f.eid,measurement,event_dt,visit) %>%
+  filter(!is.na(measurement)) %>%
+  mutate(biomarker = "uacr")
+```
+
+Add UACR trajectory data to the `biomarker_traj_tab_long`.
+
+```r
+biomarker_traj_tab_long <- bind_rows(biomarker_traj_tab_long,uacr_traj) %>% 
+  filter(!is.na(event_dt),!is.na(measurement))
+```
+
+Create macro/microalbuminuria event table.
+
+```r
+albuminuria_event_tab <- 
+  biomarker_traj_tab_long %>% 
+  filter(biomarker == "uacr") %>%
+    mutate(macroalbuminuria = ifelse(measurement < 33.9,F,T),
+           microalbuminuria = ifelse(measurement < 3.4,F,T)) %>%
+    select(f.eid,event_dt,macroalbuminuria,microalbuminuria) %>%
+    pivot_longer(cols=c(macroalbuminuria,microalbuminuria),values_to = "event", names_to = "type") %>%
+  select(f.eid,event,event_dt,type)
+```
+
+If a subject was missing urine albumin or urine creatinine levels, we cannot compute urine albumin to creatinine ratio (UACR). Urine albumin levels were assumed to be undetectable (`NA`s) if urine albumin levels were below $6.7$. Subjects with known detection issue had missing urine albumin measurements. However, we can still rule out micro/macroalbuminuria using the urine creatinine levels by computing the upper bound of UACR.
+
+To elaborate, suppose a subject's urine albumin level $a$ is below the detection level, i.e. $a < 6.7$. Then, $ACR = \frac{a}{c \times 10^{-3}} < \frac{6.7}{c\times 10^{-3}}$ where $c:=$ urine creatinine levels. Thus, $\frac{6.7}{c\times 10^{-3}}$ is an upper bound of ACR for the subject. Thus
+
+  -if the upper bound of $ACR$ is less than 33.9, rule out macroalbuminuria
+
+  -if the upper bound of $ACR$ is less than 3.4, rule out microalbuminuria.
+
+
+```r
+subjects_with_urine_albumin_below_detection_limit <- 
+  labs_ukb %>% 
+  rename(below_detection_visit0 = f.30505.0.0, below_detection_visit1 = f.30505.1.0) %>%
+  select(f.eid,contains("below")) %>%
+  pivot_longer(contains("below"),names_to = "visit",values_to = "below_detection_limit") %>%
+  mutate(visit = ifelse(visit == "below_detection_visit0",0,1),
+         below_detection_limit = ifelse(is.na(below_detection_limit),NA,T)) %>%
+  filter(below_detection_limit == T) %>% 
+  select(f.eid,visit)
+
+albuminuria_event_tab_inferred <- 
+  biomarker_traj_tab_long %>% filter(biomarker == "creat_urine") %>%
+  filter(f.eid %in% subjects_with_urine_albumin_below_detection_limit$f.eid) %>%
+  mutate(ACR_upper_bound = 6.7/(measurement*10^-3)) %>%
+  mutate(macroalbuminuria = ifelse(ACR_upper_bound < 33.9,F,NA),
+         microalbuminuria = ifelse(ACR_upper_bound < 3.4,F,NA)) %>% 
+  select(f.eid,event_dt,macroalbuminuria,microalbuminuria) %>%
+  pivot_longer(cols=c(macroalbuminuria,microalbuminuria),values_to = "event", names_to = "type") %>%
+  filter(!is.na(event)) %>%
+  select(f.eid,event,event_dt,type)
+```
+
+Combine inferred albuminuria event table with `albuminuria_event_tab`
+
+```r
+albuminuria_event_tab <- bind_rows(albuminuria_event_tab,albuminuria_event_tab_inferred) %>% distinct()
+```
+
+Load demographics table and ID's of subjects with sex mismatch.
+
+```r
+demog <- readRDS("generated_data/demog_selected.RDS")
+sex_mismatch_subject_ids <- readRDS("generated_data/sex_mismatch_subject_ids.RDS")
+```
+
+Filter out the following from the biomarker trajectory table and albuminuria event table:
+
+- any subjects with sex mismatch
+- any unknown measurements
+- any measurements with unknown dates
+
+
+```r
+biomarker_traj_tab_long <- biomarker_traj_tab_long[!(biomarker_traj_tab_long$f.eid %in% sex_mismatch_subject_ids),]
+biomarker_traj_tab_long <- biomarker_traj_tab_long %>% left_join(demog %>% select(f.eid,DOB),by="f.eid")
+biomarker_traj_tab_long$event_dt <- cleandates(biomarker_traj_tab_long$event_dt,biomarker_traj_tab_long$DOB,T) %>% as.Date()
+biomarker_traj_tab_long <- biomarker_traj_tab_long %>% select(-DOB)
+biomarker_traj_tab_long <- biomarker_traj_tab_long[!is.na(biomarker_traj_tab_long$event_dt),]
+biomarker_traj_tab_long <- biomarker_traj_tab_long[!is.na(biomarker_traj_tab_long$measurement),]
+
+albuminuria_event_tab <- albuminuria_event_tab[!(albuminuria_event_tab$f.eid %in% sex_mismatch_subject_ids),]
+albuminuria_event_tab <- albuminuria_event_tab %>% left_join(demog %>% select(f.eid,DOB),by="f.eid")
+albuminuria_event_tab$event_dt <- cleandates(albuminuria_event_tab$event_dt,albuminuria_event_tab$DOB,T) %>% as.Date()
+albuminuria_event_tab <- albuminuria_event_tab %>% select(-DOB)
+albuminuria_event_tab <- albuminuria_event_tab[!is.na(albuminuria_event_tab$event_dt),]
+```
+
+Save the biomarker trajectory table and albuminuria event table extracted from the UKB asssessment center data.
+
+```r
+saveRDS(biomarker_traj_tab_long,"generated_data/biomarker_trajectory_ukb.RDS")
+saveRDS(albuminuria_event_tab,"generated_data/albuminuria_event_tab_ukb.RDS")
+```
+
+
+
+
