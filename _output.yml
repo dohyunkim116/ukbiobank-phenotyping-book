@@ -1,4 +1,16 @@
 bookdown::gitbook:
   split_by: "section+number"
   css: "style.css"
+  config:
+    sharing:
+      facebook: false
+      github: true
+      twitter: false
+      linkedin: false
+      weibo: false
+      instapaper: false
+      vk: false
+      whatsapp: false
+      all: ['facebook', 'twitter', 'linkedin', 'weibo', 'instapaper']
+    info: true
     
