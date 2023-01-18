@@ -27,6 +27,8 @@ sampleqc$f.22030.0.0 <- ordered(sampleqc$f.22030.0.0, levels=lvl.100264, labels=
 
 
 names(sampleqc) <- c("f.eid", "batch", "genetic_sex", "heterozygosity_noncorrected", "heterozygosity_PCAcorrected",
-                     "Missingness", "genetic_ethnic_grouping", "plate", "well", "sex_aneuploidy",  "used_in_genetic_PCA",
-                     "genetic_kinship",  "x_probe_intensity", "y_probe_intensity", "DNA_conc", "AM_QC_metric_cluster", 
-                     "AM_QC_metric_dqc", "outlier_het_missing", "use_in_phasing_autosomes", "use_in_phasing_x", "use_in_phasing_y")
+               "Missingness", "genetic_ethnic_grouping", "plate", "well",
+               paste0("PC", 1:40), 
+               "sex_aneuploidy",  "used_in_genetic_PCA",
+                "genetic_kinship",  "x_probe_intensity", "y_probe_intensity", "DNA_conc", "AM_QC_metric_cluster",  
+		"AM_QC_metric_dqc",  "outlier_het_missing", "use_in_phasing_autosomes", "use_in_phasing_x", "use_in_phasing_xy")
