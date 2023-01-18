@@ -14,7 +14,9 @@ knitr::opts_chunk$set(echo = T, message = F)
 
 This repository contains the analysis pipeline reproducing results presented in this [paper]().
 
-## ExecutionThe pipeline consists of a series of Rmarkdown files which should be executed in order. For example, `01-incidence_rate_and_tte_fut_summary.Rmd` should be executed first, followed by `02-prep_data_baseline_demog.Rmd`, then `03-prep_data_biomarker.Rmd ` and so on. Note, execution times for `05-impute.Rmd`, `06-primary_analysis.Rmd`, `07-primary_analysis_dm2.Rmd`, `09-risk_prediction.Rmd` and `10-risk_prediction_dm2.Rmd` are greater than 20 minutes and require multiple cores.
+## Execution
+
+The pipeline consists of a series of Rmarkdown files which should be executed in order. For example, `01-incidence_rate_and_tte_fut_summary.Rmd` should be executed first, followed by `02-prep_data_baseline_demog.Rmd`, then `03-prep_data_biomarker.Rmd ` and so on. Note, execution times for `05-impute.Rmd`, `06-primary_analysis.Rmd`, `07-primary_analysis_dm2.Rmd`, `09-risk_prediction.Rmd` and `10-risk_prediction_dm2.Rmd` are greater than 20 minutes and require multiple cores.
 
 ## Data
 
