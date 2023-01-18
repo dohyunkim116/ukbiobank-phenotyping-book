@@ -1,0 +1,445 @@
+---
+title: "Generate phenotypes_all.txt"
+author: "Aubrey Jensen"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r, message=F, warning=F}
+# Libraries #
+library(tidyselect) 
+library(tidyr)
+library(reshape)
+library(dplyr)
+library(purrr)
+library(lubridate)
+library(ggplot2)
+library(data.table)
+library(tictoc)
+library(fastDummies)
+library(table1)
+library(boot)
+# functions #
+source("helper_functions.R")
+source("names_keys.R")
+```
+
+Read in data from baskets (1 row per individual)
+```{r, message=F, warning=F}
+# Read in data from baskets (1 row per individual) #
+  tic("Reading in basket data");
+  source("raw_data/demog_UKB_MOD.r")
+  source("raw_data/PCA_UKB_MOD.r")
+  names(PCs)[1:11] <- c("f.eid", "PC1", "PC2", "PC3", "PC4", "PC5", "PC6", "PC7", "PC8", "PC9", "PC10")
+  source("raw_data/sampleQC_UKB_MOD.r")
+  source("raw_data/first_occurrences_UKB_MOD.r")
+  source("raw_data/labs_UKB_MOD.r")
+  source("raw_data/ICD_UKB_MOD.r")
+  source("raw_data/OPCS_procedures_UKB_MOD.r")
+  rm(list = ls(pattern = "^lvl"))
+  rm(list = ls(pattern = "^lbl"))
+  toc()
+```
+
+Lists of IDs found in gp_clinical
+```{r}
+gp_clinical_ids <- fread("raw_data/entire_gp_registrations_30March2021.txt", select = 'eid')$eid
+```
+
+Combine data and clean dates
+```{r, message=F}
+dates2clean <- 
+  c("f.42000.0.0", "f.42010.0.0", "f.42012.0.0", "f.42008.0.0", "f.42006.0.0", "f.42008.0.0", "f.42026.0.0",
+    "f.130706.0.0", "f.130708.0.0", "f.130714.0.0", "f.131298.0.0", "f.131300.0.0", "f.131360.0.0", 
+    "f.131362.0.0", "f.131364.0.0", "f.131366.0.0", "f.131368.0.0")
+  
+# Merge large datasets  ####
+work <- full_join(demog, PCs) %>%  
+    full_join(firstoccurs) %>%
+    full_join(sampleqc)# %>%
+   # full_join(broadmeds)
+
+  # clean up
+rm(demog, firstoccurs, PCs, sampleqc)#, broadmeds)
+```
+
+```{r, echo=F,message=F, results='hide'}
+gc(verbose=F)
+```
+
+```{r, message=F}
+# Merge remaining datasets
+  work <- work %>%
+    full_join(labs) %>%
+    full_join(ICD %>% select(f.eid, starts_with("f.40000"))) %>%
+    dplyr::rename(YOB = f.34.0.0) %>%
+    dplyr::rename(MOB = f.52.0.0) %>%
+    dplyr::mutate(DOB = make_date(YOB, MOB)) %>%
+    dplyr::mutate(SEX = as.character(f.31.0.0)) %>%
+    dplyr::mutate_at(dates2clean, .funs=cleandates, DOBs=.[,"DOB"]) %>%
+    dplyr::rename(date_firstoc_t1d = f.130706.0.0, date_firstoc_t2d = f.130708.0.0, date_firstoc_unspecified_dm = f.130714.0.0) %>%
+    dplyr::mutate(date_firstoc_dm = pmin(date_firstoc_t1d, date_firstoc_t2d, date_firstoc_unspecified_dm, na.rm=T)) %>% 
+    dplyr::mutate(age_firstoc_dm = decimal_date(date_firstoc_dm) - decimal_date(DOB)) %>%
+    dplyr::rename(date_init = f.53.0.0, date_repeat = f.53.1.0) %>% 
+    dplyr::mutate(age_init = decimal_date(date_init) - decimal_date(DOB), 
+                  age_repeat = decimal_date(date_repeat) - decimal_date(DOB),
+                  age_2010 = floor(2010 - decimal_date(DOB))) %>%
+    dplyr::rename(ethnic_self = f.21000.0.0, BMI = f.21001.0.0, BMI2 = f.23104.0.0, date_death = f.40000.0.0) %>%
+    dplyr::mutate(date_records_censored = as.Date(pmin(censor_dates[f.40022.0.0], 
+                                                       censor_dates[f.40022.0.1], 
+                                                       censor_dates[f.40022.0.2], na.rm=T))) %>%
+    dplyr::mutate(date_records_censored = as.Date(ifelse(is.na(date_records_censored), 
+                                                         censor_dates["PEDW"], 
+                                                         date_records_censored), origin=origin)) %>%
+    dplyr::rename(Creat1 = f.30700.0.0, Creat2 = f.30700.1.0, 
+                  A1C1 = f.30750.0.0, A1C2 = f.30750.1.0, 
+                  urine_alb1 = f.30500.0.0, urine_alb2 = f.30500.1.0, 
+                  urine_alb_low1 = f.30505.0.0, urine_alb_low2 = f.30505.1.0, urine_creat1 = f.30510.0.0, urine_creat2 = f.30510.1.0) %>%
+    dplyr::mutate(BMI = ifelse(!is.na(BMI), BMI, BMI2)) %>%
+    dplyr::mutate(BMI = round(BMI, 1)) %>%
+    dplyr::rename(date_lost_fu = f.191.0.0, reason_lost_fu = f.190.0.0) %>%
+    mutate(date_censor_death = pmin(date_records_censored, date_death, date_lost_fu, na.rm=T)) %>%
+    mutate(years_init2censor_death = lubridate::decimal_date(date_censor_death) - lubridate::decimal_date(date_init)) %>%
+    dplyr::rename(Chol1 = f.30690.0.0, Chol2 = f.30690.1.0, 
+                  HDL1 = f.30760.0.0, HDL2 = f.30760.1.0, 
+                  LDL1 = f.30780.0.0, LDL2 = f.30780.1.0) %>%
+    dplyr::rename(smoke_status1 = f.20116.0.0, smoke_status2 = f.20116.1.0, smoke_status3 = f.20116.2.0, smoke_status4 = f.20116.3.0) %>%
+    dplyr::rename(packyear_smoke1 = f.20161.0.0, packyear_smoke2 = f.20161.1.0, packyear_smoke3 = f.20161.2.0, packyear_smoke4 = f.20161.3.0) %>%
+    dplyr::rename(sbp1 = f.4080.0.0, sbp2 = f.4080.1.0, sbp3 = f.4080.2.0, sbp4= f.4080.3.0) %>% #automatic readings
+    dplyr::rename(sbpm1 = f.93.0.0, sbpm2 = f.93.1.0, sbpm3 = f.93.2.0, sbpm4= f.93.3.0) %>% #manual readings
+    mutate(sbp_ukb = coalesce(sbp1, sbpm1, sbp2, sbpm2, sbp3, sbpm3, sbp4, sbpm4)) %>%
+    dplyr::mutate(in_gp_clin = as.numeric(f.eid %in% gp_clinical_ids)) %>%
+    dplyr::mutate(smoke_ever = ifelse(smoke_status1 %in% c("Previous", "Current") & !is.na(smoke_status1) |
+             smoke_status2 %in% c("Previous", "Current")  & !is.na(smoke_status2) |
+             smoke_status3 %in% c("Previous", "Current")  & !is.na(smoke_status3) |
+             smoke_status4 %in% c("Previous", "Current")  & !is.na(smoke_status4), 1,
+                ifelse(smoke_status1 %in% c(NA, "Prefer not to answer") &
+                    smoke_status2 %in% c(NA, "Prefer not to answer") &
+                    smoke_status3 %in% c(NA, "Prefer not to answer") &
+                    smoke_status4 %in% c(NA, "Prefer not to answer"), NA, 0))) %>%
+    mutate(packyears_smoke = coalesce(packyear_smoke1, packyear_smoke2, packyear_smoke3, packyear_smoke4)) %>%
+    mutate(packyears_smoke = ifelse(!is.na(packyears_smoke), packyears_smoke,
+                                    ifelse(smoke_ever == 0 & !is.na(smoke_ever), 0, NA)))
+   work$smoke_ever[work$packyears_smoke == 0 & !is.na(work$packyears_smoke)] <- 0
+```
+
+Read in record level hospital admissions data 
+```{r, message=F}
+#hesin contains the dates to match to instance and array indices
+hesin <- fread("raw_data/entire_hesin_24March2021.txt", select=c("eid", "ins_index", "epistart"))
+
+# Read in hospital data and add date_init, age_init.  Just using the ICD10 method of developing CCI, not yet considering self-report data.  Maybe can add that later.
+hosp <- fread("raw_data/entire_hesin_diag_11Feb2021.txt") %>%
+  right_join(hesin) %>%
+  dplyr::rename(f.eid = eid) %>%
+  left_join(work %>% select(f.eid, date_init, age_init))
+hosp$epistart <- as.Date(hosp$epistart, tryFormats = "%d/%m/%Y")
+
+#Set of hospitalizations occuring before initiation into ukb-for baseline charlson index
+hosp_pre_init <- hosp %>%
+  filter(epistart < date_init) %>%
+  select(f.eid, diag_icd10, epistart)
+```
+
+Charlson index
+```{r, message=F}
+#Get comorbidities based on the Quan et. al code lists. 
+#B20.x-B22.x, B24.x 
+AIDS_HIV <- hosp_pre_init %>%
+  filter(grepl("B2[0124]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(AIDS_HIV = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#G45.x, G46.x,, H34.0, I60.x-169.x
+Cerebrovascular_disease <- hosp_pre_init %>%
+  filter(grepl("G4[56]|H340|I6[0-9]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(Cerebrovascular_disease = 1) %>%
+  select(-epistart, -diag_icd10)
+
+
+#I27.8, I27.9, J40.x-J47.x, J60.x-J67.x, J68.4, J70.1, J70.3
+Chron_pulmonary <- hosp_pre_init %>%
+  filter(grepl("I27[89]|J4[0-7]|J6[0-7]|J684|J701|J703", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(Chron_pulmonary = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#I09.9, I11.0, I13.0, I13.2, I25.2, I42.0, I42.5-I42.9, I43.x, I50.x, P29.0
+#Congestive heart failure
+CHF <- hosp_pre_init %>%
+  filter(grepl("I099|I110|I13[02]|I252|I42[056789]|I43|I50|P290", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(CHF = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#F00.x-F03.x, F05.1, G30.X, G31.1
+dementia <- hosp_pre_init %>%
+  filter(grepl("F0[0-3]|F051|G30|G311", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(dementia = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#E10.2-E10.5, E10.7, E11.2-E11.5, E11.7, E12.2-E12.5, E12.7, E13.2-E13.5, E13.7, E14.2-E14.5, E14.7
+diabetes_wcomp <- hosp_pre_init %>%
+  filter(grepl("E1[0-4][23457]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(diabetes_wcomp = 1) %>%
+  select(-epistart, -diag_icd10)
+  
+#E10.0, E10.1, E10.6, E10.8-E11.1, E11.6, E11.8-E12.1, E12.6, E12.8-E13.1, E13.6, E13.8-E14.1, E14.6, E14.8, E14.9
+diabetes_uncomp <- hosp_pre_init %>%
+  filter(grepl("E1[0-4][01689]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(diabetes_uncomp = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#G04.1, G11.4, G80.2, G81.x, G82.x, G83.0-G83.4, G83.9
+hemi_para_plegia <-  hosp_pre_init %>%
+  filter(grepl("G041|G114|G802|G8[12]|G83[012349]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(hemi_para_plegia = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#C00.x-C26.x, C30.x-C34.x, C37.x-C41.x, C43.x, C45.x-C58.x, C60.x-C76.x, C81.x-C85.x, C88.x, C90.x-C97.x
+malig_incl_lymph_leuk <- hosp_pre_init %>%
+  filter(grepl("C[016]|C2[0-6]|C3[0-4,7-9]|C4[01356789]|C5[0-8]|C7[0-6]|C8[123458]|C9[0-7]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(malig_incl_lymph_leuk = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#C77.x-C80.x
+metastatic_solid_tumor <- hosp_pre_init %>%
+  filter(grepl("C7[789]|C80", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>% 
+  filter(row_number() == 1) %>%
+  mutate(metastatic_solid_tumor = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#B18.x, K70.0-K70.3, K70.9, K71.3-K71.5, K71.7, K73.x, K74.x, K76.0, K76.2-K76.4, K76.8, K76.9, Z94.4
+mild_liver <- hosp_pre_init %>%
+  filter(grepl("B18|K70[0-3,9]|K71[3-5,7]|K7[34]|K76[0,2-4,8,9]|Z94.4", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(mild_liver = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#I85.0, I85.9, I86.4, I98.2, K70.4, K71.1, K72.1, K72.9, K76.5, K76.6, K76.7
+mod_severe_liver <- hosp_pre_init %>%
+  filter(grepl("I85[09]|I864|I982|K704|K711|K72[19]|K76[567]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(mod_severe_liver = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#I21.x, I22.x, I25.2
+MI_hosp <-  hosp_pre_init %>%
+  filter(grepl("I2[12]|I252", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(MI_hosp = 1) %>%
+  select(-epistart, -diag_icd10)
+
+# K25.x-K28.x
+peptic_ulcers <- hosp_pre_init %>%
+  filter(grepl("K2[5-8]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(peptic_ulcers = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#I70.x, I71.x, I73.1, I73.8, I73.9, I77.1, I79.0, I79.2, K55.1. K55.8, K55.9, Z95.8, K95.9 (assumed to have supposed to say Z95.9.  K95.9 does not exist)
+periph_vasc_dis <- hosp_pre_init %>%
+  filter(grepl("I7[01]|I73[189]|I771|I79[02]|K55[189]|Z95[89]", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(periph_vasc_dis = 1) %>%
+  select(-epistart, -diag_icd10)
+
+#I12.0, I13.1, N03.2-N03.7, N05.2-N05.7, N18.x, N19.x, N25.0, Z49.0-Z49.2, Z94.0, Z99.2
+renal <- hosp_pre_init %>%
+  filter(grepl("I120|I131|N03[2-7]|N05[2-7]|N1[89]|N25|Z49[0-2]|Z940|Z992", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(renal = 1) %>%
+  select(-epistart, -diag_icd10)
+  
+# M05.x, M06.x, M31.5, M32.x-M34.x, M35.1
+rheumatic <- hosp_pre_init %>%
+  filter(grepl("M0[56]|M315|M3[2-4]|M351", diag_icd10)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, epistart) %>%
+  filter(row_number() == 1) %>%
+  mutate(rheumatic = 1) %>%
+  select(-epistart, -diag_icd10)
+
+CCI <- left_join(work %>% select(f.eid),
+                AIDS_HIV) %>%
+  left_join(Cerebrovascular_disease) %>%
+  left_join(Chron_pulmonary) %>% 
+  left_join(CHF) %>%
+  left_join(dementia) %>%
+  left_join(diabetes_wcomp) %>%
+  left_join(diabetes_uncomp) %>%
+  left_join(hemi_para_plegia) %>%
+  left_join(malig_incl_lymph_leuk) %>%
+  left_join(metastatic_solid_tumor) %>%
+  left_join(mild_liver) %>%
+  left_join(mod_severe_liver) %>%
+  left_join(MI_hosp) %>%
+  left_join(peptic_ulcers) %>%
+  left_join(periph_vasc_dis) %>%
+  left_join(renal) %>%
+  left_join(rheumatic)
+
+CCI$Cerebrovascular_disease[is.na(CCI$Cerebrovascular_disease)] <- 0
+CCI$Chron_pulmonary[is.na(CCI$Chron_pulmonary)] <- 0
+CCI$CHF[is.na(CCI$CHF)] <- 0
+CCI$dementia[is.na(CCI$dementia)] <- 0
+CCI$diabetes_wcomp[is.na(CCI$diabetes_wcomp)] <- 0
+CCI$diabetes_uncomp[is.na(CCI$diabetes_uncomp)] <- 0
+CCI$hemi_para_plegia[is.na(CCI$hemi_para_plegia)] <- 0
+CCI$malig_incl_lymph_leuk[is.na(CCI$malig_incl_lymph_leuk)] <- 0
+CCI$metastatic_solid_tumor[is.na(CCI$metastatic_solid_tumor)] <- 0
+CCI$mild_liver[is.na(CCI$mild_liver)] <- 0
+CCI$mod_severe_liver[is.na(CCI$mod_severe_liver)] <- 0
+CCI$MI_hosp[is.na(CCI$MI_hosp)] <- 0
+CCI$peptic_ulcers[is.na(CCI$peptic_ulcers)] <- 0
+CCI$periph_vasc_dis[is.na(CCI$periph_vasc_dis)] <- 0
+CCI$renal[is.na(CCI$renal)] <- 0
+CCI$rheumatic[is.na(CCI$rheumatic)] <- 0
+
+CCI <- CCI %>%
+  mutate(CCI_liver = ifelse(mod_severe_liver == 1, 3, 
+                            ifelse(mild_liver ==1, 1, 0))) %>%
+  mutate(CCI_dm = ifelse(diabetes_wcomp ==1, 2,
+                         ifelse(diabetes_uncomp ==1, 1, 0))) %>%
+  mutate(CCI_cancer = ifelse(metastatic_solid_tumor ==1, 6, 
+                             ifelse(malig_incl_lymph_leuk ==1, 2, 0))) %>%
+  rowwise() %>%
+  mutate(CCI = sum(CCI_liver, CCI_dm, CCI_cancer, 6*AIDS_HIV, 2*dementia, 2*renal, 2*hemi_para_plegia, 
+                   Cerebrovascular_disease, Chron_pulmonary, CHF, MI_hosp, peptic_ulcers, periph_vasc_dis, rheumatic, na.rm=T))
+
+work <- left_join(work, CCI)
+```
+
+```{r}
+phets <- work
+rm(work)
+phets <- phets %>% select(f.eid | !starts_with('f'))
+```
+
+Add PGS results
+```{r, message=F, eval=F}
+pgs_t2d <- fread(paste0(pheno_dir, "PGS000036result.txt")) %>%
+   mutate(PGS000036_decile = ntile(PGS000036, 10))
+
+pgs_t1d <- fread(paste0(pheno_dir, "PGS000024_result.txt")) %>%
+   mutate(PGS000024_decile = ntile(PGS000024, 10)) %>%
+  select(IID, PGS000024, PGS000024_decile) %>%
+  dplyr::rename(f.eid = IID)
+
+phets <- left_join(phets, pgs_t2d) %>%
+  left_join(pgs_t1d)
+```
+
+Add MET results
+```{r, message=F}
+source("raw_data/diet_exercise_UKB_MOD.r")
+MET <- bd %>%
+  select(f.eid, starts_with(c("f.22037", "f.22038", "f.22039"))) %>%
+  mutate(MET_minutes = f.22037.0.0 + f.22038.0.0 + f.22039.0.0) %>%
+  mutate(MET_decile = ntile(MET_minutes, 10)) %>%
+  mutate(MET_tertile = ntile(MET_minutes, 3))
+phets <- left_join(phets, MET)
+```
+
+Add Education
+```{r}
+source("raw_data/demog_UKB_MOD.r")
+educ <- demog %>%
+  select(f.eid, starts_with(c("f.6138.0", "f.10722.0"))) %>% #On
+  mutate_if(is.factor, as.character) %>%
+  pivot_longer(!f.eid, values_drop_na = T, names_to = NULL, values_to = "max_qualification") %>%
+  mutate(max_qualification = as.character(max_qualification)) %>%
+  mutate(ISCED_level = educ_key[max_qualification]) %>%
+  mutate(max_qualification = maxqual_key[max_qualification]) %>%
+  filter(!is.na(ISCED_level)) %>%
+  group_by(f.eid) %>%
+  arrange(f.eid, desc(ISCED_level), max_qualification) %>%
+  slice(1) %>%
+  mutate(ISCED_level_gt2 = as.numeric(ISCED_level > 2))
+```
+
+Self-reported Bp-lowering and cholesterol-lowering drugs
+```{r, message=F, warning=F}
+# Bp-lowering and cholesterol-lowering drugs
+  broadmeds <- demog %>%
+    select(f.eid, starts_with(c("f.6177", "f.6153")))
+  broadmeds <- broadmeds %>%
+    gather(var, response, f.6177.0.0:f.6153.3.3) %>%
+    filter(!is.na(response) & !(response %in% c("Do not know", "Prefer not to answer"))) %>%
+    group_by(f.eid, response) %>%
+    filter(row_number()==1)
+  
+  broadmeds  <- broadmeds %>%
+    group_by(f.eid) %>%
+    summarize(self_bpdrugs = as.numeric(sum(response == "Blood pressure medication") > 0), 
+              self_cholesteroldrugs = as.numeric(sum(response == "Cholesterol lowering medication") > 0),
+              self_insulin = as.numeric(sum(response == "Insulin") > 0),
+              self_contracep = as.numeric(sum(response == "Oral contraceptive pill or minipill") > 0),
+              self_hrt = as.numeric(sum(response == "Hormone replacement therapy") > 0)) %>%
+    select(f.eid, starts_with("self")) %>%
+    distinct()
+```
+
+```{r}
+rm(demog, labs, ICD, hesin, hosp, hosp_pre_init, CCI, MET,procs) 
+phets <- left_join(phets, educ) %>% left_join(broadmeds)
+```
+
+Add European indicator
+```{r}
+phets <- 
+  phets %>% 
+  mutate(EUR = as.numeric(used_in_genetic_PCA == "Yes" & sex_aneuploidy %in% c("", NA) &
+                            genetic_ethnic_grouping == "Caucasian")) %>%
+  mutate(EUR = ifelse(is.na(EUR), 0, EUR))
+```
+
+```{r}
+saveRDS(phets,"phenotypes_all.RDS")
+```
+
+
+
+
+
+
