@@ -1,0 +1,313 @@
+---
+title:  "Primary analysis, pooled step variable selection"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = T, warning = T)
+```
+
+```{r, message=F}
+library(tidyverse)
+library(survival)
+library(parallel)
+library(miceRanger)
+source("functions.R")
+```
+
+Import imputed baseline dataset
+```{r}
+imputed_baseline_dat_list <- readRDS("data/imputed_baseline_dat_list.RDS")
+demog <- readRDS("data/demog_all.RDS")
+```
+
+Set seed
+```{r}
+set.seed(1)
+```
+
+Set core numbers
+```{r}
+mc_cores <- 6
+```
+
+Import time-to-event datasets
+```{r}
+tte_file_names <- list.files(path = "generated_data",pattern = "tte.RDS",full.names = T)
+tte_datasets <- lapply(tte_file_names,readRDS)
+outcome_names <- c("CVD","DKD","DR","HS","IS","MI","PCI","ST","UA")
+names(tte_datasets) <- outcome_names
+```
+
+```{r}
+biomarker_col_name <- 
+  get_biomarker_col_name(c("sbp","dbp","glucose","hba1c","chol","trig","hdl","ldl","egfr","uacr"))
+
+preds_all <- c("ethnic_self","SEX","age_init","smoke_ever","BMI","CCI","ISCED_level_gt2",
+               "self_insulin","self_bpdrugs","self_cholesteroldrugs","MET_hours","PGS000024","PGS000036",
+               biomarker_col_name)
+```
+
+Create complete case dataset up to PGS and EUR variables
+```{r}
+tte_dat_list_per_outcome <- 
+  lapply(tte_datasets,function(tte){
+    lapply(imputed_baseline_dat_list,function(baseline_dat){
+      temp <- demog %>% select(-all_of(intersect(colnames(demog),colnames(baseline_dat))[-1]))
+      basline_dat_complete <- 
+        left_join(baseline_dat,temp,by = "f.eid") %>% select(c("f.eid",preds_all,"EUR"))
+      merged_dat <- tte %>% 
+        select(f.eid,time_to_event,event) %>% 
+        left_join(basline_dat_complete,by="f.eid")
+      merged_dat[merged_dat %>% select(-c("PGS000024","PGS000036","EUR")) %>% complete.cases(),] %>%
+        mutate(ethnic_self = relevel(as.factor(ethnic_self),ref = "White"))
+    })
+  })
+```
+
+Create dataset lists
+```{r}
+tte_dat_list_per_outcome_bp_drug1 <- 
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(self_bpdrugs == 1) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+
+tte_dat_list_per_outcome_bp_drug0 <- 
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(self_bpdrugs == 0) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+
+tte_dat_list_per_outcome_glycemic_drug1 <- 
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(self_insulin == 1) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+
+tte_dat_list_per_outcome_glycemic_drug0 <- 
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(self_insulin == 0) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+
+tte_dat_list_per_outcome_lipids_drug1 <- 
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(self_cholesteroldrugs == 1) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+  })
+})
+
+tte_dat_list_per_outcome_lipids_drug0 <- 
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(self_cholesteroldrugs == 0) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+
+tte_dat_list_per_outcome_eur <-
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(EUR == 1) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+
+tte_dat_list_per_outcome_eur_glycemic_drug1 <-
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(EUR == 1, self_insulin == 1) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+
+tte_dat_list_per_outcome_eur_glycemic_drug0 <-
+  tte_dat_list_per_outcome %>% lapply(function(tte_dat_list){
+    lapply(tte_dat_list,function(tte_dat){
+        tte_dat %>% filter(EUR == 1, self_insulin == 0) %>% 
+        mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+    })
+})
+```
+
+## Univariate analysis
+
+Define predictors to be used
+```{r}
+covs <- c("ethnic_self","SEX","age_init","smoke_ever","BMI","CCI","ISCED_level_gt2")
+core_covs <- covs[1:3]
+covs_drugs <- c("self_insulin","self_bpdrugs","self_cholesteroldrugs")
+pa_preds <- "MET_hours"
+bp_preds <- get_biomarker_col_name(c("sbp","dbp"))
+glycemic_preds <- get_biomarker_col_name(c("glucose","hba1c"))
+glucose_preds <- get_biomarker_col_name("glucose")
+hba1c_preds <- get_biomarker_col_name("hba1c")
+lipids_preds <- get_biomarker_col_name(c("chol","trig","hdl","ldl"))
+kidney_preds <- biomarker_col_name[str_which(biomarker_col_name,pattern = "egfr|uacr")]
+grs_preds <- c("PGS000024", "PGS000036")
+```
+
+### Kindney function
+```{r}
+preds_kidney_rhs <- c(covs,kidney_preds,covs_drugs)
+kidney_res <- mclapply(tte_dat_list_per_outcome,function(tte_dat_list){
+  uv_coxph_pool(tte_dat_list,preds_rhs = preds_kidney_rhs) 
+},mc.cores = mc_cores)
+```
+
+### Exercise
+```{r}
+preds_pa_rhs <- c(covs,pa_preds,covs_drugs)
+
+pa_res <- mclapply(tte_dat_list_per_outcome,function(tte_dat_list){
+  uv_coxph_pool(tte_dat_list,preds_rhs = preds_pa_rhs) 
+},mc.cores = mc_cores)
+```
+
+### BP, drug = 1
+```{r}
+preds_bp_rhs <- c(covs,covs_drugs[-2],bp_preds)
+
+bp1_res <- mclapply(tte_dat_list_per_outcome_bp_drug1,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_bp_rhs,core_covs)  
+},mc.cores = mc_cores)
+```
+
+### BP, drug = 0
+```{r}
+bp0_res <- mclapply(tte_dat_list_per_outcome_bp_drug0,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_bp_rhs,core_covs)  
+},mc.cores = mc_cores)
+```
+
+### glucose, drug = 1
+```{r}
+preds_glucose_rhs <- c(covs,covs_drugs[-1],glucose_preds)
+glucose1_res <- mclapply(tte_dat_list_per_outcome_glycemic_drug1,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_glucose_rhs,core_covs)
+},mc.cores = mc_cores)
+```
+
+### glucose, drug = 0
+```{r}
+glucose0_res <- mclapply(tte_dat_list_per_outcome_glycemic_drug0,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_glucose_rhs,core_covs)
+},mc.cores = mc_cores)
+```
+
+### hba1c, drug = 1
+```{r}
+preds_hba1c_rhs <- c(covs,covs_drugs[-1],hba1c_preds)
+hba1c1_res <- mclapply(tte_dat_list_per_outcome_glycemic_drug1,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_hba1c_rhs,core_covs)
+},mc.cores = mc_cores)
+```
+
+### hba1c, drug = 0
+```{r}
+hba1c0_res <- mclapply(tte_dat_list_per_outcome_glycemic_drug0,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_hba1c_rhs,core_covs)
+},mc.cores = mc_cores)
+```
+
+### lipids, drug = 1
+```{r}
+preds_lipids_rhs <- c(covs,covs_drugs[-3],lipids_preds)
+lipids1_res <- mclapply(tte_dat_list_per_outcome_lipids_drug1,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_lipids_rhs,core_covs)
+},mc.cores = mc_cores)
+```
+
+### lipids, drug = 0
+```{r}
+lipids0_res <- mclapply(tte_dat_list_per_outcome_lipids_drug0,function(tte_dat_list){
+  pooled_coxph_step_additive(tte_dat_list,preds_rhs = preds_lipids_rhs,core_covs)
+},mc.cores = mc_cores)
+```
+
+### GRS, drug = 1
+```{r}
+preds_grs_rhs <- c(covs[-1],grs_preds,covs_drugs[-1])
+grs1_res <- mclapply(tte_dat_list_per_outcome_eur_glycemic_drug1,function(tte_dat_list){
+  uv_coxph_pool(tte_dat_list,preds_grs_rhs)
+},mc.cores = mc_cores)
+```
+
+### GRS, drug = 0
+```{r}
+preds_grs_rhs <- c(covs[-1],grs_preds,covs_drugs[-1])
+grs0_res <- mclapply(tte_dat_list_per_outcome_eur_glycemic_drug0,function(tte_dat_list){
+  uv_coxph_pool(tte_dat_list,preds_grs_rhs)
+},mc.cores = mc_cores)
+```
+
+## Multivariate analysis
+
+### glucose + all the other variables
+```{r}
+mv_preds_rhs_glucose <- c(covs[-1],covs_drugs,pa_preds,bp_preds,glucose_preds,lipids_preds,grs_preds,kidney_preds)
+mv_res_glucose <- mclapply(tte_dat_list_per_outcome_eur,function(tte_dat_list){
+    pooled_coxph_step_additive(tte_dat_list,mv_preds_rhs_glucose,core_covs[-1]) 
+},mc.cores = mc_cores)
+```
+
+### hba1c + all the other variables
+```{r}
+mv_preds_rhs_hba1c <- c(covs[-1],covs_drugs,pa_preds,bp_preds,hba1c_preds,lipids_preds,grs_preds,kidney_preds)
+mv_res_hba1c <- mclapply(tte_dat_list_per_outcome_eur,function(tte_dat_list){
+    pooled_coxph_step_additive(tte_dat_list,mv_preds_rhs_hba1c,core_covs[-1]) 
+},mc.cores = mc_cores)
+```
+
+## Save the results
+```{r}
+res_list <- list("kidney_res"=kidney_res,"pa_res"=pa_res,"bp1_res"=bp1_res,"bp0_res"=bp0_res,
+                 "glucose1_res"=glucose1_res,"glucose0_res"=glucose0_res,
+                 "hba1c1_res"=hba1c1_res,"hba1c0_res"=hba1c0_res,
+                 "lipids1_res"=lipids1_res,"lipids0_res"=lipids0_res,
+                 "grs1_res"=grs1_res,"grs0_res"=grs0_res,
+                 "mv_res_glucose"=mv_res_glucose,"mv_res_hba1c"=mv_res_hba1c)
+
+save(list = names(res_list),file = "results/res_primary_analysis_step.RData")
+save.image(file = "results/session_res_primary_ana.RData")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

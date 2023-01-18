@@ -1,0 +1,196 @@
+---
+title: "Incidence Rate"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+```
+
+```{r}
+library(tidyverse)
+library(data.table)
+source("functions.R")
+```
+
+Import time-to-event datasets
+```{r}
+tte_file_names <- list.files(path = "generated_data",pattern = "tte.RDS",full.names = T)
+tte_datasets <- lapply(tte_file_names,readRDS)
+outcome_names <- 
+  tte_file_names %>% str_split("_tte.RDS") %>% lapply(.,function(x)x[1]) %>% unlist
+outcome_names <- c("CVD","DKD","DR","HS","IS","MI","PCI","ST","UA")
+names(tte_datasets) <- outcome_names
+```
+
+Compute median and mean survival times across cases and follow-up times across controls
+```{r}
+tte_datasets[[1]] %>% filter(event == 1) %>% summarise(mean_tte = mean(time_to_event), median_tte = median(time_to_event))
+
+tte_datasets[[1]] %>% filter(event == 1) %>% .$time_to_event %>% fivenum()
+
+temp1 <- lapply(1:length(tte_datasets),function(i){
+  tte <- tte_datasets[[i]]
+  tte %>% 
+    filter(event == 1) %>% 
+    summarise(outcome = names(tte_datasets)[i], mean_tte = mean(time_to_event), 
+              median_tte = median(time_to_event), 
+              IQR_tte = fivenum(time_to_event)[4] - fivenum(time_to_event)[2])
+}) %>% bind_rows()
+
+temp2 <- lapply(1:length(tte_datasets),function(i){
+  tte <- tte_datasets[[i]]
+  tte %>% 
+    filter(event == 0) %>% 
+    summarise(outcome = names(tte_datasets)[i], mean_fut = mean(time_to_event), 
+              median_fut = median(time_to_event), 
+              IQR_fut = fivenum(time_to_event)[4] - fivenum(time_to_event)[2])
+}) %>% bind_rows()
+
+
+```
+
+```{r}
+openxlsx::write.xlsx(full_join(temp1,temp2,by="outcome"),"results/tte_fut_summary.xlsx")
+```
+
+
+
+Incidence rate is defined following how CDC defined it [here](https://www.cdc.gov/csels/dsepd/ss1978/lesson3/section2.html):
+
+$$
+  \frac{\textrm{Number of new cases of disease from t = 0 until the end of the study}}{\textrm{time each person was observed, totaled for all persons}}
+$$
+To be more explicit, person indicated in the denominator includes everyone, regardless of their observations being censored or not.\\
+
+Examples:
+
+* a person followed for 5 years without developing disease is said to contribute 5 person-years of follow-up
+* a person developing disease at year 2, contributes 1.5 person-years if the person is followed yearly
+* a person lost to follow-up at year 2, contributes 1.5 person-years if the person is followed yearly
+
+Properties:
+
+* Person-time assumes that the probability of disease during the study period is constant e.g. 10 person followed for 1 year has the same total number of person years as 1 person followed for 10 years.
+
+Note, since the follow-up intervals are not regular, we cannot compute the person-years as suggested by the CDC definition. Hueristic is just divide the total number of cases by the total time to event across all subjects.\\
+
+We also compute confidence interval of incidence rate. Suppose $Y$ is the number of events during the period of observation and $T$ be the total number of person-years during that period. Using Poisson rate model (__review Poisson rate model__), we have
+
+\begin{align*}
+  &T \times Y \sim Pois(\lambda)\\
+  & \hat{\lambda} = \frac{Y}{T}
+\end{align*}
+
+The exact confidence interval of $Y$ ([reference](https://www.statsdirect.com/help/rates/poisson_rate_ci.htm)) is given by 
+$$
+Y_l = \frac{\chi_{2Y,\alpha/2}}{2},\quad Y_u = \frac{\chi_{2(Y+1),1-\alpha/2}}{2}
+$$
+
+```{r}
+get_incidence_rate_est <- function(total_num_events,total_person_years,year_scale,alpha){
+  incidence_rate_est <- total_num_events/total_person_years*year_scale
+  l <- qchisq(alpha/2,2*total_num_events)/2/total_person_years * year_scale
+  u <- qchisq(1-alpha/2,2*(total_num_events+1))/2/total_person_years * year_scale
+  c("incidence_rate"=incidence_rate_est,"lower"=l,"upper"=u) %>% round(2) %>% as.character()
+}
+
+get_incidence_proportion_est <- function(total_num_events,total_num_people_at_time_zero){
+  phat <- total_num_events/total_num_people_at_time_zero
+  me <- sqrt(phat*(1-phat)/total_num_people_at_time_zero)
+  l <- phat - 1.96 * me
+  u <- phat + 1.96 * me
+  temp <- (c(phat,l,u) * 100) %>% round(2)
+  paste0(temp[1],' (',temp[2],',',temp[3],')')
+}
+```
+
+```{r}
+incidence_rates <- lapply(tte_datasets,function(tte_dat){
+  total_num_events <- sum(tte_dat$event)
+  total_person_years <- sum(tte_dat$time_to_event)
+  year_scale <- 1000
+  alpha <- 0.05
+  temp <- get_incidence_rate_est(total_num_events,total_person_years,1000,0.05) 
+  paste0(temp[1],' (',temp[2],'-',temp[3],')')
+}) %>% as_vector()
+```
+
+```{r}
+saveRDS(incidence_rates,file = "data/incidence_rates.RDS")
+tibble(outcome=names(incidence_rates), incidence_rate = incidence_rates)
+```
+
+```{r}
+tte_datasets_long <- lapply(1:length(tte_datasets),function(i){
+  tte_datasets[[i]] %>% mutate(outcome = names(tte_datasets)[i])
+}) %>% bind_rows()
+
+incidence_proportion_tab <- tte_datasets_long %>% group_by(outcome) %>% 
+  summarize(phat = sum(event)/n(),
+            incidence_proportion = get_incidence_proportion_est(sum(event),n())) %>% 
+  arrange(desc(phat)) %>% mutate(label = paste0(outcome,': ',incidence_proportion))
+
+tte_datasets_long <- tte_datasets_long %>% mutate(outcome = factor(outcome,levels = incidence_proportion_tab$outcome))
+
+tte_datasets_long %>% group_by(outcome) %>% 
+  arrange(time_to_event) %>% mutate(proportion=cumsum(event)/n()*100) %>%
+  ggplot(aes(time_to_event,proportion,color = outcome)) + geom_line() +  
+  scale_color_discrete(name = "Outcome: incidence proportion (95% CI)", labels = incidence_proportion_tab$label) +
+  ggtitle("Cumulative incidence")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

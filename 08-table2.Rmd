@@ -1,0 +1,197 @@
+---
+title: "Table2"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+```
+
+```{r}
+library(tidyverse)
+library(flextable)
+library(mice)
+source("functions.R")
+```
+
+## Mixed DM
+
+Load primary analysis result objects for mixed DM into current environment
+```{r}
+load("results/res_primary_analysis_step.RData")
+```
+
+Put mixed DM primary analysis result objects into a list
+```{r}
+res_list_dm_mixed <- list("kidney_res"=kidney_res,"pa_res"=pa_res,"bp1_res"=bp1_res,"bp0_res"=bp0_res,
+                 "glucose1_res"=glucose1_res,"glucose0_res"=glucose0_res,
+                 "hba1c1_res"=hba1c1_res,"hba1c0_res"=hba1c0_res,
+                 "lipids1_res"=lipids1_res,"lipids0_res"=lipids0_res,
+                 "grs1_res"=grs1_res,"grs0_res"=grs0_res,
+                 "mv_res_glucose"=mv_res_glucose,"mv_res_hba1c"=mv_res_hba1c)
+```
+
+```{r}
+load("results/res_primary_analysis_step_dm2.RData")
+```
+
+Put DM2 primary analysis result objects into a list
+```{r}
+res_list_dm2 <- list("kidney_res"=kidney_res,"pa_res"=pa_res,"bp1_res"=bp1_res,"bp0_res"=bp0_res,
+                 "glucose1_res"=glucose1_res,"glucose0_res"=glucose0_res,
+                 "hba1c1_res"=hba1c1_res,"hba1c0_res"=hba1c0_res,
+                 "lipids1_res"=lipids1_res,"lipids0_res"=lipids0_res,
+                 "grs1_res"=grs1_res,"grs0_res"=grs0_res,
+                 "mv_res_glucose"=mv_res_glucose,"mv_res_hba1c"=mv_res_hba1c)
+```
+
+Put result lists into one, and make changes to named list
+```{r}
+res_list_per_dm_type <- list(res_list_dm_mixed,res_list_dm2)
+names(res_list_per_dm_type) <- c("dm_mixed","dm2")
+```
+
+Compile all of primary analysis results
+```{r}
+primary_analysis_res_long <- 
+  lapply(1:length(res_list_per_dm_type),function(i){
+    dm_type_val <- names(res_list_per_dm_type)[i]
+    res_list <- res_list_per_dm_type[[i]]
+    lapply(1:length(res_list),function(j){
+      res <- res_list[[j]]
+      res_type_val <- names(res_list)[j]
+      lapply(1:length(res),function(k){
+        r <- res[[k]]
+        outcome_val <- names(res)[k]
+        temp <-  r %>% summary(conf.int = T,exponentiate = T) %>% 
+          mutate(outcome = outcome_val, res_type = res_type_val, dm_type = dm_type_val)
+        temp 
+      }) %>% bind_rows() %>% as_tibble()
+  }) %>% bind_rows()
+}) %>% bind_rows()
+```
+
+Define all covariates. This will be used to define levels.
+```{r}
+biomarker_col_name <- 
+  get_biomarker_col_name(c("sbp","dbp","glucose","hba1c","chol","trig","hdl","ldl","egfr","uacr"))
+biomarker_col_name[biomarker_col_name %in% c("slope_uacr")] <- "slope_log_uacr"
+terms_all <- c("age_init","SEX","ISCED_level_gt2","ethnic_selfAsian","ethnic_selfBlack","ethnic_selfOther",
+               "smoke_ever","MET_hours","self_insulin","self_bpdrugs","self_cholesteroldrugs","PGS000024", "PGS000036",
+               "BMI","CCI",biomarker_col_name)
+terms_all <- intersect(terms_all,primary_analysis_res_long$term)
+```
+
+Apply the following cleaning procedure:
+1. Convert `term` variable into factor with pre-defined levels to easily sort them later
+2. Reformat variable names for presentation
+3. Get formatted HR and p-values
+4. Convert outcome fields into factor type
+
+```{r}
+primary_analysis_res_long <- primary_analysis_res_long %>% 
+  mutate(term=factor(term,levels=terms_all)) %>% #1
+  mutate(term=reformat_labels(.$term)) %>% # 2
+  select(term,estimate,`2.5 %`,`97.5 %`,p.value,outcome,res_type,dm_type) %>% # remove unnecessary fields
+  rename(HR = estimate) %>% # rename the column name
+  rowwise() %>% mutate(HR = get_formatted_hr(HR,`2.5 %`,`97.5 %`), p.value = get_formatted_pval(p.value)) %>%  #3
+  ungroup() %>% select(term,HR,p.value,outcome,res_type,dm_type) %>% # remove unnecessary fields
+  mutate(outcome = as.factor(outcome)) #4
+```
+
+Get wide format table per result type
+```{r}
+primary_analysis_res_wide_per_res_type_per_dm_type <-
+  lapply(names(res_list_per_dm_type),function(dm_type_val){
+    tab_wide_list <- lapply(names(res_list_per_dm_type[[dm_type_val]]),function(res_type_val){
+      tab_long <- primary_analysis_res_long %>% 
+        filter(dm_type == dm_type_val, res_type == res_type_val) %>% 
+        select(term,HR,p.value,outcome)
+      tab_wide <- tab_long %>% 
+        pivot_wider(id_cols = term, names_from = outcome,values_from = c(HR,p.value)) %>%
+        select(term,all_of(paste0(c("HR","p.value"),"_",rep(levels(tab_long$outcome),each=2)))) %>%
+        arrange(term)  
+      temp <- 
+       lapply(res_list_per_dm_type[[dm_type_val]][[res_type_val]],function(x){
+         x$glanced %>% select(n,nevent) %>% mutate(ncontrol = n - nevent) %>% 
+           select(nevent,ncontrol) %>%
+           apply(.,2,mean) %>% round() %>% paste(collapse = '/')
+         })
+      attr(tab_wide,"header") <- paste0(names(temp),' (',unlist(temp),')')
+      tab_wide
+    })
+    names(tab_wide_list) <- names(res_list_per_dm_type[[dm_type_val]])
+    tab_wide_list
+  })
+names(primary_analysis_res_wide_per_res_type_per_dm_type) <- names(res_list_per_dm_type)
+
+primary_analysis_res_wide_per_res_type_per_dm_type[[1]][[1]]$term %>% levels()
+```
+
+Convert wide format tables to `flextable` object
+```{r}
+primary_analysis_res_ft_per_res_type_per_dm_type <-
+  lapply(primary_analysis_res_wide_per_res_type_per_dm_type,function(wide_tab_per_res_type){
+  lapply(wide_tab_per_res_type,function(wide_tab){
+      get_primary_analysis_ft(wide_tab)
+  })
+})
+```
+
+Create table 2
+```{r}
+tab2 <- primary_analysis_res_wide_per_res_type_per_dm_type[[1]]$mv_res_glucose[1:7]
+
+# Removes rows with all values equal to NA; this happened because we subset the outcomes to CVD, DKD and DR
+tab2 <- tab2[rowSums(is.na(tab2)) != (ncol(tab2) - 1),]
+
+# Modify header row
+attr(tab2,"header") <- attr(tab2,"header")[1:3]
+tab2_ft <- get_primary_analysis_ft(tab2,fontsize_val = 10) 
+```
+
+Create supplementary table (DM2 analogue of table 2)
+```{r}
+tab2_supp <- primary_analysis_res_wide_per_res_type_per_dm_type[[2]]$mv_res_glucose[1:7]
+
+# Removes rows with all values equal to NA; this happened because we subset the outcomes to CVD, DKD and DR
+tab2_supp <- tab2_supp[rowSums(is.na(tab2_supp)) != (ncol(tab2_supp) - 1),]
+
+# Modify header row
+attr(tab2_supp,"header") <- attr(tab2_supp,"header")[1:3]
+tab2_supp_ft <- get_primary_analysis_ft(tab2_supp,fontsize_val = 10) 
+```
+
+
+```{r}
+sect_properties <- officer::prop_section(
+  page_size = officer::page_size(orient = "landscape",width = 8.5,height = 11)
+)
+flextable::save_as_docx(values = list(tab2_ft), pr_section = sect_properties, path = "tables/table2.docx")
+flextable::save_as_docx(values = list(tab2_supp_ft), pr_section = sect_properties, path = "tables/table2_supp.docx")
+flextable::save_as_docx(values = primary_analysis_res_ft_per_res_type_per_dm_type[[1]], pr_section = sect_properties, path = "tables/primary_analysis_supplementary_tables_mixed_dm.docx")
+flextable::save_as_docx(values = primary_analysis_res_ft_per_res_type_per_dm_type[[2]], pr_section = sect_properties, path = "tables/primary_analysis_supplementary_tables_dm2.docx")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

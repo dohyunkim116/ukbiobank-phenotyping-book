@@ -1,0 +1,160 @@
+---
+title: "Table1"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+```
+
+```{r}
+library(tidyverse)
+library(data.table)
+library(parallel)
+source("functions.R")
+```
+
+Import demographic & baseline measurement table and mean biomarker table
+```{r}
+demog_all <- readRDS("data/demog_all.RDS")
+biomarker_cv_mean_tab_wide <- readRDS("data/biomarker_cv_mean_tab_wide.RDS")
+biomarker_num_measure_tab_wide <- readRDS("data/biomarker_num_measure_tab_wide.RDS")
+```
+
+Import time-to-event datasets
+```{r}
+tte_file_names <- list.files(path = "generated_data",pattern = "tte.RDS",full.names = T)
+tte_datasets <- lapply(tte_file_names,readRDS)
+outcome_names <- 
+  tte_file_names %>% str_split("_tte.RDS") %>% lapply(.,function(x)x[1]) %>% unlist
+outcome_names <- c("CVD","DKD","DR","HS","IS","MI","PCI","ST","UA")
+names(tte_datasets) <- outcome_names
+```
+
+Merge time-to-event datasets with demographic & baseline measurement table, cv & mean biomarker table and number of biomarker measurements table
+```{r}
+merged_tte_datasets <- lapply(tte_datasets,function(tte){
+  tte %>% 
+  left_join(demog_all, by = "f.eid") %>% 
+  left_join(biomarker_cv_mean_tab_wide, by = "f.eid") %>%
+  left_join(biomarker_num_measure_tab_wide, by = "f.eid") %>%
+    mutate(n_all = rowSums(across(starts_with("n_")), na.rm = T))
+})
+```
+
+Set `tbl_summary` type
+```{r}
+gtsummary::theme_gtsummary_compact()
+```
+
+Load incidence rates
+```{r}
+incidence_rates <- readRDS("data/incidence_rates.RDS")
+```
+
+### Stratified table with overall summary statistics
+```{r}
+strat_tab_with_overall_list <- mclapply(1:length(merged_tte_datasets),function(i){
+  outcome <- names(merged_tte_datasets)[i]
+  subtab <- merged_tte_datasets[[i]]
+  temp <- get_table(subtab,outcome,stratified = T,add_overall = T)
+  temp$table_body <- add_row(temp$table_body,tibble(row_type="label",label="Incidence rate",stat_0 = incidence_rates[outcome]))
+  temp
+},mc.cores = 6)
+names(strat_tab_with_overall_list) <- names(merged_tte_datasets)
+```
+
+### Convert to flextable object
+```{r}
+tab1_stratified_plus_overall <- 
+  gtsummary::tbl_merge(strat_tab_with_overall_list[1:3],names(strat_tab_with_overall_list)[1:3]) %>%
+  gtsummary::as_flex_table() %>% 
+  flextable::font(fontname = "Times New Roman",part = "all") %>%
+  flextable::fontsize(size = 9,part = "all") %>%
+  flextable::autofit(add_w = 0, add_h = 0,part = "all") %>%
+  flextable::italic(j = c(5,9,13),italic = TRUE, part = "header") %>%
+  flextable::footnote(i = 1, j = 2:13,
+               value = flextable::as_paragraph(
+                 c("median (IQR) or percent or incidence rate (95% confidence interval)")
+                 ),
+               ref_symbols = c("1"),
+               part = "header", inline = TRUE) %>% 
+  flextable::footnote(i = 60, j = 1,
+               value = flextable::as_paragraph(
+                 c("per 1000 persons per year")
+                 ),
+               ref_symbols = c("2"),
+               part = "body", inline = TRUE) %>%
+  flextable::footnote(i = 2, j = c(5,9,13),
+               value = flextable::as_paragraph(
+                 c("Pearson's Chi-squared test or Wilcoxon rank sum test ")
+                 ),
+               ref_symbols = c("3"),
+               part = "header", inline = TRUE) %>%
+  flextable::font(fontname = "Times New Roman",part="footer") %>%
+  flextable::fontsize(size = 8,part="footer")
+```
+
+```{r}
+supplementary_tab_list <- lapply(strat_tab_with_overall_list,function(subtab){
+  subtab %>% gtsummary::as_flex_table() %>% 
+  flextable::font(fontname = "Times New Roman",part = "all") %>%
+  flextable::fontsize(size = 10,part = "all") %>%
+  flextable::autofit(add_w = 0, add_h = 0,part = "all") %>%
+  flextable::italic(j = 5,italic = TRUE, part = "header") %>%
+  flextable::footnote(i = 1, j = 2:4,
+               value = flextable::as_paragraph(
+                 c("median (IQR) or percent or incidence rate (95% confidence interval)")
+                 ),
+               ref_symbols = c("1"),
+               part = "header", inline = TRUE) %>% 
+  flextable::footnote(i = 60, j = 1,
+               value = flextable::as_paragraph(
+                 c("per 1000 persons per year")
+                 ),
+               ref_symbols = c("2"),
+               part = "body", inline = TRUE) %>%
+  flextable::footnote(i = 2, j = 5,
+             value = flextable::as_paragraph(
+               c("Pearson's Chi-squared test or Wilcoxon rank sum test ")
+               ),
+             ref_symbols = c("3"),
+             part = "header", inline = TRUE) %>%
+  flextable::font(fontname = "Times",part="footer") %>%
+  flextable::fontsize(size = 8,part="footer")
+})
+```
+
+### Save tables
+```{r}
+sect_properties <- officer::prop_section(
+  page_size = officer::page_size(orient = "landscape",width = 8.5,height = 14)
+)
+flextable::save_as_docx(values = list(tab1_stratified_plus_overall), pr_section = sect_properties, path = "tables/table1.docx")
+```
+
+```{r}
+sect_properties <- officer::prop_section(
+  page_size = officer::page_size(orient = "landscape",width = 8.5,height = 11)
+)
+flextable::save_as_docx(values = supplementary_tab_list, path = "tables/supplementary_table1.docx")
+```
+
+```{r}
+gtsummary::reset_gtsummary_theme()
+```
+
+```{r}
+
+```
+

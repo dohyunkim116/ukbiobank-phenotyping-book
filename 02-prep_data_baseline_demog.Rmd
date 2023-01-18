@@ -1,0 +1,151 @@
+---
+title: "Prepare demographic and baseine measurements dataset"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+```
+
+```{r}
+library(tidyverse)
+library(data.table)
+```
+
+Import datasets
+```{r}
+demog <- readRDS("generated_data/demog_selected.RDS")
+pcp_subject_ids <- readRDS("generated_data/gp_subject_ids.RDS")
+
+phenotypes_all  <- readRDS("generate_phenotypes_all_dot_RDS/phenotypes_all.RDS")
+dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
+```
+
+
+`demog` has:
+- gender (`SEX`)
+- baseline age (`age_init`)
+
+`phnoetypes_all` table has:
+  - smoking
+    - `smoke_ever` 
+    - `packyears_smoke`
+  - BMI (`BMI`)
+  - `self_insulin` (self-reported insulin use)
+  - `self_bpmeds` (self-reported BP medication use)
+  - `self_cholesterolmeds` (self-reported lipids medication use)
+  - CCI (`CCI`)
+  - education
+    - `max_qualification` (Highest scored Qualification)
+    - `ISCED_level` (maximum ISCED score for all the individual's qualifications)
+    - `ISCED_level_gt2` (whether the max ISCED score is 3 or higher)
+  - Physical activity (PA)
+    - `MET_minues`
+    - `MET_decile` 
+    - `MET_tertile`
+  - T2D GRS
+    - `PGS000036`
+    - `PGS000036_decile`
+  - T1D GRS
+    - `PGS000024`
+    - `PGS000024_decile`
+  - European background (`EUR`)
+  - Ethnicity (`ethnic_self`)
+  
+  `dm_firstoccur` has information on whether a subject has Type I or Type II diabetes.
+  
+  `pcp_subject_ids` is a vector of subject IDs which have linked primary care data 
+
+Collapse ethnic background
+```{r}
+phenotypes_all <- phenotypes_all %>% 
+  mutate(ethnic_self = case_when(
+    ethnic_self == "" ~ "",
+    ethnic_self == "African" ~ "Black",
+    ethnic_self == "Any other Asian background" ~ "Asian",
+    ethnic_self == "Any other Black background" ~ "Black",
+    ethnic_self == "Black or Black British" ~ "Black",
+    ethnic_self == "British" ~ "White",
+    ethnic_self == "Caribbean" ~ "Black",
+    ethnic_self == "Chinese" ~ "Asian",
+    ethnic_self == "Do not know" ~ "",
+    ethnic_self == "Indian" ~ "Asian",
+    ethnic_self == "Irish" ~ "White",
+    ethnic_self == "Mixed" ~ "Other",
+    ethnic_self == "Other ethnic group" ~ "Other",
+    ethnic_self == "Pakistani" ~ "Asian",
+    ethnic_self == "Prefer not to answer" ~ "",
+    ethnic_self == "White" ~ "White",
+    ethnic_self == "White and Asian" ~ "Other",
+    ethnic_self == "White and Black African" ~ "Other",
+    ethnic_self == "White and Black Caribbean" ~ "Other"
+    )) %>% 
+  mutate(ethnic_self = ifelse(ethnic_self == "",NA,ethnic_self)) %>% 
+  mutate(ethnic_self = relevel(as.factor(ethnic_self),ref="White"))
+```
+
+
+```{r}
+baseline_measurement_tab <- phenotypes_all %>% select(f.eid,ethnic_self,EUR,smoke_ever,packyears_smoke,BMI,
+                                                self_insulin,self_bpdrugs,self_cholesteroldrugs,CCI,
+                                                max_qualification,ISCED_level,ISCED_level_gt2,
+                                                MET_minutes,MET_decile,MET_tertile,
+                                                PGS000036,PGS000036_decile,PGS000024,PGS000024_decile)
+baseline_measurement_tab <- 
+  baseline_measurement_tab %>% mutate(
+  max_qualification = ifelse(max_qualification == "", NA, max_qualification)
+)
+```
+
+```{r}
+demog_all <- demog %>% 
+  left_join(baseline_measurement_tab,by="f.eid") %>% 
+  mutate(BMI_male = ifelse(SEX == "Male", BMI, NA),BMI_female = ifelse(SEX == "Female", BMI, NA)) %>%
+  mutate(packyears_all = packyears_smoke) %>% 
+  mutate(packyears_smoker = ifelse(packyears_smoke == 0, NA, packyears_smoke)) %>%
+  select(-packyears_smoke) %>%
+  mutate(SEX = ifelse(SEX == "Male", 1, 0)) %>%
+  mutate(MET_hours = MET_minutes/60) %>%
+  mutate(PGS000024_tertile = gtools::quantcut(PGS000024,q=3,labels=F)) %>%
+  mutate(PGS000036_tertile = gtools::quantcut(PGS000036,q=3,labels=F)) %>%
+  mutate(CCI2 = factor(ifelse(CCI < 5, CCI, ">=5"),levels = c("0","1","2","3","4",">=5"))) %>%
+  mutate(dummy = 1) %>%
+  mutate(pcp = as.integer(f.eid %in% pcp_subject_ids))
+```
+
+Add DM types column
+```{r}
+demog_all <- 
+  demog_all %>% 
+  left_join(dm_firstoccur %>% select(f.eid, dm_type),by = "f.eid")
+```
+
+```{r}
+saveRDS(demog_all,"data/demog_all.RDS")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

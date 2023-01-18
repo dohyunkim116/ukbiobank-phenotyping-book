@@ -1,0 +1,135 @@
+---
+title: "Impute predictors using subjects identified to have diabetes"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+```
+
+```{r}
+library(tidyverse)
+```
+
+Import datasets
+```{r}
+demog <- readRDS("data/demog_all.RDS")
+dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
+biomarker_cv_mean_tab_wide <- readRDS("data/biomarker_cv_mean_tab_wide.RDS") %>%
+  select(-c("avg_log_uacr","cv_log_uacr"))
+```
+
+Select variables to impute and subset the data to subjects identified to have diabetes
+```{r}
+preds_nonbiomarker <- 
+  c("ethnic_self","smoke_ever","BMI","self_insulin","self_bpdrugs","self_cholesteroldrugs",
+    "ISCED_level_gt2","MET_hours")
+
+pre_pred_tab <- 
+  dm_firstoccur %>% left_join(biomarker_cv_mean_tab_wide, by = "f.eid") %>%
+  left_join(demog, by = "f.eid") %>%
+  select(f.eid,all_of(preds_nonbiomarker),matches("cv|avg"))
+
+#nonpred_tab <- pre_pred_tab %>% select(f.eid,avg_dbp,avg_sbp)
+#pred_tab <- pre_pred_tab %>% select(-c(f.eid,avg_dbp,avg_sbp))
+
+nonpred_tab <- pre_pred_tab %>% select(f.eid)
+pred_tab <- pre_pred_tab %>% select(-f.eid)
+```
+
+Proportion of missing values for each variable
+```{r}
+apply(pre_pred_tab,2,function(x){
+  sum(is.na(x))/length(x)
+}) %>% sort()
+```
+
+Define how each variable will be imputed. This is based on examination of histogram of each variable. If the variable is integer valued or categorical, or the distribution is skewed, we use mean match imputation method. Also, note that we should not define how variables that have complete data should be imputed, as it will throw an error.
+```{r}
+vs <- c(
+  smoke_ever = "meanMatch",
+  ethnic_self = "meanMatch",
+  BMI = "meanMatch",
+  self_insulin = "meanMatch",
+  self_bpdrugs = "meanMatch",
+  self_cholesteroldrugs = "meanMatch",
+  ISCED_level_gt2 = "meanMatch",
+  MET_hours = "meanMatch",
+  cv_hba1c = "meanMatch",
+  cv_chol = "meanMatch",
+  cv_dbp = "meanMatch",
+  cv_hdl = "meanMatch",
+  cv_sbp = "meanMatch",
+  cv_trig = "meanMatch",
+  cv_glucose = "meanMatch",
+  cv_ldl = "meanMatch",
+  cv_egfr = "meanMatch",
+  cv_uacr = "meanMatch",
+  avg_hba1c = "meanMatch",
+  avg_chol = "value",
+  avg_dbp = "meanMatch",
+  avg_hdl = "meanMatch",
+  avg_sbp = "value",
+  avg_trig = "value",
+  avg_glucose = "meanMatch",
+  avg_ldl = "meanMatch",
+  avg_egfr = "value",
+  avg_uacr = "meanMatch"
+)
+```
+
+Impute
+```{r}
+set.seed(1)
+library(miceRanger)
+time <- system.time(
+  miceObj <- miceRanger(
+      pred_tab,
+      valueSelector = vs,
+      verbose = TRUE,
+      maxiter = 10
+  )
+)
+```
+
+```{r}
+saveRDS(miceObj,"data/miceObj_predtab.RDS")
+saveRDS(nonpred_tab,"data/nonpred_tab.RDS")
+```
+
+Append `nonpred_tab` columns back to imputed datasets
+```{r}
+imputed_baseline_dat_list <- 
+  completeData(miceObj) %>% lapply(function(dat){
+    cbind(nonpred_tab,dat)
+})
+```
+
+```{r}
+saveRDS(imputed_baseline_dat_list,"data/imputed_baseline_dat_list.RDS")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

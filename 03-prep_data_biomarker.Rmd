@@ -1,0 +1,180 @@
+---
+title: "Prepare biomarker sumary datasets"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+  word_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F)
+```
+
+```{r}
+library(tidyverse)
+source("functions.R")
+```
+
+Load the following biomarker datasets:
+
+- SBP 
+- DBP 
+- glucose random (blood glucose level, not fasted)
+- HbA1c
+- HDL
+- LDL
+- triglycerides
+- cholesterol
+- egfr
+- urine ACR
+
+```{r}
+biomarker_traj <- 
+  lapply(list.files("generated_data",paste(paste0("trajectory_",
+       c("sbp","dbp","glucose_rand","hba1c","hdl","ldl","trig","chol","egfr","uacr"),
+       ".RDS"),collapse = '|'),full.names = T),function(fname){
+          readRDS(fname)
+       }) %>% bind_rows() %>% distinct()
+```
+
+Rename "glucose_rand" to "glucose"
+```{r}
+biomarker_traj$biomarker[biomarker_traj$biomarker == "glucose_rand"] <- "glucose"
+```
+
+Add log UACR trajectory
+```{r}
+biomarker_traj <- 
+  bind_rows(biomarker_traj, tibble(
+    f.eid = biomarker_traj[biomarker_traj$biomarker == "uacr",]$f.eid,
+    measurement = log(biomarker_traj$measurement[biomarker_traj$biomarker == "uacr"]),
+    event_dt = biomarker_traj[biomarker_traj$biomarker == "uacr",]$event_dt,
+    biomarker = "log_uacr"))
+```
+
+
+We do the following:
+
+- add age at which measurement was taken
+- remove measurements recorded after the study initiation date
+
+Load demographic data
+```{r}
+demog <- readRDS("data/demog_all.RDS")
+```
+
+Add study initiation date and DOB fields
+```{r}
+biomarker_traj <-
+  biomarker_traj %>%
+  left_join(select(demog,f.eid,DOB,date_init), by = "f.eid")
+```
+
+Filter out biomarker measurements recorded after an individual's study initiation date
+```{r}
+biomarker_traj <- biomarker_traj[biomarker_traj$event_dt <= biomarker_traj$date_init,]
+```
+
+Add a variable containing age at which measurement was taken.
+```{r}
+biomarker_traj$age_event_dt <-
+  lubridate::decimal_date(biomarker_traj$event_dt) - lubridate::decimal_date(biomarker_traj$DOB)
+```
+
+Check whether any values of `age_event_dt` or `measurement` are missing. All of the rows are filled with NAs.
+```{r}
+biomarker_traj[is.na(biomarker_traj$age_event_dt) | is.na(biomarker_traj$measurement), ]
+```
+
+Remove these rows
+```{r}
+biomarker_traj <- biomarker_traj[!is.na(biomarker_traj$age_event_dt) & !is.na(biomarker_traj$measurement), ]
+```
+
+Remove `date_init` and `DOB` columns
+```{r}
+biomarker_traj <- biomarker_traj %>% select(-c(date_init,DOB))
+```
+
+Compute number of biomarker measurements for each subject and for each biomarker
+```{r}
+biomarker_num_measure_tab_long <- 
+  biomarker_traj %>% group_by(f.eid,biomarker) %>% 
+  summarise(
+    n = n()
+  ) %>% ungroup()
+```
+
+Convert number of biomarker measurements table to wide format
+```{r}
+biomarker_num_measure_tab_wide <-
+  pivot_wider(biomarker_num_measure_tab_long,
+              id_cols = "f.eid", names_from = "biomarker", names_prefix = "n_", values_from = 'n', values_fill = 0)
+```
+
+Compute cv and mean of biomarker measurements for each subject and for each biomarker
+```{r}
+biomarker_cv_mean_tab_long <- 
+  biomarker_traj %>% group_by(f.eid,biomarker) %>% 
+  summarise(
+    cv = sd(measurement,na.rm = T)/mean(measurement,na.rm = T),
+    avg = mean(measurement,na.rm = T)
+  ) %>% ungroup()
+```
+
+Convert cv and mean biomarker measurement table to wide format
+```{r}
+biomarker_cv_mean_tab_wide <- 
+  pivot_wider(biomarker_cv_mean_tab_long,
+              id_cols = "f.eid",names_from = "biomarker", values_from = c("cv","avg"))
+```
+
+What percentage of values are missing for each column? Recall a lot of subjects only had one hba1c measurement before filtering out biomarker measurements whose dates were after the initiation dates 
+```{r}
+apply(biomarker_cv_mean_tab_wide,2,function(x){
+  round((is.na(x) %>% sum())/length(x) * 100,0)
+}) %>% sort()
+```
+
+Subset to diabetes subjects and repeat
+```{r}
+dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
+temp <- dm_firstoccur %>% 
+  left_join(demog, by = "f.eid") %>% 
+  left_join(biomarker_cv_mean_tab_wide, by = "f.eid")
+apply(temp,2,function(x){
+  round((is.na(x) %>% sum())/length(x) * 100,0)
+}) %>% sort()
+```
+
+```{r}
+saveRDS(biomarker_traj,"data/biomarker_traj.RDS")
+saveRDS(biomarker_cv_mean_tab_long,"data/biomarker_cv_mean_tab_long.RDS")
+saveRDS(biomarker_cv_mean_tab_wide,"data/biomarker_cv_mean_tab_wide.RDS")
+saveRDS(biomarker_num_measure_tab_long,"data/biomarker_num_measure_tab_long.RDS")
+saveRDS(biomarker_num_measure_tab_wide,"data/biomarker_num_measure_tab_wide.RDS")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

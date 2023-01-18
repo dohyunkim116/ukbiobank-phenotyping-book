@@ -1,0 +1,341 @@
+---
+title: "Complication risk prediction. Main."
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+```{r}
+library(tidyverse)
+library(survival)
+library(parallel)
+source("functions.R")
+mc_cores <- 6
+```
+
+Import imputed baseline dataset
+```{r}
+imputed_baseline_dat_list <- readRDS("data/imputed_baseline_dat_list.RDS")
+demog <- readRDS("data/demog_all.RDS")
+```
+
+Import time-to-event datasets
+```{r}
+tte_file_names <- list.files(path = "generated_data", pattern = "tte.RDS", full.names = T)
+tte_datasets <- lapply(tte_file_names,readRDS)
+outcome_names <- c("CVD","DKD","DR","HS","IS","MI","PCI","ST","UA")
+names(tte_datasets) <- outcome_names
+```
+
+```{r}
+biomarker_col_name <- 
+  get_biomarker_col_name(c("sbp","dbp","glucose","hba1c","chol","trig","hdl","ldl","egfr","uacr"))
+
+preds_all <- c("ethnic_self","SEX","age_init","smoke_ever","BMI","CCI","ISCED_level_gt2",
+               "self_insulin","self_bpdrugs","self_cholesteroldrugs","MET_hours","PGS000024","PGS000036",
+               biomarker_col_name)
+```
+
+Create complete case dataset consisting only of Europeans. Note that `ethnic_self` is not included because we are only interested in analyzing Europeans
+```{r}
+tte_dat_list_per_outcome <- 
+  lapply(tte_datasets,function(tte){
+    lapply(imputed_baseline_dat_list,function(baseline_dat){
+      temp <- demog %>% select(-intersect(colnames(demog),colnames(baseline_dat))[-1])
+      basline_dat_complete <- 
+        left_join(baseline_dat,temp,by = "f.eid") %>% select(all_of(c("f.eid",preds_all,"EUR")))
+      merged_dat <- tte %>% 
+        select(f.eid,time_to_event,event) %>% 
+        left_join(basline_dat_complete,by="f.eid")
+      merged_dat %>% filter(EUR == 1) %>% select(-EUR) %>% na.omit()
+    })
+  })
+```
+
+Define predictors to be used
+```{r}
+covs_base <- c("SEX","age_init","smoke_ever","BMI","CCI","ISCED_level_gt2")
+core_covs <- covs_base[1:2]
+covs_drugs <- c("self_insulin","self_bpdrugs","self_cholesteroldrugs")
+pa_preds <- "MET_hours"
+bp_preds <- get_biomarker_col_name(c("sbp","dbp"))
+glucose_preds <- get_biomarker_col_name("glucose")
+lipids_preds <- get_biomarker_col_name(c("chol","trig","hdl","ldl"))
+kidney_preds <- biomarker_col_name[str_which(biomarker_col_name,pattern = "egfr|uacr")]
+grs_preds <- c("PGS000024", "PGS000036")
+```
+
+Define training samples
+```{r}
+nsamp_vec <- tte_dat_list_per_outcome %>% 
+  lapply(function(tte_dat_list){
+    lapply(tte_dat_list,nrow) %>% unique()
+}) %>% unlist()
+
+set.seed(1)
+training_ratio <- 0.7
+training_rows_per_outcome <- lapply(nsamp_vec,function(n) sample(1:n,size = n*training_ratio,replace = F))
+```
+
+Create training and validation set, 2:1
+```{r}
+tte_dat_list_per_outcome_training <- lapply(1:length(tte_dat_list_per_outcome),function(i){
+  tte_dat_list <- tte_dat_list_per_outcome[[i]]
+  lapply(tte_dat_list,function(tte_dat){
+    tte_dat[training_rows_per_outcome[[i]],] %>% 
+      mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+  })
+})
+names(tte_dat_list_per_outcome_training) <- names(tte_dat_list_per_outcome)
+
+tte_dat_list_per_outcome_validation <- lapply(1:length(tte_dat_list_per_outcome),function(i){
+  tte_dat_list <- tte_dat_list_per_outcome[[i]]
+  lapply(tte_dat_list,function(tte_dat){
+    tte_dat[-training_rows_per_outcome[[i]],] %>% 
+      mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv","PGS")),.fns = scale))
+  })
+})
+names(tte_dat_list_per_outcome_validation) <- names(tte_dat_list_per_outcome)
+```
+
+Fit multivariable pooled step Cox PH
+```{r,eval=T}
+preds_rhs <- c(covs_base,covs_drugs,pa_preds,bp_preds,glucose_preds,lipids_preds,kidney_preds,grs_preds)
+res <- mclapply(tte_dat_list_per_outcome_training,function(tte_dat_list){
+    pooled_coxph_step_additive(tte_dat_list,preds_rhs,core_covs) 
+},mc.cores = mc_cores)
+
+saveRDS(res,"results/res_risk_prediction_main_training.RDS")
+```
+
+Create input data frame for AUC bar plot generation
+```{r}
+res <- readRDS("results/res_risk_prediction_main_training.RDS")
+pred_eval_df_per_outcome <- lapply(1:length(tte_dat_list_per_outcome_validation),function(i){
+    outcome <- names(tte_dat_list_per_outcome_validation)[i]
+    get_pred_eval_df(tte_dat_list_per_outcome_validation[[i]],res[[i]],outcome)
+}) 
+
+pred_eval_df_long <- pred_eval_df_per_outcome %>% bind_rows()
+```
+
+AUC bar plots
+```{r}
+auc_summary_tab <- pred_eval_df_long %>%
+  group_by(outcome) %>% summarize(ncase=sum(event),ncontrol=n() - ncase,get_auc(event,avg_pred_risk))
+
+temp <- auc_summary_tab %>% mutate(label=paste0(ncase,'/',ncontrol,' | ',formatC(auc,2),' (',formatC(auc.l,2),'-',formatC(auc.u,2),')')) %>%
+  select(outcome,label)
+outcome_labs <- paste0(temp$outcome,' | ',temp$label)
+names(outcome_labs) <- temp$outcome
+
+auc_bar_plot <- pred_eval_df_long %>% 
+  group_by(outcome) %>% summarize(get_auc(event,avg_pred_risk)) %>%
+  ggplot(aes(x=outcome,y=auc,fill=outcome)) + 
+  geom_bar(stat = "identity",position="dodge") + 
+  geom_errorbar(aes(x=outcome,ymin=auc.l,ymax=auc.u,width=0.4)) + 
+  theme_minimal() + 
+  theme(axis.text.x = element_blank(),axis.ticks.x = element_blank(),axis.title.x = element_blank()) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  scale_fill_discrete(name = "Outcome | n.case/n.control | AUC (95% CI)", labels = outcome_labs) + ylab("AUC")
+auc_bar_plot
+```
+
+
+```{r}
+pdf("figures/auc_bar_plot_across_outcomes.pdf")
+print(auc_bar_plot)
+dev.off()
+```
+
+```{r}
+png("figures/auc_bar_plot_across_outcomes.png")
+print(auc_bar_plot)
+dev.off()
+```
+
+
+KM plot
+```{r}
+df_per_outcome_km <- lapply(1:length(tte_dat_list_per_outcome_validation),function(i){
+  tte_dat_list <- tte_dat_list_per_outcome_validation[[i]]
+  bind_cols(tte_dat_list[[1]] %>% select(time_to_event),pred_eval_df_per_outcome[[i]]) %>%
+    mutate(risk=as.factor(ifelse(avg_pred_risk <= median(avg_pred_risk,na.rm = T),"low","high"))) %>% na.omit()
+})
+
+df_long_km <- df_per_outcome_km %>% bind_rows()  %>% as.data.frame()
+
+outcome_names <- df_long_km$outcome %>% table() %>% names()
+```
+
+
+```{r}
+dat <- df_long_km %>% filter(outcome %in% c("CVD","DKD","DR")) %>% 
+  mutate(outcome = droplevels(outcome)) %>% as.data.frame()
+fit <- survfit(Surv(time_to_event,event)~risk,data = dat)
+km_main <- survminer::ggsurvplot(fit,data=dat,pval = TRUE,facet.by = "outcome",short.panel.labs = T,
+                      ggtheme = theme_bw(),ylim = c(0.4,1),pval.coord = c(0,0.5),
+                      legend.labs = c("high","low"),legend.title = element_blank(), legend = c(0.9,0.9),
+                      conf.int = T) + 
+  xlab(label = "Time(years)")
+
+km_main$theme$legend.background <- element_rect(fill='transparent',color = 'transparent')
+km_main$theme$legend.box.background <- element_rect(fill='transparent',color = 'transparent')
+km_main$theme$legend.key <- element_rect(fill="transparent",color = 'transparent')
+```
+
+```{r}
+pdf("figures/km_plot_main.pdf")
+print(km_main)
+dev.off()
+```
+
+```{r}
+png("figures/km_plot_main.png")
+print(km_main)
+dev.off()
+```
+
+```{r}
+km_plot_list <- lapply(outcome_names,function(outcome_name){
+  dat <- df_long_km %>% filter(outcome == outcome_name)
+  fit <- survfit(Surv(time_to_event,event)~risk,data = dat)
+  
+  temp <- survminer::ggsurvplot(fit,data=df_long_km,pval=T,scales = "free",ggtheme = theme_minimal(),
+                                ylim = c(0.4,1),pval.coord = c(0,0.5),
+                                 legend.labs = c("high","low"),legend.title = element_blank(), legend = c(0.9,0.6),
+                                conf.int = T) + 
+    xlab(label = "Time(years)")
+  temp$theme$legend.background <- element_rect(fill='transparent',color = 'transparent')
+  temp$theme$legend.box.background <- element_rect(fill='transparent',color = 'transparent')
+  temp$theme$legend.key <- element_rect(fill="transparent",color = 'transparent')
+  return(temp$plot)
+})
+names(km_plot_list) <- outcome_names
+```
+
+png
+```{r}
+lapply(outcome_names,function(outcome_name){
+  png(paste0("figures/km_plot_",outcome_name,".png"))
+  print(km_plot_list[[outcome_name]])
+  dev.off()
+})
+```
+
+pdf
+```{r}
+lapply(outcome_names,function(outcome_name){
+  pdf(paste0("figures/km_plot_",outcome_name,".pdf"))
+  print(km_plot_list[[outcome_name]])
+  dev.off()
+})
+```
+
+Create selected variable summary table
+```{r}
+library(mice)
+terms_all <- c("age_init","SEX","ISCED_level_gt2","ethnic_selfAsian","ethnic_selfBlack","ethnic_selfOther",
+               "smoke_ever","MET_hours","self_insulin","self_bpdrugs","self_cholesteroldrugs","PGS000024", "PGS000036",
+               "BMI","CCI",biomarker_col_name)
+
+var_sel_sum_tab <- lapply(1:length(res),function(i){
+  outcome_val <- names(res)[i]
+  r <- res[[i]]
+  tibble(term=r$pooled$term,outcome=outcome_val,dummy = "1")
+}) %>% bind_rows() %>% mutate(term = factor(term,levels = terms_all))
+levels(var_sel_sum_tab$term) <- rename_levels(levels(var_sel_sum_tab$term))
+var_sel_sum_tab <- var_sel_sum_tab %>% pivot_wider(id_cols = term, names_from = outcome,values_from = dummy) %>%
+  arrange(term)
+colnames(var_sel_sum_tab) <- c("Variables",levels(auc_summary_tab$outcome))
+```
+
+```{r}
+library(flextable)
+fontsize_val <- 11
+var_sel_sum_tab_ft <- flextable(var_sel_sum_tab) %>% 
+  font(fontname = "Times New Roman",part = "all") %>%
+  fontsize(size = fontsize_val,part = "all") %>%
+  bold(i = 1, part = "header") %>%
+  border_remove() %>%
+    hline_top(part = "header",border =  officer::fp_border(width = 1)) %>%
+    hline(part = "header",border =  officer::fp_border(width = 1)) %>%
+    hline_bottom(part = "body",border =  officer::fp_border(width = 1)) %>%
+  align(i = 1, part = "header", align = "center") %>%
+  align(i = 1:nrow(var_sel_sum_tab), part = "body", align = "center") %>%
+  align(j = 1, part = "header", align = "right") %>%
+  align(j = 1, part = "body", align = "right") %>%
+  set_table_properties(layout = "autofit", width = 0.6) %>%
+  padding(padding = 2.5, part = "all") %>%
+  line_spacing(space = 0.75, part = "body")
+```
+
+```{r}
+sect_properties <- officer::prop_section(
+  page_size = officer::page_size(orient = "portrait",width = 8.5,height = 11)
+)
+flextable::save_as_docx(values = list(var_sel_sum_tab_ft), pr_section = sect_properties, path = "tables/tableS7.docx")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

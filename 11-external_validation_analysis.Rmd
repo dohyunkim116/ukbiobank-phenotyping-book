@@ -1,0 +1,210 @@
+---
+title:  "Validation analysis"
+author: "Do Hyun Kim"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    number_sections: no
+    theme: lumen
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = T)
+```
+
+```{r, message=F}
+library(tidyverse)
+library(survival)
+library(parallel)
+library(mice)
+source("functions.R")
+```
+
+Import imputed baseline dataset
+```{r}
+imputed_baseline_dat_list <- readRDS("data/imputed_baseline_dat_list.RDS")
+demog <- readRDS("data/demog_all.RDS")
+```
+
+Set seed
+```{r}
+set.seed(1)
+```
+
+Set core numbers
+```{r}
+mc_cores <- 6
+```
+
+Import time-to-event datasets
+```{r}
+tte_file_names <- list.files(path = "generated_data",pattern = "tte.RDS",full.names = T)
+tte_datasets <- lapply(tte_file_names,readRDS)
+outcome_names <- c("CVD","DKD","DR","HS","IS","MI","PCI","ST","UA")
+names(tte_datasets) <- outcome_names
+```
+
+```{r}
+biomarker_col_name <- 
+  get_biomarker_col_name(c("sbp","dbp","glucose","hba1c","chol","trig","hdl","ldl","egfr","uacr"))
+
+preds_all <- c("ethnic_self","SEX","age_init","smoke_ever","BMI","CCI","ISCED_level_gt2",
+               "self_insulin","self_bpdrugs","self_cholesteroldrugs","MET_hours","PGS000024","PGS000036",
+               biomarker_col_name)
+```
+
+Create complete case dataset up to PGS and EUR variables
+```{r}
+tte_dat_list_per_outcome <- 
+  lapply(tte_datasets,function(tte){
+    lapply(imputed_baseline_dat_list,function(baseline_dat){
+      temp <- demog %>% select(-all_of(intersect(colnames(demog),colnames(baseline_dat))[-1]))
+      basline_dat_complete <- 
+        left_join(baseline_dat,temp,by = "f.eid") %>% select(c("f.eid",preds_all,"EUR"))
+      merged_dat <- tte %>% 
+        select(f.eid,time_to_event,event) %>% 
+        left_join(basline_dat_complete,by="f.eid")
+      merged_dat[merged_dat %>% select(-c("PGS000024","PGS000036","EUR")) %>% complete.cases(),] %>%
+        mutate(ethnic_self = relevel(as.factor(ethnic_self),ref = "White"))
+    })
+  })
+```
+
+## Mixed
+
+```{r}
+tte_dat_list_per_outcome_validation_noneur <- lapply(1:length(tte_dat_list_per_outcome),function(i){
+  tte_dat_list <- tte_dat_list_per_outcome[[i]]
+  lapply(tte_dat_list,function(tte_dat){
+    tte_dat <- tte_dat %>% filter(EUR == 0) %>% select(-EUR) %>%
+      mutate(across(.cols = starts_with(c("MET_hours","avg_uacr","cv")),.fns = scale))
+    tte_dat$PGS000024[is.na(tte_dat$PGS000024)] <- 0
+    tte_dat$PGS000036[is.na(tte_dat$PGS000036)] <- 0
+    tte_dat
+  })
+})
+names(tte_dat_list_per_outcome_validation_noneur) <- names(tte_dat_list_per_outcome)
+```
+
+```{r}
+res <- readRDS("results//res_risk_prediction_main_training.RDS")
+pred_eval_df_per_outcome <- lapply(1:length(tte_dat_list_per_outcome_validation_noneur),function(i){
+    outcome <- names(tte_dat_list_per_outcome_validation_noneur)[i]
+    get_pred_eval_df(tte_dat_list_per_outcome_validation_noneur[[i]],res[[i]],outcome)
+}) 
+
+pred_eval_df_long <- pred_eval_df_per_outcome %>% bind_rows()
+```
+
+AUC bar plots
+```{r}
+auc_summary_tab <- pred_eval_df_long %>%
+  group_by(outcome) %>% summarize(ncase=sum(event),ncontrol=n() - ncase,get_auc(event,avg_pred_risk))
+
+temp <- auc_summary_tab %>% mutate(label=paste0(ncase,'/',ncontrol,' | ',formatC(auc,2),' (',formatC(auc.l,digits = 2, format = 'f'),'-',formatC(auc.u, digits = 2, format = 'f'),')')) %>%
+  select(outcome,label)
+outcome_labs <- paste0(temp$outcome,' | ',temp$label)
+names(outcome_labs) <- temp$outcome
+
+auc_bar_plot <- pred_eval_df_long %>% 
+  group_by(outcome) %>% summarize(get_auc(event,avg_pred_risk)) %>%
+  ggplot(aes(x=outcome,y=auc,fill=outcome)) + 
+  geom_bar(stat = "identity",position="dodge") + 
+  geom_errorbar(aes(x=outcome,ymin=auc.l,ymax=auc.u,width=0.4)) + 
+  theme_minimal() + 
+  theme(axis.text.x = element_blank(),axis.ticks.x = element_blank(),axis.title.x = element_blank()) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  scale_fill_discrete(name = "Outcome | n.case/n.control | AUC (95% CI)", labels = outcome_labs) + ylab("AUC")
+auc_bar_plot
+```
+
+```{r}
+pdf("figures/auc_bar_plot_across_outcomes_validation.pdf")
+print(auc_bar_plot)
+dev.off()
+```
+
+```{r}
+png("figures/auc_bar_plot_across_outcomes_validation.png")
+print(auc_bar_plot)
+dev.off()
+```
+
+## Type II
+
+```{r}
+dm_firstoccur <- readRDS("generated_data/dm_firstoccur.RDS")
+dm_type_tab <- dm_firstoccur %>% select(f.eid, dm_type)
+```
+
+```{r}
+tte_dat_list_per_outcome_validation_noneur_dm2 <- 
+  lapply(tte_dat_list_per_outcome_validation_noneur,function(tte_dat_list){
+    lapply(tte_dat_list, function(tte_dat){
+        tte_dat %>% left_join(dm_type_tab,by="f.eid") %>% 
+        filter(dm_type  == "Type2") %>% 
+        select(-c(dm_type))  
+    })
+  })
+names(tte_dat_list_per_outcome_validation_noneur_dm2) <- 
+  names(tte_dat_list_per_outcome_validation_noneur)
+```
+
+```{r}
+res_dm2 <- readRDS("results/res_risk_prediction_main_training_dm2.RDS")
+pred_eval_df_per_outcome_dm2 <-
+  lapply(1:length(tte_dat_list_per_outcome_validation_noneur),function(i){
+    outcome <- names(tte_dat_list_per_outcome_validation_noneur_dm2)[i]
+    get_pred_eval_df(tte_dat_list_per_outcome_validation_noneur_dm2[[i]],res_dm2[[i]],outcome)
+}) 
+
+pred_eval_df_long_dm2 <- pred_eval_df_per_outcome_dm2 %>% bind_rows()
+```
+
+AUC bar plots
+```{r}
+auc_summary_tab <- pred_eval_df_long_dm2 %>%
+  group_by(outcome) %>% summarize(ncase=sum(event),ncontrol=n() - ncase,get_auc(event,avg_pred_risk))
+
+temp <- auc_summary_tab %>% mutate(label=paste0(ncase,'/',ncontrol,' | ',formatC(auc,2),' (',formatC(auc.l,digits = 2, format = 'f'),'-',formatC(auc.u, digits = 2, format = 'f'),')')) %>%
+  select(outcome,label)
+outcome_labs <- paste0(temp$outcome,' | ',temp$label)
+names(outcome_labs) <- temp$outcome
+
+auc_bar_plot <- pred_eval_df_long_dm2 %>% 
+  group_by(outcome) %>% summarize(get_auc(event,avg_pred_risk)) %>%
+  ggplot(aes(x=outcome,y=auc,fill=outcome)) + 
+  geom_bar(stat = "identity",position="dodge") + 
+  geom_errorbar(aes(x=outcome,ymin=auc.l,ymax=auc.u,width=0.4)) + 
+  theme_minimal() + 
+  theme(axis.text.x = element_blank(),axis.ticks.x = element_blank(),axis.title.x = element_blank()) +
+  scale_y_continuous(breaks=seq(0,1,0.1)) +
+  scale_fill_discrete(name = "Outcome | n.case/n.control | AUC (95% CI)", labels = outcome_labs) + ylab("AUC")
+auc_bar_plot
+```
+
+```{r}
+pdf("figures/auc_bar_plot_across_outcomes_validation_dm2.pdf")
+print(auc_bar_plot)
+dev.off()
+```
+
+```{r}
+png("figures/auc_bar_plot_across_outcomes_validation_dm2.png")
+print(auc_bar_plot)
+dev.off()
+```
+
+
+
+
+
+
+
+
+
