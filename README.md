@@ -38,12 +38,12 @@ book](https://dohyunkim116.github.io/ukbiobank-phenotyping-book/)).
 - `diet_exercise_UKB`
 - `demog_UKB.tab`
 
-We provide the scripts that reformat the raw data are in
-`generate_phenotypes_all_dot_RDS`. The raw data can be requested from UK
-Biobank study with appropriate access permission. Please refer to the
-introductory paragraph in [chapter 1 of the phenotyping
-book](https://dohyunkim116.github.io/ukbiobank-phenotyping-book/1-reformat-raw-data.html#reformat-raw-data)
-for more information.
+We provide the scripts that reformat the raw data, which are in
+`generate_phenotypes_all_dot_RDS` folder. The raw data can be requested
+from UK Biobank study with appropriate access permission. Please refer
+to the introductory paragraph in [chapter
+1](https://dohyunkim116.github.io/ukbiobank-phenotyping-book/1-reformat-raw-data.html#reformat-raw-data)
+of the phenotyping book for more information.
 
 `phenotypes_all.RDS` (a data frame when you load it to the R
 environment) should also contain numeric fields named `PGS000024` and
